@@ -1,57 +1,39 @@
-<!DOCTYPE html>
-
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FieldOps Pro</title>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #030810; color: #e2e8f0; font-family: system-ui, sans-serif; }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="text/babel" data-presets="react">
-    const { useState, useEffect, useRef } = React;
+import { useState, useEffect, useRef } from "react";
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SEED DATA
 // ══════════════════════════════════════════════════════════════════════════════
 
 const CLIENTS = [
-{ id:“C001”, name:“The Southern Co-op”, contact:“Lisa Hennessy”, email:“facilities@southernco-op.co.uk”, phone:“023 9200 1234”, type:“Retail” },
-{ id:“C002”, name:“Chapplins Letting Agents”, contact:“Mark Chaplin”, email:“maintenance@chapplins.co.uk”, phone:“01329 822 100”, type:“Letting Agent” },
-{ id:“C003”, name:“Fareham Borough Council”, contact:“David Osei”, email:“d.osei@fareham.gov.uk”, phone:“01329 236 100”, type:“Local Authority” },
+  { id:"C001", name:"The Southern Co-op", contact:"Lisa Hennessy", email:"facilities@southernco-op.co.uk", phone:"023 9200 1234", type:"Retail" },
+  { id:"C002", name:"Chapplins Letting Agents", contact:"Mark Chaplin", email:"maintenance@chapplins.co.uk", phone:"01329 822 100", type:"Letting Agent" },
+  { id:"C003", name:"Fareham Borough Council", contact:"David Osei", email:"d.osei@fareham.gov.uk", phone:"01329 236 100", type:"Local Authority" },
 ];
 
 const ENGINEERS = [
-{ id:“E001”, name:“Dan Kovacs”, initials:“DK”, phone:“07700 111001”, specialisms:[“HVAC”,“Electrical”], dayRate:280, hourlyRate:35, status:“available” },
-{ id:“E002”, name:“Aisha Brennan”, initials:“AB”, phone:“07700 111002”, specialisms:[“Plumbing”,“General”], dayRate:260, hourlyRate:32, status:“available” },
-{ id:“E003”, name:“Marcus Webb”, initials:“MW”, phone:“07700 111003”, specialisms:[“Electrical”,“Fire Safety”], dayRate:290, hourlyRate:36, status:“available” },
-{ id:“E004”, name:“Lena Papadopoulos”, initials:“LP”, phone:“07700 111004”, specialisms:[“HVAC”,“Mechanical”], dayRate:275, hourlyRate:34, status:“available” },
+  { id:"E001", name:"Dan Kovacs", initials:"DK", phone:"07700 111001", specialisms:["HVAC","Electrical"], dayRate:280, hourlyRate:35, status:"available" },
+  { id:"E002", name:"Aisha Brennan", initials:"AB", phone:"07700 111002", specialisms:["Plumbing","General"], dayRate:260, hourlyRate:32, status:"available" },
+  { id:"E003", name:"Marcus Webb", initials:"MW", phone:"07700 111003", specialisms:["Electrical","Fire Safety"], dayRate:290, hourlyRate:36, status:"available" },
+  { id:"E004", name:"Lena Papadopoulos", initials:"LP", phone:"07700 111004", specialisms:["HVAC","Mechanical"], dayRate:275, hourlyRate:34, status:"available" },
 ];
 
 // Site KV data - coordinates and site info
 const SITES_KV = {
-“southernco-op-southsea”:   { name:“Southern Co-op – Southsea”,       address:“Albert Rd, Southsea, PO5 2SG”,           lat:50.7878, lng:-1.0823, clientId:“C001”, siteRef:“SCO-001” },
-“southernco-op-portchester”:{ name:“Southern Co-op – Portchester”,     address:“Castle St, Portchester, PO16 9QX”,       lat:50.8476, lng:-1.1213, clientId:“C001”, siteRef:“SCO-002” },
-“southernco-op-gosport”:    { name:“Southern Co-op – Gosport”,         address:“Stoke Rd, Gosport, PO12 1LH”,            lat:50.7956, lng:-1.1232, clientId:“C001”, siteRef:“SCO-003” },
-“southernco-op-havant”:     { name:“Southern Co-op – Havant”,          address:“Market Way, Havant, PO9 1QE”,            lat:50.8531, lng:-0.9825, clientId:“C001”, siteRef:“SCO-004” },
-“chapplins-highst”:         { name:“Chapplins – 14 High St”,           address:“14 High Street, Fareham, PO16 7AF”,      lat:50.8519, lng:-1.1776, clientId:“C002”, siteRef:“CHA-001” },
-“chapplins-westst”:         { name:“Chapplins – 22 West St”,           address:“22 West Street, Fareham, PO16 0BH”,      lat:50.8502, lng:-1.1798, clientId:“C002”, siteRef:“CHA-002” },
-“fareham-civic”:            { name:“Fareham Civic Offices”,            address:“Civic Way, Fareham, PO16 7AZ”,            lat:50.8527, lng:-1.1763, clientId:“C003”, siteRef:“FBC-001” },
-“fareham-leisure”:          { name:“Fareham Leisure Centre”,           address:“Park Lane, Fareham, PO15 6NZ”,            lat:50.8489, lng:-1.1891, clientId:“C003”, siteRef:“FBC-002” },
-“fareham-library”:          { name:“Fareham Library”,                  address:“Osborn Rd, Fareham, PO16 7EN”,            lat:50.8521, lng:-1.1774, clientId:“C003”, siteRef:“FBC-003” },
+  "southernco-op-southsea":   { name:"Southern Co-op – Southsea",       address:"Albert Rd, Southsea, PO5 2SG",           lat:50.7878, lng:-1.0823, clientId:"C001", siteRef:"SCO-001" },
+  "southernco-op-portchester":{ name:"Southern Co-op – Portchester",     address:"Castle St, Portchester, PO16 9QX",       lat:50.8476, lng:-1.1213, clientId:"C001", siteRef:"SCO-002" },
+  "southernco-op-gosport":    { name:"Southern Co-op – Gosport",         address:"Stoke Rd, Gosport, PO12 1LH",            lat:50.7956, lng:-1.1232, clientId:"C001", siteRef:"SCO-003" },
+  "southernco-op-havant":     { name:"Southern Co-op – Havant",          address:"Market Way, Havant, PO9 1QE",            lat:50.8531, lng:-0.9825, clientId:"C001", siteRef:"SCO-004" },
+  "chapplins-highst":         { name:"Chapplins – 14 High St",           address:"14 High Street, Fareham, PO16 7AF",      lat:50.8519, lng:-1.1776, clientId:"C002", siteRef:"CHA-001" },
+  "chapplins-westst":         { name:"Chapplins – 22 West St",           address:"22 West Street, Fareham, PO16 0BH",      lat:50.8502, lng:-1.1798, clientId:"C002", siteRef:"CHA-002" },
+  "fareham-civic":            { name:"Fareham Civic Offices",            address:"Civic Way, Fareham, PO16 7AZ",            lat:50.8527, lng:-1.1763, clientId:"C003", siteRef:"FBC-001" },
+  "fareham-leisure":          { name:"Fareham Leisure Centre",           address:"Park Lane, Fareham, PO15 6NZ",            lat:50.8489, lng:-1.1891, clientId:"C003", siteRef:"FBC-002" },
+  "fareham-library":          { name:"Fareham Library",                  address:"Osborn Rd, Fareham, PO16 7EN",            lat:50.8521, lng:-1.1774, clientId:"C003", siteRef:"FBC-003" },
 };
 
 const INIT_SUBCONTRACTORS = [
-{ id:“SC001”, name:“Drainage Direct Ltd”, category:“Drainage”, contact:“Rob Pearce”, email:“jobs@drainagedirect.co.uk”, ccEmails:[“admin@drainagedirect.co.uk”,“office@yourcompany.co.uk”], phone:“01329 445566”, defaultMargin:35, notes:“24/7 emergency drainage. Send PO with all jobs.” },
-{ id:“SC002”, name:“PestSmart Solutions”,  category:“Pest Control”, contact:“Karen Mills”, email:“bookings@pestsmart.co.uk”, ccEmails:[“office@yourcompany.co.uk”], phone:“07800 223344”, defaultMargin:30, notes:“Next day response standard.” },
-{ id:“SC003”, name:“SkyRoof Contractors”,  category:“Roofing”, contact:“Jim Ashby”, email:“jim@skyroofcontractors.co.uk”, ccEmails:[“office@yourcompany.co.uk”], phone:“07900 556677”, defaultMargin:25, notes:“Quotes within 48h.” },
+  { id:"SC001", name:"Drainage Direct Ltd", category:"Drainage", contact:"Rob Pearce", email:"jobs@drainagedirect.co.uk", ccEmails:["admin@drainagedirect.co.uk","office@yourcompany.co.uk"], phone:"01329 445566", defaultMargin:35, notes:"24/7 emergency drainage. Send PO with all jobs." },
+  { id:"SC002", name:"PestSmart Solutions",  category:"Pest Control", contact:"Karen Mills", email:"bookings@pestsmart.co.uk", ccEmails:["office@yourcompany.co.uk"], phone:"07800 223344", defaultMargin:30, notes:"Next day response standard." },
+  { id:"SC003", name:"SkyRoof Contractors",  category:"Roofing", contact:"Jim Ashby", email:"jim@skyroofcontractors.co.uk", ccEmails:["office@yourcompany.co.uk"], phone:"07900 556677", defaultMargin:25, notes:"Quotes within 48h." },
 ];
 
 const now = new Date();
@@ -64,230 +46,230 @@ const nextPO = () => `PO-${_poCounter++}`;
 
 // Priority config
 const PRIORITY_SLA = {
-P1:{ label:“P1”, respond:4,  complete:24,   color:”#ef4444”, bg:”#450a0a”, desc:“4h respond / 24h complete” },
-P2:{ label:“P2”, respond:168,complete:168,  color:”#f97316”, bg:”#431407”, desc:“7 days” },
-P3:{ label:“P3”, respond:336,complete:336,  color:”#eab308”, bg:”#422006”, desc:“14 days” },
-P4:{ label:“P4”, respond:336,complete:336,  color:”#84cc16”, bg:”#1a2e05”, desc:“14 days” },
-P5:{ label:“P5”, respond:720,complete:720,  color:”#22d3ee”, bg:”#083344”, desc:“30 days” },
+  P1:{ label:"P1", respond:4,  complete:24,   color:"#ef4444", bg:"#450a0a", desc:"4h respond / 24h complete" },
+  P2:{ label:"P2", respond:168,complete:168,  color:"#f97316", bg:"#431407", desc:"7 days" },
+  P3:{ label:"P3", respond:336,complete:336,  color:"#eab308", bg:"#422006", desc:"14 days" },
+  P4:{ label:"P4", respond:336,complete:336,  color:"#84cc16", bg:"#1a2e05", desc:"14 days" },
+  P5:{ label:"P5", respond:720,complete:720,  color:"#22d3ee", bg:"#083344", desc:"30 days" },
 };
 
 const STATUS_CFG = {
-pending:     { label:“Pending”,       color:”#64748b”, bg:”#1e293b”, icon:“⏳” },
-scheduled:   { label:“Scheduled”,     color:”#38bdf8”, bg:”#0c2d4a”, icon:“📅” },
-travelling:  { label:“Travelling”,    color:”#a78bfa”, bg:”#2e1b5e”, icon:“🚗” },
-“in-progress”:{ label:“In Progress”,  color:”#f59e0b”, bg:”#451a03”, icon:“🔧” },
-complete:    { label:“Complete”,       color:”#34d399”, bg:”#064e3b”, icon:“✓”  },
-invoiced:    { label:“Invoiced”,       color:”#6ee7b7”, bg:”#022c22”, icon:“£”  },
-“on-hold”:   { label:“On Hold”,       color:”#f97316”, bg:”#431407”, icon:“⏸” },
-quote:       { label:“Quote Required”, color:”#fb7185”, bg:”#4c0519”, icon:“📋” },
-“subcontracted”:{ label:“Subcontracted”, color:”#c084fc”, bg:”#3b0764”, icon:“🔀” },
-“sub-quoted”:   { label:“Sub Quoted”,    color:”#818cf8”, bg:”#1e1b4b”, icon:“💬” },
+  pending:     { label:"Pending",       color:"#64748b", bg:"#1e293b", icon:"⏳" },
+  scheduled:   { label:"Scheduled",     color:"#38bdf8", bg:"#0c2d4a", icon:"📅" },
+  travelling:  { label:"Travelling",    color:"#a78bfa", bg:"#2e1b5e", icon:"🚗" },
+  "in-progress":{ label:"In Progress",  color:"#f59e0b", bg:"#451a03", icon:"🔧" },
+  complete:    { label:"Complete",       color:"#34d399", bg:"#064e3b", icon:"✓"  },
+  invoiced:    { label:"Invoiced",       color:"#6ee7b7", bg:"#022c22", icon:"£"  },
+  "on-hold":   { label:"On Hold",       color:"#f97316", bg:"#431407", icon:"⏸" },
+  quote:       { label:"Quote Required", color:"#fb7185", bg:"#4c0519", icon:"📋" },
+  "subcontracted":{ label:"Subcontracted", color:"#c084fc", bg:"#3b0764", icon:"🔀" },
+  "sub-quoted":   { label:"Sub Quoted",    color:"#818cf8", bg:"#1e1b4b", icon:"💬" },
 };
 
 const COMPLIANCE_SCHEDULE = [
-{ id:“CS001”, clientId:“C001”, siteKey:“southernco-op-portchester”, title:“Gas Safety Inspection (CP12)”, category:“Gas”, frequency:“annual”, nextDue:dFwd(14), slaHours:72 },
-{ id:“CS002”, clientId:“C002”, siteKey:“chapplins-highst”, title:“Landlord Gas Safety (CP12)”, category:“Gas”, frequency:“annual”, nextDue:dFwd(8), slaHours:48 },
-{ id:“CS003”, clientId:“C003”, siteKey:“fareham-civic”, title:“Emergency Lighting 6-Monthly Test”, category:“Electrical”, frequency:“6-monthly”, nextDue:dFwd(45), slaHours:24 },
-{ id:“CS004”, clientId:“C001”, siteKey:“southernco-op-southsea”, title:“Fixed Wire Testing (EICR)”, category:“Electrical”, frequency:“5-yearly”, nextDue:dFwd(3), slaHours:168 },
-{ id:“CS005”, clientId:“C003”, siteKey:“fareham-leisure”, title:“Fire Alarm Service”, category:“Fire Safety”, frequency:“6-monthly”, nextDue:dFwd(7), slaHours:48 },
-{ id:“CS006”, clientId:“C001”, siteKey:“southernco-op-gosport”, title:“PAT Testing”, category:“Electrical”, frequency:“annual”, nextDue:dFwd(2), slaHours:168 },
+  { id:"CS001", clientId:"C001", siteKey:"southernco-op-portchester", title:"Gas Safety Inspection (CP12)", category:"Gas", frequency:"annual", nextDue:dFwd(14), slaHours:72 },
+  { id:"CS002", clientId:"C002", siteKey:"chapplins-highst", title:"Landlord Gas Safety (CP12)", category:"Gas", frequency:"annual", nextDue:dFwd(8), slaHours:48 },
+  { id:"CS003", clientId:"C003", siteKey:"fareham-civic", title:"Emergency Lighting 6-Monthly Test", category:"Electrical", frequency:"6-monthly", nextDue:dFwd(45), slaHours:24 },
+  { id:"CS004", clientId:"C001", siteKey:"southernco-op-southsea", title:"Fixed Wire Testing (EICR)", category:"Electrical", frequency:"5-yearly", nextDue:dFwd(3), slaHours:168 },
+  { id:"CS005", clientId:"C003", siteKey:"fareham-leisure", title:"Fire Alarm Service", category:"Fire Safety", frequency:"6-monthly", nextDue:dFwd(7), slaHours:48 },
+  { id:"CS006", clientId:"C001", siteKey:"southernco-op-gosport", title:"PAT Testing", category:"Electrical", frequency:"annual", nextDue:dFwd(2), slaHours:168 },
 ];
 
 const INITIAL_JOBS = [
-{
-id:“JOB-0891”, clientId:“C001”, siteKey:“southernco-op-southsea”,
-title:“HVAC Unit Failure”, type:“reactive”, category:“HVAC”,
-priority:“P1”, status:“in-progress”, engineerId:“E001”,
-location:“Southern Co-op, Albert Rd, Southsea, PO5 2SG”,
-description:“Complete rooftop HVAC failure. Store temperature rising.”,
-createdAt:hAgo(3), responseDeadline:hFwd(1), completionDeadline:hFwd(21),
-labourHours:0, labourRate:35, labourCost:0,
-materials:[ { id:“M001”, poNumber:“PO-1001”, description:“Fan motor assembly”, supplier:“Wolseley”, qty:1, unitCost:320, margin:20, charged:384, status:“ordered” } ],
-notes:[{ author:“Dan Kovacs”, time:hAgo(1.5), text:“On site. Motor failed. Part ordered.” }],
-attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
-subcontractorId:null, subcontractorLog:[], subQuote:null,
-calloutCharged:false, quoteData:null, onHoldReason:null,
-},
-{
-id:“JOB-0890”, clientId:“C002”, siteKey:“chapplins-highst”,
-title:“Boiler Fault – No Heating”, type:“reactive”, category:“Plumbing”,
-priority:“P1”, status:“scheduled”, engineerId:“E002”,
-location:“14 High Street, Fareham, PO16 7AF”,
-description:“Tenant reports no heating. Boiler F28 fault code.”,
-createdAt:hAgo(6), responseDeadline:hFwd(18), completionDeadline:hFwd(18),
-labourHours:0, labourRate:32, labourCost:0,
-materials:[], notes:[], attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
-subcontractorId:null, subcontractorLog:[], subQuote:null,
-calloutCharged:false, quoteData:null, onHoldReason:null,
-},
-{
-id:“JOB-0889”, clientId:“C001”, siteKey:“southernco-op-gosport”,
-title:“Drain Blockage – External Drain”, type:“reactive”, category:“Drainage”,
-priority:“P2”, status:“subcontracted”, engineerId:null,
-location:“Southern Co-op, Stoke Rd, Gosport, PO12 1LH”,
-description:“External drain blocked causing standing water near delivery bay. Health & Safety risk.”,
-createdAt:hAgo(5), responseDeadline:hFwd(163), completionDeadline:hFwd(163),
-labourHours:0, labourRate:0, labourCost:0,
-materials:[], notes:[], attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
-subcontractorId:“SC001”,
-subcontractorLog:[{
-time:hAgo(4), action:“dispatched”,
-to:“jobs@drainagedirect.co.uk”, cc:[“admin@drainagedirect.co.uk”,“office@yourcompany.co.uk”],
-sentBy:“Office Admin”, subcontractorName:“Drainage Direct Ltd”,
-message:“Please attend as P2. Full job details in body.”
-}],
-subQuote:null, calloutCharged:false, quoteData:null, onHoldReason:null,
-},
-{
-id:“JOB-0888”, clientId:“C002”, siteKey:“chapplins-westst”,
-title:“Drain Collapse – Rear Courtyard”, type:“reactive”, category:“Drainage”,
-priority:“P2”, status:“sub-quoted”, engineerId:null,
-location:“22 West Street, Fareham, PO16 0BH”,
-description:“Root infiltration causing partial drain collapse. CCTV survey required.”,
-createdAt:hAgo(48), responseDeadline:hFwd(120), completionDeadline:hFwd(120),
-labourHours:0, labourRate:0, labourCost:0,
-materials:[], notes:[{author:“Office”,time:hAgo(24),text:“Drainage Direct attended for initial survey. Quote received.”}],
-attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
-subcontractorId:“SC001”,
-subcontractorLog:[
-{ time:hAgo(47), action:“dispatched”, to:“jobs@drainagedirect.co.uk”, cc:[“office@yourcompany.co.uk”], sentBy:“Office Admin”, subcontractorName:“Drainage Direct Ltd”, message:“P2 drainage call out – attend and survey.” },
-{ time:hAgo(24), action:“quote-received”, sentBy:“Office Admin”, subcontractorName:“Drainage Direct Ltd”, note:“Sub quote received £1,450. Includes CCTV survey and patch repair.” },
-],
-subQuote:{
-subCost:1450, subDescription:“CCTV survey + patch lining to drain collapse 3m section”,
-margin:35, clientCharge:1958, approved:false, sentToClient:false,
-calloutSubCost:280, calloutMargin:35, calloutCharge:378,
-},
-calloutCharged:false, quoteData:null, onHoldReason:null,
-},
-{
-id:“JOB-0887”, clientId:“C003”, siteKey:“fareham-civic”,
-title:“Emergency Lighting Test Fail”, type:“compliance”, category:“Electrical”,
-priority:“P2”, status:“complete”, engineerId:“E003”,
-location:“Fareham Civic Offices, Civic Way, Fareham, PO16 7AZ”,
-description:“6 emergency light fittings failed annual test.”,
-createdAt:hAgo(18), responseDeadline:hAgo(10), completionDeadline:hAgo(10),
-labourHours:3, labourRate:36, labourCost:108,
-materials:[{ id:“M002”, poNumber:“PO-1002”, description:“LED emergency modules x6”, supplier:“Edmundson Electrical”, qty:6, unitCost:28, margin:25, charged:210, status:“delivered” }],
-notes:[{author:“Marcus Webb”,time:hAgo(8),text:“All 6 units replaced and tested. Certificate issued.”}],
-attachments:[“emergency_lighting_cert.pdf”], completedAt:hAgo(8), invoiced:false, invoiceMonth:“2025-01”,
-subcontractorId:null, subcontractorLog:[], subQuote:null,
-calloutCharged:false, quoteData:null, onHoldReason:null,
-},
-{
-id:“JOB-0886”, clientId:“C001”, siteKey:“southernco-op-southsea”,
-title:“Fire Door Closer Replacement”, type:“reactive”, category:“General”,
-priority:“P3”, status:“pending”, engineerId:null,
-location:“Southern Co-op, Albert Rd, Southsea, PO5 2SG”,
-description:“3x fire door closers failed inspection.”,
-createdAt:hAgo(1), responseDeadline:hFwd(335), completionDeadline:hFwd(335),
-labourHours:0, labourRate:35, labourCost:0,
-materials:[], notes:[], attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
-subcontractorId:null, subcontractorLog:[], subQuote:null,
-calloutCharged:false, quoteData:null, onHoldReason:null,
-},
+  {
+    id:"JOB-0891", clientId:"C001", siteKey:"southernco-op-southsea",
+    title:"HVAC Unit Failure", type:"reactive", category:"HVAC",
+    priority:"P1", status:"in-progress", engineerId:"E001",
+    location:"Southern Co-op, Albert Rd, Southsea, PO5 2SG",
+    description:"Complete rooftop HVAC failure. Store temperature rising.",
+    createdAt:hAgo(3), responseDeadline:hFwd(1), completionDeadline:hFwd(21),
+    labourHours:0, labourRate:35, labourCost:0,
+    materials:[ { id:"M001", poNumber:"PO-1001", description:"Fan motor assembly", supplier:"Wolseley", qty:1, unitCost:320, margin:20, charged:384, status:"ordered" } ],
+    notes:[{ author:"Dan Kovacs", time:hAgo(1.5), text:"On site. Motor failed. Part ordered." }],
+    attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
+    subcontractorId:null, subcontractorLog:[], subQuote:null,
+    calloutCharged:false, quoteData:null, onHoldReason:null,
+  },
+  {
+    id:"JOB-0890", clientId:"C002", siteKey:"chapplins-highst",
+    title:"Boiler Fault – No Heating", type:"reactive", category:"Plumbing",
+    priority:"P1", status:"scheduled", engineerId:"E002",
+    location:"14 High Street, Fareham, PO16 7AF",
+    description:"Tenant reports no heating. Boiler F28 fault code.",
+    createdAt:hAgo(6), responseDeadline:hFwd(18), completionDeadline:hFwd(18),
+    labourHours:0, labourRate:32, labourCost:0,
+    materials:[], notes:[], attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
+    subcontractorId:null, subcontractorLog:[], subQuote:null,
+    calloutCharged:false, quoteData:null, onHoldReason:null,
+  },
+  {
+    id:"JOB-0889", clientId:"C001", siteKey:"southernco-op-gosport",
+    title:"Drain Blockage – External Drain", type:"reactive", category:"Drainage",
+    priority:"P2", status:"subcontracted", engineerId:null,
+    location:"Southern Co-op, Stoke Rd, Gosport, PO12 1LH",
+    description:"External drain blocked causing standing water near delivery bay. Health & Safety risk.",
+    createdAt:hAgo(5), responseDeadline:hFwd(163), completionDeadline:hFwd(163),
+    labourHours:0, labourRate:0, labourCost:0,
+    materials:[], notes:[], attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
+    subcontractorId:"SC001",
+    subcontractorLog:[{
+      time:hAgo(4), action:"dispatched",
+      to:"jobs@drainagedirect.co.uk", cc:["admin@drainagedirect.co.uk","office@yourcompany.co.uk"],
+      sentBy:"Office Admin", subcontractorName:"Drainage Direct Ltd",
+      message:"Please attend as P2. Full job details in body."
+    }],
+    subQuote:null, calloutCharged:false, quoteData:null, onHoldReason:null,
+  },
+  {
+    id:"JOB-0888", clientId:"C002", siteKey:"chapplins-westst",
+    title:"Drain Collapse – Rear Courtyard", type:"reactive", category:"Drainage",
+    priority:"P2", status:"sub-quoted", engineerId:null,
+    location:"22 West Street, Fareham, PO16 0BH",
+    description:"Root infiltration causing partial drain collapse. CCTV survey required.",
+    createdAt:hAgo(48), responseDeadline:hFwd(120), completionDeadline:hFwd(120),
+    labourHours:0, labourRate:0, labourCost:0,
+    materials:[], notes:[{author:"Office",time:hAgo(24),text:"Drainage Direct attended for initial survey. Quote received."}],
+    attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
+    subcontractorId:"SC001",
+    subcontractorLog:[
+      { time:hAgo(47), action:"dispatched", to:"jobs@drainagedirect.co.uk", cc:["office@yourcompany.co.uk"], sentBy:"Office Admin", subcontractorName:"Drainage Direct Ltd", message:"P2 drainage call out – attend and survey." },
+      { time:hAgo(24), action:"quote-received", sentBy:"Office Admin", subcontractorName:"Drainage Direct Ltd", note:"Sub quote received £1,450. Includes CCTV survey and patch repair." },
+    ],
+    subQuote:{
+      subCost:1450, subDescription:"CCTV survey + patch lining to drain collapse 3m section",
+      margin:35, clientCharge:1958, approved:false, sentToClient:false,
+      calloutSubCost:280, calloutMargin:35, calloutCharge:378,
+    },
+    calloutCharged:false, quoteData:null, onHoldReason:null,
+  },
+  {
+    id:"JOB-0887", clientId:"C003", siteKey:"fareham-civic",
+    title:"Emergency Lighting Test Fail", type:"compliance", category:"Electrical",
+    priority:"P2", status:"complete", engineerId:"E003",
+    location:"Fareham Civic Offices, Civic Way, Fareham, PO16 7AZ",
+    description:"6 emergency light fittings failed annual test.",
+    createdAt:hAgo(18), responseDeadline:hAgo(10), completionDeadline:hAgo(10),
+    labourHours:3, labourRate:36, labourCost:108,
+    materials:[{ id:"M002", poNumber:"PO-1002", description:"LED emergency modules x6", supplier:"Edmundson Electrical", qty:6, unitCost:28, margin:25, charged:210, status:"delivered" }],
+    notes:[{author:"Marcus Webb",time:hAgo(8),text:"All 6 units replaced and tested. Certificate issued."}],
+    attachments:["emergency_lighting_cert.pdf"], completedAt:hAgo(8), invoiced:false, invoiceMonth:"2025-01",
+    subcontractorId:null, subcontractorLog:[], subQuote:null,
+    calloutCharged:false, quoteData:null, onHoldReason:null,
+  },
+  {
+    id:"JOB-0886", clientId:"C001", siteKey:"southernco-op-southsea",
+    title:"Fire Door Closer Replacement", type:"reactive", category:"General",
+    priority:"P3", status:"pending", engineerId:null,
+    location:"Southern Co-op, Albert Rd, Southsea, PO5 2SG",
+    description:"3x fire door closers failed inspection.",
+    createdAt:hAgo(1), responseDeadline:hFwd(335), completionDeadline:hFwd(335),
+    labourHours:0, labourRate:35, labourCost:0,
+    materials:[], notes:[], attachments:[], completedAt:null, invoiced:false, invoiceMonth:null,
+    subcontractorId:null, subcontractorLog:[], subQuote:null,
+    calloutCharged:false, quoteData:null, onHoldReason:null,
+  },
 ];
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HELPERS
 // ══════════════════════════════════════════════════════════════════════════════
 
-const fmt = (n) => ((n || 0).toLocaleString(“en-GB”,{minimumFractionDigits:2,maximumFractionDigits:2})) || “0.00”;
-const formatDate = (iso) => !iso ? “—” : new Date(iso).toLocaleDateString(“en-GB”,{day:“numeric”,month:“short”,year:“numeric”});
-const formatDateTime = (iso) => !iso ? “—” : new Date(iso).toLocaleString(“en-GB”,{day:“numeric”,month:“short”,hour:“2-digit”,minute:“2-digit”});
+const fmt = (n) => n?.toLocaleString("en-GB",{minimumFractionDigits:2,maximumFractionDigits:2}) ?? "0.00";
+const formatDate = (iso) => !iso ? "—" : new Date(iso).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+const formatDateTime = (iso) => !iso ? "—" : new Date(iso).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
 const timeAgo = (iso) => {
-const diff = now - new Date(iso);
-const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
-if(h===0) return `${m}m ago`; if(h<24) return `${h}h ago`; return `${Math.floor(h/24)}d ago`;
+  const diff = now - new Date(iso);
+  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
+  if(h===0) return `${m}m ago`; if(h<24) return `${h}h ago`; return `${Math.floor(h/24)}d ago`;
 };
 const countdown = (iso) => {
-const diff = new Date(iso) - now, abs = Math.abs(diff);
-const h = Math.floor(abs/3600000), m = Math.floor((abs%3600000)/60000);
-return diff<0 ? `Breached ${h}h ${m}m ago` : `${h}h ${m}m remaining`;
+  const diff = new Date(iso) - now, abs = Math.abs(diff);
+  const h = Math.floor(abs/3600000), m = Math.floor((abs%3600000)/60000);
+  return diff<0 ? `Breached ${h}h ${m}m ago` : `${h}h ${m}m remaining`;
 };
 const getSLAStatus = (job) => {
-if([“complete”,“invoiced”].includes(job.status)) return “met”;
-const diff = new Date(job.completionDeadline) - now;
-if(diff<0) return “breached”; if(diff<3600000) return “critical”; if(diff<7200000) return “warning”; return “ok”;
+  if(["complete","invoiced"].includes(job.status)) return "met";
+  const diff = new Date(job.completionDeadline) - now;
+  if(diff<0) return "breached"; if(diff<3600000) return "critical"; if(diff<7200000) return "warning"; return "ok";
 };
-const SLA_COLOR = { ok:”#34d399”, warning:”#f59e0b”, critical:”#ef4444”, breached:”#dc2626”, met:”#475569” };
+const SLA_COLOR = { ok:"#34d399", warning:"#f59e0b", critical:"#ef4444", breached:"#dc2626", met:"#475569" };
 
 // Site intelligence: get all jobs + compliance at same site within 14 days
 const getSiteIntelligence = (job, allJobs, complianceSchedule) => {
-if(!job.siteKey) return { jobs:[], compliance:[] };
-const siteJobs = allJobs.filter(j => j.siteKey===job.siteKey && j.id!==job.id && ![“invoiced”].includes(j.status));
-const cutoff = new Date(now.getTime() + 14*86400000);
-const siteDue = complianceSchedule.filter(c => {
-const s = SITES_KV[c.siteKey];
-const jobSite = SITES_KV[job.siteKey];
-return c.siteKey===job.siteKey && new Date(c.nextDue) < cutoff;
-});
-return { jobs:siteJobs, compliance:siteDue };
+  if(!job.siteKey) return { jobs:[], compliance:[] };
+  const siteJobs = allJobs.filter(j => j.siteKey===job.siteKey && j.id!==job.id && !["invoiced"].includes(j.status));
+  const cutoff = new Date(now.getTime() + 14*86400000);
+  const siteDue = complianceSchedule.filter(c => {
+    const s = SITES_KV[c.siteKey];
+    const jobSite = SITES_KV[job.siteKey];
+    return c.siteKey===job.siteKey && new Date(c.nextDue) < cutoff;
+  });
+  return { jobs:siteJobs, compliance:siteDue };
 };
 
 // ══════════════════════════════════════════════════════════════════════════════
 // MICRO COMPONENTS
 // ══════════════════════════════════════════════════════════════════════════════
 
-const Badge = ({status}) => { const c=STATUS_CFG[status]||STATUS_CFG.pending; return <span style={{background:c.bg,color:c.color,border:`1px solid ${c.color}44`,padding:“2px 9px”,borderRadius:4,fontSize:10,fontWeight:800,letterSpacing:“0.05em”,whiteSpace:“nowrap”}}>{c.icon} {c.label}</span>; };
+const Badge = ({status}) => { const c=STATUS_CFG[status]||STATUS_CFG.pending; return <span style={{background:c.bg,color:c.color,border:`1px solid ${c.color}44`,padding:"2px 9px",borderRadius:4,fontSize:10,fontWeight:800,letterSpacing:"0.05em",whiteSpace:"nowrap"}}>{c.icon} {c.label}</span>; };
 
 const PriBadge = ({priority}) => {
-const c = PRIORITY_SLA[priority] || PRIORITY_SLA.P3;
-return <span style={{background:c.bg,color:c.color,border:`1px solid ${c.color}55`,padding:“2px 9px”,borderRadius:4,fontSize:10,fontWeight:900,letterSpacing:“0.06em”,whiteSpace:“nowrap”}}>{c.label}</span>;
+  const c = PRIORITY_SLA[priority] || PRIORITY_SLA.P3;
+  return <span style={{background:c.bg,color:c.color,border:`1px solid ${c.color}55`,padding:"2px 9px",borderRadius:4,fontSize:10,fontWeight:900,letterSpacing:"0.06em",whiteSpace:"nowrap"}}>{c.label}</span>;
 };
 
-const Av = ({i,size=32,bg=”#1e3a5f”}) => <div style={{width:size,height:size,borderRadius:“50%”,background:bg,display:“flex”,alignItems:“center”,justifyContent:“center”,fontSize:size*0.36,fontWeight:800,color:”#e2e8f0”,flexShrink:0,border:“2px solid #0f172a”}}>{i}</div>;
+const Av = ({i,size=32,bg="#1e3a5f"}) => <div style={{width:size,height:size,borderRadius:"50%",background:bg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:size*0.36,fontWeight:800,color:"#e2e8f0",flexShrink:0,border:"2px solid #0f172a"}}>{i}</div>;
 
-const Inp = ({style,…p}) => <input style={{background:”#070f1f”,border:“1px solid #1e3a5f”,color:”#e2e8f0”,borderRadius:6,padding:“8px 11px”,fontSize:12,outline:“none”,boxSizing:“border-box”,…style}} {…p}/>;
-const Sel = ({style,children,…p}) => <select style={{background:”#070f1f”,border:“1px solid #1e3a5f”,color:”#e2e8f0”,borderRadius:6,padding:“8px 10px”,fontSize:12,outline:“none”,…style}} {…p}>{children}</select>;
-const TA  = ({style,…p}) => <textarea style={{background:”#070f1f”,border:“1px solid #1e3a5f”,color:”#e2e8f0”,borderRadius:6,padding:“8px 11px”,fontSize:12,outline:“none”,resize:“vertical”,fontFamily:“inherit”,boxSizing:“border-box”,…style}} {…p}/>;
-const Btn = ({style,children,…p}) => <button style={{background:”#1d4ed8”,color:”#fff”,border:“none”,borderRadius:7,padding:“8px 16px”,cursor:“pointer”,fontSize:12,fontWeight:700,…style}} {…p}>{children}</button>;
-const Card = ({style,children,…p}) => <div style={{background:”#080f20”,border:“1px solid #1e293b”,borderRadius:10,…style}} {…p}>{children}</div>;
-const Lbl = ({children,style}) => <div style={{fontSize:9,color:”#475569”,textTransform:“uppercase”,letterSpacing:“0.07em”,marginBottom:4,fontWeight:700,…style}}>{children}</div>;
+const Inp = ({style,...p}) => <input style={{background:"#070f1f",border:"1px solid #1e3a5f",color:"#e2e8f0",borderRadius:6,padding:"8px 11px",fontSize:12,outline:"none",boxSizing:"border-box",...style}} {...p}/>;
+const Sel = ({style,children,...p}) => <select style={{background:"#070f1f",border:"1px solid #1e3a5f",color:"#e2e8f0",borderRadius:6,padding:"8px 10px",fontSize:12,outline:"none",...style}} {...p}>{children}</select>;
+const TA  = ({style,...p}) => <textarea style={{background:"#070f1f",border:"1px solid #1e3a5f",color:"#e2e8f0",borderRadius:6,padding:"8px 11px",fontSize:12,outline:"none",resize:"vertical",fontFamily:"inherit",boxSizing:"border-box",...style}} {...p}/>;
+const Btn = ({style,children,...p}) => <button style={{background:"#1d4ed8",color:"#fff",border:"none",borderRadius:7,padding:"8px 16px",cursor:"pointer",fontSize:12,fontWeight:700,...style}} {...p}>{children}</button>;
+const Card = ({style,children,...p}) => <div style={{background:"#080f20",border:"1px solid #1e293b",borderRadius:10,...style}} {...p}>{children}</div>;
+const Lbl = ({children,style}) => <div style={{fontSize:9,color:"#475569",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:4,fontWeight:700,...style}}>{children}</div>;
 
 // Cost colours: sub cost = red, client charge = green, profit = gold
-const SubCostTxt = ({children}) => <span style={{color:”#f87171”,fontWeight:700}}>{children}</span>;
-const ClientChargeTxt = ({children}) => <span style={{color:”#4ade80”,fontWeight:700}}>{children}</span>;
-const ProfitTxt = ({children}) => <span style={{color:”#fbbf24”,fontWeight:800}}>{children}</span>;
+const SubCostTxt = ({children}) => <span style={{color:"#f87171",fontWeight:700}}>{children}</span>;
+const ClientChargeTxt = ({children}) => <span style={{color:"#4ade80",fontWeight:700}}>{children}</span>;
+const ProfitTxt = ({children}) => <span style={{color:"#fbbf24",fontWeight:800}}>{children}</span>;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SITE INTELLIGENCE BANNER
 // ══════════════════════════════════════════════════════════════════════════════
 
 function SiteIntelligenceBanner({job, allJobs, compliance}) {
-const intel = getSiteIntelligence(job, allJobs, compliance);
-if(intel.jobs.length===0 && intel.compliance.length===0) return null;
-const site = SITES_KV[job.siteKey];
-return (
-<div style={{background:”#0c1f0a”,border:“2px solid #4ade8066”,borderRadius:8,padding:“12px 14px”,marginBottom:14}}>
-<div style={{fontSize:11,fontWeight:800,color:”#4ade80”,marginBottom:8}}>
-🗺 Site Intelligence – {(site && site.name) || job.location}
-</div>
-{intel.jobs.length>0&&(
-<div style={{marginBottom:8}}>
-<div style={{fontSize:10,color:”#86efac”,fontWeight:700,marginBottom:4}}>OTHER JOBS AT THIS SITE:</div>
-{intel.jobs.map(j=>(
-<div key={j.id} style={{fontSize:11,color:”#bbf7d0”,marginBottom:3,paddingLeft:8,borderLeft:“2px solid #4ade8044”}}>
-<PriBadge priority={j.priority}/> <span style={{marginLeft:4}}>{j.title}</span> <span style={{color:”#475569”,marginLeft:4}}>·</span> <Badge status={j.status}/>
-</div>
-))}
-</div>
-)}
-{intel.compliance.length>0&&(
-<div>
-<div style={{fontSize:10,color:”#fde68a”,fontWeight:700,marginBottom:4}}>COMPLIANCE DUE WITHIN 14 DAYS:</div>
-{intel.compliance.map(c=>(
-<div key={c.id} style={{fontSize:11,color:”#fef3c7”,marginBottom:3,paddingLeft:8,borderLeft:“2px solid #fbbf2444”}}>
-⚠ {c.title} <span style={{color:”#6b7280”}}>· Due {formatDate(c.nextDue)}</span>
-</div>
-))}
-</div>
-)}
-<div style={{fontSize:10,color:”#4ade80”,marginTop:8,fontStyle:“italic”}}>
-💡 Consider combining visits to reduce travel costs
-</div>
-</div>
-);
+  const intel = getSiteIntelligence(job, allJobs, compliance);
+  if(intel.jobs.length===0 && intel.compliance.length===0) return null;
+  const site = SITES_KV[job.siteKey];
+  return (
+    <div style={{background:"#0c1f0a",border:"2px solid #4ade8066",borderRadius:8,padding:"12px 14px",marginBottom:14}}>
+      <div style={{fontSize:11,fontWeight:800,color:"#4ade80",marginBottom:8}}>
+        🗺 Site Intelligence – {site?.name || job.location}
+      </div>
+      {intel.jobs.length>0&&(
+        <div style={{marginBottom:8}}>
+          <div style={{fontSize:10,color:"#86efac",fontWeight:700,marginBottom:4}}>OTHER JOBS AT THIS SITE:</div>
+          {intel.jobs.map(j=>(
+            <div key={j.id} style={{fontSize:11,color:"#bbf7d0",marginBottom:3,paddingLeft:8,borderLeft:"2px solid #4ade8044"}}>
+              <PriBadge priority={j.priority}/> <span style={{marginLeft:4}}>{j.title}</span> <span style={{color:"#475569",marginLeft:4}}>·</span> <Badge status={j.status}/>
+            </div>
+          ))}
+        </div>
+      )}
+      {intel.compliance.length>0&&(
+        <div>
+          <div style={{fontSize:10,color:"#fde68a",fontWeight:700,marginBottom:4}}>COMPLIANCE DUE WITHIN 14 DAYS:</div>
+          {intel.compliance.map(c=>(
+            <div key={c.id} style={{fontSize:11,color:"#fef3c7",marginBottom:3,paddingLeft:8,borderLeft:"2px solid #fbbf2444"}}>
+              ⚠ {c.title} <span style={{color:"#6b7280"}}>· Due {formatDate(c.nextDue)}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      <div style={{fontSize:10,color:"#4ade80",marginTop:8,fontStyle:"italic"}}>
+        💡 Consider combining visits to reduce travel costs
+      </div>
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -295,78 +277,75 @@ return (
 // ══════════════════════════════════════════════════════════════════════════════
 
 function SubcontractorModal({job, subcontractors, clients, onClose, onDispatch}) {
-const [selectedSub, setSelectedSub] = useState((subcontractors[0] ? subcontractors[0].id : ‘’)||””);
-const [message, setMessage] = useState(””);
-const [confirmed, setConfirmed] = useState(false);
-const sub = subcontractors.find(s=>s.id===selectedSub);
-const client = clients.find(c=>c.id===job.clientId);
-const site = SITES_KV[job.siteKey];
-const pri = PRIORITY_SLA[job.priority];
+  const [selectedSub, setSelectedSub] = useState(subcontractors[0]?.id||"");
+  const [message, setMessage] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  const sub = subcontractors.find(s=>s.id===selectedSub);
+  const client = clients.find(c=>c.id===job.clientId);
+  const site = SITES_KV[job.siteKey];
+  const pri = PRIORITY_SLA[job.priority];
 
-const defaultMsg = sub ? `Dear ${sub.contact},\n\nPlease attend the following job:\n\nJOB REF: ${job.id}\nCLIENT: ${(client && client.name)}\nSITE: ${job.location}\nPRIORITY: ${job.priority} – ${(pri ? pri.desc : '')}\nCATEGORY: ${job.category}\n\nDESCRIPTION:\n${job.description}\n\nPlease confirm attendance and provide an ETA.\n\nKind regards,\nFieldOps Pro` : “”;
+  const defaultMsg = sub ? `Dear ${sub.contact},\n\nPlease attend the following job:\n\nJOB REF: ${job.id}\nCLIENT: ${client?.name}\nSITE: ${job.location}\nPRIORITY: ${job.priority} – ${pri?.desc}\nCATEGORY: ${job.category}\n\nDESCRIPTION:\n${job.description}\n\nPlease confirm attendance and provide an ETA.\n\nKind regards,\nFieldOps Pro` : "";
 
-useEffect(()=>{ setMessage(defaultMsg); setConfirmed(false); },[selectedSub]);
+  useEffect(()=>{ setMessage(defaultMsg); setConfirmed(false); },[selectedSub]);
 
-const handleDispatch = () => {
-if(!confirmed||!sub) return;
-onDispatch(job, sub, message);
-onClose();
-};
+  const handleDispatch = () => {
+    if(!confirmed||!sub) return;
+    onDispatch(job, sub, message);
+    onClose();
+  };
 
-return (
-<div style={{position:“fixed”,inset:0,background:”#000000cc”,zIndex:200,display:“flex”,alignItems:“center”,justifyContent:“center”,backdropFilter:“blur(4px)”}}>
-<Card style={{width:600,maxHeight:“90vh”,overflowY:“auto”,padding:24,border:“1px solid #c084fc55”}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:18}}>
-<div style={{fontSize:16,fontWeight:900,color:”#c084fc”}}>🔀 Dispatch to Subcontractor</div>
-<button onClick={onClose} style={{background:”#1e293b”,border:“1px solid #334155”,color:”#94a3b8”,borderRadius:6,padding:“4px 10px”,cursor:“pointer”,fontSize:18}}>×</button>
-</div>
-
-```
-    <div style={{marginBottom:14}}>
-      <Lbl>Select Subcontractor</Lbl>
-      <Sel style={{width:"100%"}} value={selectedSub} onChange={e=>setSelectedSub(e.target.value)}>
-        {subcontractors.map(s=><option key={s.id} value={s.id}>{s.name} ({s.category})</option>)}
-      </Sel>
-    </div>
-
-    {sub&&(
-      <>
-        <Card style={{padding:12,marginBottom:14,border:"1px solid #3b0764",background:"#0d0617"}}>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,fontSize:11}}>
-            <div><span style={{color:"#475569"}}>Contact: </span><span style={{color:"#e2e8f0",fontWeight:600}}>{sub.contact}</span></div>
-            <div><span style={{color:"#475569"}}>Phone: </span><span style={{color:"#e2e8f0",fontWeight:600}}>{sub.phone}</span></div>
-            <div><span style={{color:"#475569"}}>To: </span><span style={{color:"#c084fc",fontWeight:700}}>{sub.email}</span></div>
-            <div><span style={{color:"#475569"}}>Default Margin: </span><ProfitTxt>{sub.defaultMargin}%</ProfitTxt></div>
-            <div style={{gridColumn:"1/-1"}}><span style={{color:"#475569"}}>CC: </span><span style={{color:"#818cf8"}}>{sub.ccEmails.join(", ")}</span></div>
-          </div>
-          {sub.notes&&<div style={{fontSize:10,color:"#64748b",marginTop:6,fontStyle:"italic"}}>Note: {sub.notes}</div>}
-        </Card>
+  return (
+    <div style={{position:"fixed",inset:0,background:"#000000cc",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}}>
+      <Card style={{width:600,maxHeight:"90vh",overflowY:"auto",padding:24,border:"1px solid #c084fc55"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+          <div style={{fontSize:16,fontWeight:900,color:"#c084fc"}}>🔀 Dispatch to Subcontractor</div>
+          <button onClick={onClose} style={{background:"#1e293b",border:"1px solid #334155",color:"#94a3b8",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontSize:18}}>×</button>
+        </div>
 
         <div style={{marginBottom:14}}>
-          <Lbl>Email Message</Lbl>
-          <TA style={{width:"100%"}} rows={10} value={message} onChange={e=>setMessage(e.target.value)}/>
+          <Lbl>Select Subcontractor</Lbl>
+          <Sel style={{width:"100%"}} value={selectedSub} onChange={e=>setSelectedSub(e.target.value)}>
+            {subcontractors.map(s=><option key={s.id} value={s.id}>{s.name} ({s.category})</option>)}
+          </Sel>
         </div>
 
-        <div style={{background:"#0c1a2e",border:"1px solid #1e3a5f",borderRadius:8,padding:12,marginBottom:14}}>
-          <div style={{fontSize:11,color:"#94a3b8",marginBottom:8}}>This will send to: <span style={{color:"#c084fc",fontWeight:700}}>{sub.email}</span> and CC: <span style={{color:"#818cf8"}}>{sub.ccEmails.join(", ")}</span></div>
-          <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setConfirmed(p=>!p)}>
-            <div style={{width:18,height:18,borderRadius:4,border:`2px solid ${confirmed?"#c084fc":"#334155"}`,background:confirmed?"#c084fc":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-              {confirmed&&<span style={{fontSize:12,color:"#fff"}}>✓</span>}
+        {sub&&(
+          <>
+            <Card style={{padding:12,marginBottom:14,border:"1px solid #3b0764",background:"#0d0617"}}>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,fontSize:11}}>
+                <div><span style={{color:"#475569"}}>Contact: </span><span style={{color:"#e2e8f0",fontWeight:600}}>{sub.contact}</span></div>
+                <div><span style={{color:"#475569"}}>Phone: </span><span style={{color:"#e2e8f0",fontWeight:600}}>{sub.phone}</span></div>
+                <div><span style={{color:"#475569"}}>To: </span><span style={{color:"#c084fc",fontWeight:700}}>{sub.email}</span></div>
+                <div><span style={{color:"#475569"}}>Default Margin: </span><ProfitTxt>{sub.defaultMargin}%</ProfitTxt></div>
+                <div style={{gridColumn:"1/-1"}}><span style={{color:"#475569"}}>CC: </span><span style={{color:"#818cf8"}}>{sub.ccEmails.join(", ")}</span></div>
+              </div>
+              {sub.notes&&<div style={{fontSize:10,color:"#64748b",marginTop:6,fontStyle:"italic"}}>Note: {sub.notes}</div>}
+            </Card>
+
+            <div style={{marginBottom:14}}>
+              <Lbl>Email Message</Lbl>
+              <TA style={{width:"100%"}} rows={10} value={message} onChange={e=>setMessage(e.target.value)}/>
             </div>
-            <span style={{fontSize:12,color:"#e2e8f0",fontWeight:600}}>I confirm I want to dispatch {sub.name} to {job.id}</span>
-          </div>
-        </div>
 
-        <Btn style={{width:"100%",background:confirmed?"#7c3aed":"#334155",padding:12,fontSize:13,cursor:confirmed?"pointer":"not-allowed"}} onClick={handleDispatch} disabled={!confirmed}>
-          🔀 Dispatch & Log
-        </Btn>
-      </>
-    )}
-  </Card>
-</div>
-```
+            <div style={{background:"#0c1a2e",border:"1px solid #1e3a5f",borderRadius:8,padding:12,marginBottom:14}}>
+              <div style={{fontSize:11,color:"#94a3b8",marginBottom:8}}>This will send to: <span style={{color:"#c084fc",fontWeight:700}}>{sub.email}</span> and CC: <span style={{color:"#818cf8"}}>{sub.ccEmails.join(", ")}</span></div>
+              <div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}} onClick={()=>setConfirmed(p=>!p)}>
+                <div style={{width:18,height:18,borderRadius:4,border:`2px solid ${confirmed?"#c084fc":"#334155"}`,background:confirmed?"#c084fc":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  {confirmed&&<span style={{fontSize:12,color:"#fff"}}>✓</span>}
+                </div>
+                <span style={{fontSize:12,color:"#e2e8f0",fontWeight:600}}>I confirm I want to dispatch {sub.name} to {job.id}</span>
+              </div>
+            </div>
 
-);
+            <Btn style={{width:"100%",background:confirmed?"#7c3aed":"#334155",padding:12,fontSize:13,cursor:confirmed?"pointer":"not-allowed"}} onClick={handleDispatch} disabled={!confirmed}>
+              🔀 Dispatch & Log
+            </Btn>
+          </>
+        )}
+      </Card>
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -374,121 +353,118 @@ return (
 // ══════════════════════════════════════════════════════════════════════════════
 
 function SubQuotePanel({job, subcontractors, onUpdate, showToast}) {
-const sub = subcontractors.find(s=>s.id===job.subcontractorId);
-const [subCost, setSubCost] = useState((job.subQuote ? job.subQuote.subCost : 0)||””);
-const [subDesc, setSubDesc] = useState((job.subQuote ? job.subQuote.subDescription : ‘’)||””);
-const [margin, setMargin] = useState((job.subQuote ? job.subQuote.margin : 35)||(sub && sub.defaultMargin)||35);
-const [calloutSubCost, setCalloutSubCost] = useState((job.subQuote ? job.subQuote.calloutSubCost : 0)||””);
-const [calloutMargin, setCalloutMargin] = useState((job.subQuote ? job.subQuote.calloutMargin : 35)||(sub && sub.defaultMargin)||35);
+  const sub = subcontractors.find(s=>s.id===job.subcontractorId);
+  const [subCost, setSubCost] = useState(job.subQuote?.subCost||"");
+  const [subDesc, setSubDesc] = useState(job.subQuote?.subDescription||"");
+  const [margin, setMargin] = useState(job.subQuote?.margin||sub?.defaultMargin||35);
+  const [calloutSubCost, setCalloutSubCost] = useState(job.subQuote?.calloutSubCost||"");
+  const [calloutMargin, setCalloutMargin] = useState(job.subQuote?.calloutMargin||sub?.defaultMargin||35);
 
-const clientCharge = parseFloat(subCost) * (1 + parseFloat(margin)/100);
-const calloutCharge = parseFloat(calloutSubCost) * (1 + parseFloat(calloutMargin)/100);
-const profit = clientCharge - parseFloat(subCost);
-const calloutProfit = calloutCharge - parseFloat(calloutSubCost);
+  const clientCharge = parseFloat(subCost) * (1 + parseFloat(margin)/100);
+  const calloutCharge = parseFloat(calloutSubCost) * (1 + parseFloat(calloutMargin)/100);
+  const profit = clientCharge - parseFloat(subCost);
+  const calloutProfit = calloutCharge - parseFloat(calloutSubCost);
 
-const saveQuote = () => {
-onUpdate({…job, status:“sub-quoted”, subQuote:{
-subCost:parseFloat(subCost), subDescription:subDesc, margin:parseFloat(margin),
-clientCharge:parseFloat(clientCharge.toFixed(2)),
-calloutSubCost:parseFloat(calloutSubCost), calloutMargin:parseFloat(calloutMargin),
-calloutCharge:parseFloat(calloutCharge.toFixed(2)), approved:false, sentToClient:false,
-}});
-showToast(“Sub quote saved”);
-};
+  const saveQuote = () => {
+    onUpdate({...job, status:"sub-quoted", subQuote:{
+      subCost:parseFloat(subCost), subDescription:subDesc, margin:parseFloat(margin),
+      clientCharge:parseFloat(clientCharge.toFixed(2)),
+      calloutSubCost:parseFloat(calloutSubCost), calloutMargin:parseFloat(calloutMargin),
+      calloutCharge:parseFloat(calloutCharge.toFixed(2)), approved:false, sentToClient:false,
+    }});
+    showToast("Sub quote saved");
+  };
 
-const approveAndQuoteClient = () => {
-onUpdate({…job, subQuote:{…job.subQuote, sentToClient:true}});
-showToast(“Client quote sent (simulated)”);
-};
+  const approveAndQuoteClient = () => {
+    onUpdate({...job, subQuote:{...job.subQuote, sentToClient:true}});
+    showToast("Client quote sent (simulated)");
+  };
 
-const approveAndDispatch = () => {
-const logEntry = {time:new Date().toISOString(), action:“works-approved”, sentBy:“Office Admin”, subcontractorName:(sub && sub.name), note:`Works approved. Sub cost £${fmt((job.subQuote ? job.subQuote.subCost : 0))}. Client approved £${fmt((job.subQuote ? job.subQuote.clientCharge : 0))}.`};
-onUpdate({…job, subQuote:{…job.subQuote, approved:true}, subcontractorLog:[…(job.subcontractorLog||[]), logEntry]});
-showToast(`Works dispatched back to ${(sub && sub.name)}`);
-};
+  const approveAndDispatch = () => {
+    const logEntry = {time:new Date().toISOString(), action:"works-approved", sentBy:"Office Admin", subcontractorName:sub?.name, note:`Works approved. Sub cost £${fmt(job.subQuote?.subCost)}. Client approved £${fmt(job.subQuote?.clientCharge)}.`};
+    onUpdate({...job, subQuote:{...job.subQuote, approved:true}, subcontractorLog:[...(job.subcontractorLog||[]), logEntry]});
+    showToast(`Works dispatched back to ${sub?.name}`);
+  };
 
-return (
-<div>
-{/* Sub quote entry */}
-<Card style={{padding:14,marginBottom:14,border:“1px solid #3b0764”}}>
-<Lbl style={{color:”#c084fc”}}>Sub-Contractor Quote Entry</Lbl>
+  return (
+    <div>
+      {/* Sub quote entry */}
+      <Card style={{padding:14,marginBottom:14,border:"1px solid #3b0764"}}>
+        <Lbl style={{color:"#c084fc"}}>Sub-Contractor Quote Entry</Lbl>
 
-```
-    <div style={{marginBottom:12}}>
-      <Lbl>Initial Call-Out Cost (sub's charge)</Lbl>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:6}}>
-        <div><Lbl>Sub Cost (£)</Lbl><Inp type="number" style={{width:"100%"}} value={calloutSubCost} onChange={e=>setCalloutSubCost(e.target.value)}/></div>
-        <div><Lbl>Your Margin %</Lbl><Inp type="number" style={{width:"100%"}} value={calloutMargin} onChange={e=>setCalloutMargin(e.target.value)}/></div>
-        <div style={{display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
-          <Lbl>Charge to Client</Lbl>
-          <div style={{padding:"8px 11px",background:"#060d1a",border:"1px solid #1e293b",borderRadius:6,fontSize:12}}>
-            <ClientChargeTxt>£{fmt(isNaN(calloutCharge)?0:calloutCharge)}</ClientChargeTxt>
-            <ProfitTxt style={{marginLeft:8,fontSize:10}}>(+£{fmt(isNaN(calloutProfit)?0:calloutProfit)})</ProfitTxt>
+        <div style={{marginBottom:12}}>
+          <Lbl>Initial Call-Out Cost (sub's charge)</Lbl>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:6}}>
+            <div><Lbl>Sub Cost (£)</Lbl><Inp type="number" style={{width:"100%"}} value={calloutSubCost} onChange={e=>setCalloutSubCost(e.target.value)}/></div>
+            <div><Lbl>Your Margin %</Lbl><Inp type="number" style={{width:"100%"}} value={calloutMargin} onChange={e=>setCalloutMargin(e.target.value)}/></div>
+            <div style={{display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
+              <Lbl>Charge to Client</Lbl>
+              <div style={{padding:"8px 11px",background:"#060d1a",border:"1px solid #1e293b",borderRadius:6,fontSize:12}}>
+                <ClientChargeTxt>£{fmt(isNaN(calloutCharge)?0:calloutCharge)}</ClientChargeTxt>
+                <ProfitTxt style={{marginLeft:8,fontSize:10}}>(+£{fmt(isNaN(calloutProfit)?0:calloutProfit)})</ProfitTxt>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <div style={{marginBottom:12}}>
-      <div style={{height:1,background:"#1e293b",marginBottom:12}}/>
-      <Lbl>Remedial Works Quote (sub's price)</Lbl>
-      <div style={{marginBottom:8}}><Lbl>Works Description</Lbl><TA style={{width:"100%"}} rows={2} value={subDesc} onChange={e=>setSubDesc(e.target.value)} placeholder="What works are being quoted for?"/></div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
-        <div><Lbl>Sub Quoted Cost (£)</Lbl><Inp type="number" style={{width:"100%"}} value={subCost} onChange={e=>setSubCost(e.target.value)}/></div>
-        <div><Lbl>Your Margin %</Lbl><Inp type="number" style={{width:"100%"}} value={margin} onChange={e=>setMargin(e.target.value)}/></div>
-        <div style={{display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
-          <Lbl>Client Charge</Lbl>
-          <div style={{padding:"8px 11px",background:"#060d1a",border:"1px solid #1e293b",borderRadius:6,fontSize:12}}>
-            <ClientChargeTxt>£{fmt(isNaN(clientCharge)?0:clientCharge)}</ClientChargeTxt>
-            <ProfitTxt style={{marginLeft:8,fontSize:10}}>(+£{fmt(isNaN(profit)?0:profit)})</ProfitTxt>
+        <div style={{marginBottom:12}}>
+          <div style={{height:1,background:"#1e293b",marginBottom:12}}/>
+          <Lbl>Remedial Works Quote (sub's price)</Lbl>
+          <div style={{marginBottom:8}}><Lbl>Works Description</Lbl><TA style={{width:"100%"}} rows={2} value={subDesc} onChange={e=>setSubDesc(e.target.value)} placeholder="What works are being quoted for?"/></div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8}}>
+            <div><Lbl>Sub Quoted Cost (£)</Lbl><Inp type="number" style={{width:"100%"}} value={subCost} onChange={e=>setSubCost(e.target.value)}/></div>
+            <div><Lbl>Your Margin %</Lbl><Inp type="number" style={{width:"100%"}} value={margin} onChange={e=>setMargin(e.target.value)}/></div>
+            <div style={{display:"flex",flexDirection:"column",justifyContent:"flex-end"}}>
+              <Lbl>Client Charge</Lbl>
+              <div style={{padding:"8px 11px",background:"#060d1a",border:"1px solid #1e293b",borderRadius:6,fontSize:12}}>
+                <ClientChargeTxt>£{fmt(isNaN(clientCharge)?0:clientCharge)}</ClientChargeTxt>
+                <ProfitTxt style={{marginLeft:8,fontSize:10}}>(+£{fmt(isNaN(profit)?0:profit)})</ProfitTxt>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
+
+        {/* Cost summary */}
+        <div style={{background:"#060d1a",border:"1px solid #1e293b",borderRadius:7,padding:10,marginBottom:12}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,fontSize:11}}>
+            <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>TOTAL SUB COST</div><SubCostTxt>£{fmt((parseFloat(calloutSubCost)||0)+(parseFloat(subCost)||0))}</SubCostTxt></div>
+            <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>TOTAL CLIENT CHARGE</div><ClientChargeTxt>£{fmt((isNaN(calloutCharge)?0:calloutCharge)+(isNaN(clientCharge)?0:clientCharge))}</ClientChargeTxt></div>
+            <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>TOTAL PROFIT</div><ProfitTxt>£{fmt((isNaN(calloutProfit)?0:calloutProfit)+(isNaN(profit)?0:profit))}</ProfitTxt></div>
+          </div>
+        </div>
+
+        <div style={{display:"flex",gap:8}}>
+          <Btn style={{flex:1,background:"#7c3aed"}} onClick={saveQuote}>Save Quote</Btn>
+        </div>
+      </Card>
+
+      {/* Actions when quote is saved */}
+      {job.subQuote&&(
+        <Card style={{padding:14,border:"1px solid #1e3a5f"}}>
+          <Lbl>Quote Actions</Lbl>
+          <div style={{marginBottom:12,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,fontSize:11}}>
+            <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>CALL-OUT (client)</div><ClientChargeTxt>£{fmt(job.subQuote.calloutCharge)}</ClientChargeTxt></div>
+            <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>REMEDIAL (client)</div><ClientChargeTxt>£{fmt(job.subQuote.clientCharge)}</ClientChargeTxt></div>
+            <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>TOTAL PROFIT</div><ProfitTxt>£{fmt((job.subQuote.calloutCharge-job.subQuote.calloutSubCost)+(job.subQuote.clientCharge-job.subQuote.subCost))}</ProfitTxt></div>
+          </div>
+          <div style={{marginBottom:10,fontSize:11,color:"#94a3b8"}}>Remedial works: {job.subQuote.subDescription}</div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+            {!job.subQuote.sentToClient&&<Btn style={{background:"#065f46",fontSize:11}} onClick={approveAndQuoteClient}>📧 Send Quote to Client</Btn>}
+            {job.subQuote.sentToClient&&!job.subQuote.approved&&(
+              <div style={{fontSize:11,color:"#34d399",padding:"8px 12px",background:"#064e3b",borderRadius:6}}>✓ Quote sent to client – awaiting approval</div>
+            )}
+            {job.subQuote.sentToClient&&!job.subQuote.approved&&(
+              <Btn style={{background:"#7c3aed",fontSize:11}} onClick={approveAndDispatch}>✅ Client Approved – Dispatch Works</Btn>
+            )}
+            {job.subQuote.approved&&<div style={{fontSize:11,color:"#4ade80",fontWeight:700,padding:"8px 12px",background:"#064e3b",borderRadius:6}}>✓ Approved & Dispatched to {sub?.name}</div>}
+          </div>
+          <div style={{fontSize:10,color:"#475569",marginTop:8,fontStyle:"italic"}}>
+            Note: Sub contractor will receive their quoted price (£{fmt(job.subQuote?.subCost)}), not the marked-up client charge.
+          </div>
+        </Card>
+      )}
     </div>
-
-    {/* Cost summary */}
-    <div style={{background:"#060d1a",border:"1px solid #1e293b",borderRadius:7,padding:10,marginBottom:12}}>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,fontSize:11}}>
-        <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>TOTAL SUB COST</div><SubCostTxt>£{fmt((parseFloat(calloutSubCost)||0)+(parseFloat(subCost)||0))}</SubCostTxt></div>
-        <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>TOTAL CLIENT CHARGE</div><ClientChargeTxt>£{fmt((isNaN(calloutCharge)?0:calloutCharge)+(isNaN(clientCharge)?0:clientCharge))}</ClientChargeTxt></div>
-        <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>TOTAL PROFIT</div><ProfitTxt>£{fmt((isNaN(calloutProfit)?0:calloutProfit)+(isNaN(profit)?0:profit))}</ProfitTxt></div>
-      </div>
-    </div>
-
-    <div style={{display:"flex",gap:8}}>
-      <Btn style={{flex:1,background:"#7c3aed"}} onClick={saveQuote}>Save Quote</Btn>
-    </div>
-  </Card>
-
-  {/* Actions when quote is saved */}
-  {job.subQuote&&(
-    <Card style={{padding:14,border:"1px solid #1e3a5f"}}>
-      <Lbl>Quote Actions</Lbl>
-      <div style={{marginBottom:12,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,fontSize:11}}>
-        <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>CALL-OUT (client)</div><ClientChargeTxt>£{fmt(job.subQuote.calloutCharge)}</ClientChargeTxt></div>
-        <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>REMEDIAL (client)</div><ClientChargeTxt>£{fmt(job.subQuote.clientCharge)}</ClientChargeTxt></div>
-        <div><div style={{color:"#475569",fontSize:9,marginBottom:2}}>TOTAL PROFIT</div><ProfitTxt>£{fmt((job.subQuote.calloutCharge-job.subQuote.calloutSubCost)+(job.subQuote.clientCharge-job.subQuote.subCost))}</ProfitTxt></div>
-      </div>
-      <div style={{marginBottom:10,fontSize:11,color:"#94a3b8"}}>Remedial works: {job.subQuote.subDescription}</div>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-        {!job.subQuote.sentToClient&&<Btn style={{background:"#065f46",fontSize:11}} onClick={approveAndQuoteClient}>📧 Send Quote to Client</Btn>}
-        {job.subQuote.sentToClient&&!job.subQuote.approved&&(
-          <div style={{fontSize:11,color:"#34d399",padding:"8px 12px",background:"#064e3b",borderRadius:6}}>✓ Quote sent to client – awaiting approval</div>
-        )}
-        {job.subQuote.sentToClient&&!job.subQuote.approved&&(
-          <Btn style={{background:"#7c3aed",fontSize:11}} onClick={approveAndDispatch}>✅ Client Approved – Dispatch Works</Btn>
-        )}
-        {job.subQuote.approved&&<div style={{fontSize:11,color:"#4ade80",fontWeight:700,padding:"8px 12px",background:"#064e3b",borderRadius:6}}>✓ Approved & Dispatched to {(sub && sub.name)}</div>}
-      </div>
-      <div style={{fontSize:10,color:"#475569",marginTop:8,fontStyle:"italic"}}>
-        Note: Sub contractor will receive their quoted price (£{fmt((job.subQuote ? job.subQuote.subCost : 0))}), not the marked-up client charge.
-      </div>
-    </Card>
-  )}
-</div>
-```
-
-);
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -496,25 +472,25 @@ return (
 // ══════════════════════════════════════════════════════════════════════════════
 
 function SubLog({log, subcontractors}) {
-if(!log||log.length===0) return <div style={{fontSize:12,color:”#475569”,fontStyle:“italic”}}>No subcontractor activity.</div>;
-const actionColor = { dispatched:”#c084fc”,“quote-received”:”#fbbf24”,“works-approved”:”#4ade80” };
-const actionLabel = { dispatched:“Dispatched”,“quote-received”:“Quote Received”,“works-approved”:“Works Approved” };
-return (
-<div>
-{log.map((l,i)=>(
-<Card key={i} style={{padding:“10px 12px”,marginBottom:8,border:“1px solid #1e3a5f”}}>
-<div style={{display:“flex”,justifyContent:“space-between”,marginBottom:5}}>
-<span style={{fontSize:11,fontWeight:700,color:actionColor[l.action]||”#94a3b8”}}>{actionLabel[l.action]||l.action} – {l.subcontractorName}</span>
-<span style={{fontSize:10,color:”#475569”}}>{formatDateTime(l.time)}</span>
-</div>
-{l.to&&<div style={{fontSize:10,color:”#64748b”}}>To: <span style={{color:”#818cf8”}}>{l.to}</span>{(l.cc && l.cc.length)>0&&<> · CC: <span style={{color:”#64748b”}}>{l.cc.join(”, “)}</span></>}</div>}
-{l.note&&<div style={{fontSize:11,color:”#94a3b8”,marginTop:4}}>{l.note}</div>}
-{l.message&&<div style={{fontSize:10,color:”#475569”,marginTop:4,whiteSpace:“pre-wrap”,maxHeight:80,overflow:“hidden”}}>{l.message.slice(0,200)}…</div>}
-{l.sentBy&&<div style={{fontSize:10,color:”#334155”,marginTop:4}}>Sent by: {l.sentBy}</div>}
-</Card>
-))}
-</div>
-);
+  if(!log||log.length===0) return <div style={{fontSize:12,color:"#475569",fontStyle:"italic"}}>No subcontractor activity.</div>;
+  const actionColor = { dispatched:"#c084fc","quote-received":"#fbbf24","works-approved":"#4ade80" };
+  const actionLabel = { dispatched:"Dispatched","quote-received":"Quote Received","works-approved":"Works Approved" };
+  return (
+    <div>
+      {log.map((l,i)=>(
+        <Card key={i} style={{padding:"10px 12px",marginBottom:8,border:"1px solid #1e3a5f"}}>
+          <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
+            <span style={{fontSize:11,fontWeight:700,color:actionColor[l.action]||"#94a3b8"}}>{actionLabel[l.action]||l.action} – {l.subcontractorName}</span>
+            <span style={{fontSize:10,color:"#475569"}}>{formatDateTime(l.time)}</span>
+          </div>
+          {l.to&&<div style={{fontSize:10,color:"#64748b"}}>To: <span style={{color:"#818cf8"}}>{l.to}</span>{l.cc?.length>0&&<> · CC: <span style={{color:"#64748b"}}>{l.cc.join(", ")}</span></>}</div>}
+          {l.note&&<div style={{fontSize:11,color:"#94a3b8",marginTop:4}}>{l.note}</div>}
+          {l.message&&<div style={{fontSize:10,color:"#475569",marginTop:4,whiteSpace:"pre-wrap",maxHeight:80,overflow:"hidden"}}>{l.message.slice(0,200)}…</div>}
+          {l.sentBy&&<div style={{fontSize:10,color:"#334155",marginTop:4}}>Sent by: {l.sentBy}</div>}
+        </Card>
+      ))}
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -522,200 +498,197 @@ return (
 // ══════════════════════════════════════════════════════════════════════════════
 
 function JobDetail({job, clients, engineers, subcontractors, allJobs, compliance, onClose, onUpdate, showToast}) {
-const [tab, setTab] = useState(“overview”);
-const [newNote, setNewNote] = useState(””);
-const [editStatus, setEditStatus] = useState(job.status);
-const [editEng, setEditEng] = useState(job.engineerId||””);
-const [editLabourH, setEditLabourH] = useState(job.labourHours||0);
-const [editLabourR, setEditLabourR] = useState(job.labourRate||0);
-const [newMat, setNewMat] = useState({description:””,supplier:””,qty:1,unitCost:0,margin:20});
-const [showDispatch, setShowDispatch] = useState(false);
+  const [tab, setTab] = useState("overview");
+  const [newNote, setNewNote] = useState("");
+  const [editStatus, setEditStatus] = useState(job.status);
+  const [editEng, setEditEng] = useState(job.engineerId||"");
+  const [editLabourH, setEditLabourH] = useState(job.labourHours||0);
+  const [editLabourR, setEditLabourR] = useState(job.labourRate||0);
+  const [newMat, setNewMat] = useState({description:"",supplier:"",qty:1,unitCost:0,margin:20});
+  const [showDispatch, setShowDispatch] = useState(false);
 
-const client = clients.find(c=>c.id===job.clientId);
-const eng = engineers.find(e=>e.id===job.engineerId);
-const sub = subcontractors.find(s=>s.id===job.subcontractorId);
-const site = SITES_KV[job.siteKey];
-const slaS = getSLAStatus(job);
-const pri = PRIORITY_SLA[job.priority]||PRIORITY_SLA.P3;
-const totalMat = job.materials.reduce((s,m)=>s+m.charged,0);
-const totalLabour = (parseFloat(editLabourH)||0)*(parseFloat(editLabourR)||0);
-const subTotal = ((job.subQuote ? job.subQuote.calloutCharge : 0)||0)+((job.subQuote ? job.subQuote.clientCharge : 0)||0);
-const totalJob = totalMat + totalLabour + subTotal;
+  const client = clients.find(c=>c.id===job.clientId);
+  const eng = engineers.find(e=>e.id===job.engineerId);
+  const sub = subcontractors.find(s=>s.id===job.subcontractorId);
+  const site = SITES_KV[job.siteKey];
+  const slaS = getSLAStatus(job);
+  const pri = PRIORITY_SLA[job.priority]||PRIORITY_SLA.P3;
+  const totalMat = job.materials.reduce((s,m)=>s+m.charged,0);
+  const totalLabour = (parseFloat(editLabourH)||0)*(parseFloat(editLabourR)||0);
+  const subTotal = (job.subQuote?.calloutCharge||0)+(job.subQuote?.clientCharge||0);
+  const totalJob = totalMat + totalLabour + subTotal;
 
-const addNote = () => { if(!newNote.trim()) return; onUpdate({…job,notes:[…job.notes,{author:“Office Admin”,time:new Date().toISOString(),text:newNote.trim()}]}); setNewNote(””); };
-const saveJob = () => onUpdate({…job,status:editStatus,engineerId:editEng||null,labourHours:parseFloat(editLabourH)||0,labourRate:parseFloat(editLabourR)||0,completedAt:editStatus===“complete”&&!job.completedAt?new Date().toISOString():job.completedAt});
-const addMat = () => {
-if(!newMat.description) return;
-const cost=parseFloat(newMat.unitCost)*parseInt(newMat.qty), charged=cost*(1+(parseFloat(newMat.margin)||0)/100);
-const mat={id:`M${Date.now()}`,poNumber:nextPO(),description:newMat.description,supplier:newMat.supplier,qty:parseInt(newMat.qty),unitCost:parseFloat(newMat.unitCost),margin:parseFloat(newMat.margin),charged:parseFloat(charged.toFixed(2)),status:“ordered”};
-onUpdate({…job,materials:[…job.materials,mat]}); setNewMat({description:””,supplier:””,qty:1,unitCost:0,margin:20});
-showToast(`PO raised: ${mat.poNumber}`);
-};
-const handleDispatch = (j, selectedSub, message) => {
-const logEntry = {time:new Date().toISOString(),action:“dispatched”,to:selectedSub.email,cc:selectedSub.ccEmails,sentBy:“Office Admin”,subcontractorName:selectedSub.name,message};
-onUpdate({…j,status:“subcontracted”,subcontractorId:selectedSub.id,subcontractorLog:[…(j.subcontractorLog||[]),logEntry]});
-showToast(`Dispatched to ${selectedSub.name} · Email logged`);
-};
+  const addNote = () => { if(!newNote.trim()) return; onUpdate({...job,notes:[...job.notes,{author:"Office Admin",time:new Date().toISOString(),text:newNote.trim()}]}); setNewNote(""); };
+  const saveJob = () => onUpdate({...job,status:editStatus,engineerId:editEng||null,labourHours:parseFloat(editLabourH)||0,labourRate:parseFloat(editLabourR)||0,completedAt:editStatus==="complete"&&!job.completedAt?new Date().toISOString():job.completedAt});
+  const addMat = () => {
+    if(!newMat.description) return;
+    const cost=parseFloat(newMat.unitCost)*parseInt(newMat.qty), charged=cost*(1+(parseFloat(newMat.margin)||0)/100);
+    const mat={id:`M${Date.now()}`,poNumber:nextPO(),description:newMat.description,supplier:newMat.supplier,qty:parseInt(newMat.qty),unitCost:parseFloat(newMat.unitCost),margin:parseFloat(newMat.margin),charged:parseFloat(charged.toFixed(2)),status:"ordered"};
+    onUpdate({...job,materials:[...job.materials,mat]}); setNewMat({description:"",supplier:"",qty:1,unitCost:0,margin:20});
+    showToast(`PO raised: ${mat.poNumber}`);
+  };
+  const handleDispatch = (j, selectedSub, message) => {
+    const logEntry = {time:new Date().toISOString(),action:"dispatched",to:selectedSub.email,cc:selectedSub.ccEmails,sentBy:"Office Admin",subcontractorName:selectedSub.name,message};
+    onUpdate({...j,status:"subcontracted",subcontractorId:selectedSub.id,subcontractorLog:[...(j.subcontractorLog||[]),logEntry]});
+    showToast(`Dispatched to ${selectedSub.name} · Email logged`);
+  };
 
-const DTABS = [{id:“overview”,l:“Overview”},{id:“labour”,l:“Labour”},{id:“materials”,l:`Materials (${job.materials.length})`},{id:“subcontractor”,l:`Subcontractor${sub?" ✓":""}`},{id:“notes”,l:`Notes (${job.notes.length})`}];
+  const DTABS = [{id:"overview",l:"Overview"},{id:"labour",l:"Labour"},{id:"materials",l:`Materials (${job.materials.length})`},{id:"subcontractor",l:`Subcontractor${sub?" ✓":""}`},{id:"notes",l:`Notes (${job.notes.length})`}];
 
-return (
-<div style={{height:“100%”,display:“flex”,flexDirection:“column”,overflow:“hidden”,background:”#050d1a”}}>
-{/* Header */}
-<div style={{padding:“14px 18px”,borderBottom:“1px solid #1e293b”,flexShrink:0}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”}}>
-<div style={{flex:1,paddingRight:10}}>
-<div style={{fontSize:9,color:”#475569”,fontFamily:“monospace”,marginBottom:2}}>{job.id} · {job.type===“compliance”?“📋”:“⚡”} {job.type}</div>
-<div style={{fontSize:15,fontWeight:900,color:”#f1f5f9”,lineHeight:1.2}}>{job.title}</div>
-<div style={{fontSize:11,color:”#64748b”,marginTop:2}}>{(client && client.name)} · {job.location}</div>
-</div>
-<button onClick={onClose} style={{background:”#1e293b”,border:“1px solid #334155”,color:”#94a3b8”,borderRadius:6,padding:“4px 10px”,cursor:“pointer”,fontSize:16}}>×</button>
-</div>
-<div style={{display:“flex”,gap:6,marginTop:8,flexWrap:“wrap”,alignItems:“center”}}>
-<PriBadge priority={job.priority}/>
-<Badge status={job.status}/>
-<span style={{fontSize:10,color:SLA_COLOR[slaS],background:SLA_COLOR[slaS]+“18”,border:`1px solid ${SLA_COLOR[slaS]}44`,padding:“2px 8px”,borderRadius:4,fontWeight:700}}>
-{slaS===“met”?“✓ SLA Met”:countdown(job.completionDeadline)}
-</span>
-<span style={{fontSize:10,color:”#94a3b8”,marginLeft:“auto”}}>
-Respond by: <span style={{color:new Date(job.responseDeadline)<now?”#ef4444”:”#f59e0b”,fontWeight:700}}>{formatDateTime(job.responseDeadline)}</span>
-</span>
-<ClientChargeTxt>£{fmt(totalJob)}</ClientChargeTxt>
-</div>
-{/* Sub-tabs */}
-<div style={{display:“flex”,gap:0,marginTop:10,borderBottom:“1px solid #1e293b”}}>
-{DTABS.map(t=><button key={t.id} onClick={()=>setTab(t.id)} style={{background:“none”,border:“none”,borderBottom:`2px solid ${tab===t.id?"#38bdf8":"transparent"}`,color:tab===t.id?”#38bdf8”:”#475569”,padding:“5px 10px”,cursor:“pointer”,fontSize:11,fontWeight:700,whiteSpace:“nowrap”}}>{t.l}</button>)}
-</div>
-</div>
-
-```
-  {/* Body */}
-  <div style={{flex:1,overflowY:"auto",padding:"14px 18px"}}>
-
-    {tab==="overview"&&(
-      <div>
-        <SiteIntelligenceBanner job={job} allJobs={allJobs} compliance={compliance}/>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
-          {[[`Client`,(client && client.name)],[`Contact`,(client && client.contact)],[`Priority`,`${job.priority} – ${pri.desc}`],[`Category`,job.category],[`Logged`,timeAgo(job.createdAt)],[`Engineer`,(eng && eng.name)||"Unassigned"],[`Respond By`,formatDateTime(job.responseDeadline)],[`Complete By`,formatDateTime(job.completionDeadline)],[`Site Ref`,(site && site.siteRef)||"—"],[`Invoice`,job.invoiced?`✓ ${job.invoiceMonth}`:"Not invoiced"]].map(([l,v])=>(
-            <Card key={l} style={{padding:"9px 11px"}}><Lbl>{l}</Lbl><div style={{fontSize:12,color:"#e2e8f0",fontWeight:600}}>{v||"—"}</div></Card>
-          ))}
+  return (
+    <div style={{height:"100%",display:"flex",flexDirection:"column",overflow:"hidden",background:"#050d1a"}}>
+      {/* Header */}
+      <div style={{padding:"14px 18px",borderBottom:"1px solid #1e293b",flexShrink:0}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+          <div style={{flex:1,paddingRight:10}}>
+            <div style={{fontSize:9,color:"#475569",fontFamily:"monospace",marginBottom:2}}>{job.id} · {job.type==="compliance"?"📋":"⚡"} {job.type}</div>
+            <div style={{fontSize:15,fontWeight:900,color:"#f1f5f9",lineHeight:1.2}}>{job.title}</div>
+            <div style={{fontSize:11,color:"#64748b",marginTop:2}}>{client?.name} · {job.location}</div>
+          </div>
+          <button onClick={onClose} style={{background:"#1e293b",border:"1px solid #334155",color:"#94a3b8",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontSize:16}}>×</button>
         </div>
-        <div style={{marginBottom:12}}><Lbl>Description</Lbl><div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6,background:"#080f20",border:"1px solid #1e293b",borderRadius:7,padding:"10px 12px"}}>{job.description}</div></div>
-        {job.attachments.length>0&&<div style={{marginBottom:12}}><Lbl>Attachments</Lbl>{job.attachments.map(a=><div key={a} style={{fontSize:11,color:"#38bdf8",cursor:"pointer",marginBottom:3}}>📎 {a}</div>)}</div>}
-
-        {/* Admin Controls */}
-        <Card style={{padding:13,border:"1px solid #1e3a5f"}}>
-          <Lbl>Controls</Lbl>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
-            <div><Lbl>Status</Lbl><Sel style={{width:"100%"}} value={editStatus} onChange={e=>setEditStatus(e.target.value)}>{Object.entries(STATUS_CFG).map(([k,v])=><option key={k} value={k}>{v.icon} {v.label}</option>)}</Sel></div>
-            <div><Lbl>Engineer</Lbl><Sel style={{width:"100%"}} value={editEng} onChange={e=>setEditEng(e.target.value)}><option value="">Unassigned</option>{engineers.map(e=><option key={e.id} value={e.id}>{e.name}</option>)}</Sel></div>
-          </div>
-          <div style={{display:"flex",gap:8}}>
-            <Btn style={{flex:1}} onClick={saveJob}>Save</Btn>
-            <Btn style={{background:"#6d28d9",flex:1}} onClick={()=>setShowDispatch(true)}>🔀 Dispatch to Sub</Btn>
-          </div>
-        </Card>
+        <div style={{display:"flex",gap:6,marginTop:8,flexWrap:"wrap",alignItems:"center"}}>
+          <PriBadge priority={job.priority}/>
+          <Badge status={job.status}/>
+          <span style={{fontSize:10,color:SLA_COLOR[slaS],background:SLA_COLOR[slaS]+"18",border:`1px solid ${SLA_COLOR[slaS]}44`,padding:"2px 8px",borderRadius:4,fontWeight:700}}>
+            {slaS==="met"?"✓ SLA Met":countdown(job.completionDeadline)}
+          </span>
+          <span style={{fontSize:10,color:"#94a3b8",marginLeft:"auto"}}>
+            Respond by: <span style={{color:new Date(job.responseDeadline)<now?"#ef4444":"#f59e0b",fontWeight:700}}>{formatDateTime(job.responseDeadline)}</span>
+          </span>
+          <ClientChargeTxt>£{fmt(totalJob)}</ClientChargeTxt>
+        </div>
+        {/* Sub-tabs */}
+        <div style={{display:"flex",gap:0,marginTop:10,borderBottom:"1px solid #1e293b"}}>
+          {DTABS.map(t=><button key={t.id} onClick={()=>setTab(t.id)} style={{background:"none",border:"none",borderBottom:`2px solid ${tab===t.id?"#38bdf8":"transparent"}`,color:tab===t.id?"#38bdf8":"#475569",padding:"5px 10px",cursor:"pointer",fontSize:11,fontWeight:700,whiteSpace:"nowrap"}}>{t.l}</button>)}
+        </div>
       </div>
-    )}
 
-    {tab==="labour"&&(
-      <div>
-        <Card style={{padding:14,marginBottom:12}}>
-          <Lbl>Labour Costing</Lbl>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
-            <div><Lbl>Hours</Lbl><Inp type="number" style={{width:"100%"}} value={editLabourH} onChange={e=>setEditLabourH(e.target.value)} step="0.5"/></div>
-            <div><Lbl>Rate (£/hr)</Lbl><Inp type="number" style={{width:"100%"}} value={editLabourR} onChange={e=>setEditLabourR(e.target.value)}/></div>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:10}}>
-            <Card style={{padding:"10px 12px"}}><Lbl>Labour</Lbl><ClientChargeTxt>£{fmt(totalLabour)}</ClientChargeTxt></Card>
-            <Card style={{padding:"10px 12px"}}><Lbl>Materials</Lbl><ClientChargeTxt>£{fmt(totalMat)}</ClientChargeTxt></Card>
-            <Card style={{padding:"10px 12px"}}><Lbl>Total</Lbl><ClientChargeTxt>£{fmt(totalJob)}</ClientChargeTxt></Card>
-          </div>
-          {eng&&<div style={{fontSize:11,color:"#94a3b8",marginBottom:10}}>Engineer cost: <SubCostTxt>£{fmt(totalLabour/((editLabourR/eng.hourlyRate)||1)*eng.hourlyRate)}</SubCostTxt> · Labour margin: <ProfitTxt>£{fmt(totalLabour-(totalLabour/(editLabourR||1)*eng.hourlyRate))}</ProfitTxt></div>}
-          <Btn style={{width:"100%"}} onClick={saveJob}>Save Labour</Btn>
-        </Card>
-      </div>
-    )}
+      {/* Body */}
+      <div style={{flex:1,overflowY:"auto",padding:"14px 18px"}}>
 
-    {tab==="materials"&&(
-      <div>
-        {job.materials.length>0&&(
-          <table style={{width:"100%",borderCollapse:"collapse",marginBottom:14,fontSize:11}}>
-            <thead><tr style={{color:"#475569",fontSize:9,textTransform:"uppercase"}}>{["PO","Description","Sup","Qty","Cost","Margin","Charged","Status"].map(h=><th key={h} style={{padding:"6px 8px",borderBottom:"1px solid #1e293b",textAlign:"left",fontWeight:700}}>{h}</th>)}</tr></thead>
-            <tbody>
-              {job.materials.map(m=>(
-                <tr key={m.id} style={{borderBottom:"1px solid #0a0f1e"}}>
-                  <td style={{padding:"7px 8px",color:"#818cf8",fontFamily:"monospace",fontSize:10}}>{m.poNumber}</td>
-                  <td style={{padding:"7px 8px",color:"#e2e8f0",fontWeight:600}}>{m.description}</td>
-                  <td style={{padding:"7px 8px",color:"#64748b"}}>{m.supplier}</td>
-                  <td style={{padding:"7px 8px",color:"#64748b",textAlign:"center"}}>{m.qty}</td>
-                  <td style={{padding:"7px 8px"}}><SubCostTxt>£{fmt(m.unitCost)}</SubCostTxt></td>
-                  <td style={{padding:"7px 8px",color:"#64748b"}}>{m.margin}%</td>
-                  <td style={{padding:"7px 8px"}}><ClientChargeTxt>£{fmt(m.charged)}</ClientChargeTxt></td>
-                  <td style={{padding:"7px 8px"}}><span style={{fontSize:9,color:m.status==="delivered"?"#34d399":"#f59e0b",fontWeight:800,textTransform:"uppercase"}}>{m.status}</span></td>
-                </tr>
+        {tab==="overview"&&(
+          <div>
+            <SiteIntelligenceBanner job={job} allJobs={allJobs} compliance={compliance}/>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
+              {[[`Client`,client?.name],[`Contact`,client?.contact],[`Priority`,`${job.priority} – ${pri.desc}`],[`Category`,job.category],[`Logged`,timeAgo(job.createdAt)],[`Engineer`,eng?.name||"Unassigned"],[`Respond By`,formatDateTime(job.responseDeadline)],[`Complete By`,formatDateTime(job.completionDeadline)],[`Site Ref`,site?.siteRef||"—"],[`Invoice`,job.invoiced?`✓ ${job.invoiceMonth}`:"Not invoiced"]].map(([l,v])=>(
+                <Card key={l} style={{padding:"9px 11px"}}><Lbl>{l}</Lbl><div style={{fontSize:12,color:"#e2e8f0",fontWeight:600}}>{v||"—"}</div></Card>
               ))}
-            </tbody>
-          </table>
-        )}
-        <Card style={{padding:13,border:"1px solid #1e3a5f"}}>
-          <Lbl>Raise PO</Lbl>
-          <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:8,marginBottom:8}}>
-            <div><Lbl>Description</Lbl><Inp style={{width:"100%"}} value={newMat.description} onChange={e=>setNewMat(p=>({...p,description:e.target.value}))}/></div>
-            <div><Lbl>Supplier</Lbl><Inp style={{width:"100%"}} value={newMat.supplier} onChange={e=>setNewMat(p=>({...p,supplier:e.target.value}))}/></div>
+            </div>
+            <div style={{marginBottom:12}}><Lbl>Description</Lbl><div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6,background:"#080f20",border:"1px solid #1e293b",borderRadius:7,padding:"10px 12px"}}>{job.description}</div></div>
+            {job.attachments.length>0&&<div style={{marginBottom:12}}><Lbl>Attachments</Lbl>{job.attachments.map(a=><div key={a} style={{fontSize:11,color:"#38bdf8",cursor:"pointer",marginBottom:3}}>📎 {a}</div>)}</div>}
+
+            {/* Admin Controls */}
+            <Card style={{padding:13,border:"1px solid #1e3a5f"}}>
+              <Lbl>Controls</Lbl>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
+                <div><Lbl>Status</Lbl><Sel style={{width:"100%"}} value={editStatus} onChange={e=>setEditStatus(e.target.value)}>{Object.entries(STATUS_CFG).map(([k,v])=><option key={k} value={k}>{v.icon} {v.label}</option>)}</Sel></div>
+                <div><Lbl>Engineer</Lbl><Sel style={{width:"100%"}} value={editEng} onChange={e=>setEditEng(e.target.value)}><option value="">Unassigned</option>{engineers.map(e=><option key={e.id} value={e.id}>{e.name}</option>)}</Sel></div>
+              </div>
+              <div style={{display:"flex",gap:8}}>
+                <Btn style={{flex:1}} onClick={saveJob}>Save</Btn>
+                <Btn style={{background:"#6d28d9",flex:1}} onClick={()=>setShowDispatch(true)}>🔀 Dispatch to Sub</Btn>
+              </div>
+            </Card>
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:10}}>
-            <div><Lbl>Qty</Lbl><Inp type="number" style={{width:"100%"}} value={newMat.qty} onChange={e=>setNewMat(p=>({...p,qty:e.target.value}))}/></div>
-            <div><Lbl>Unit Cost (£)</Lbl><Inp type="number" style={{width:"100%"}} value={newMat.unitCost} onChange={e=>setNewMat(p=>({...p,unitCost:e.target.value}))}/></div>
-            <div><Lbl>Margin %</Lbl><Inp type="number" style={{width:"100%"}} value={newMat.margin} onChange={e=>setNewMat(p=>({...p,margin:e.target.value}))}/></div>
-          </div>
-          {newMat.unitCost>0&&<div style={{fontSize:11,marginBottom:8}}>Client charged: <ClientChargeTxt>£{fmt(newMat.unitCost*newMat.qty*(1+newMat.margin/100))}</ClientChargeTxt> · Margin: <ProfitTxt>£{fmt(newMat.unitCost*newMat.qty*newMat.margin/100)}</ProfitTxt></div>}
-          <Btn style={{width:"100%"}} onClick={addMat}>Raise PO</Btn>
-        </Card>
-      </div>
-    )}
-
-    {tab==="subcontractor"&&(
-      <div>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-          <div style={{fontSize:13,fontWeight:800,color:"#c084fc"}}>Subcontractor Management</div>
-          <Btn style={{background:"#6d28d9",fontSize:11}} onClick={()=>setShowDispatch(true)}>🔀 {sub?"Re-dispatch":"Dispatch"}</Btn>
-        </div>
-        {sub&&(
-          <Card style={{padding:12,marginBottom:14,border:"1px solid #3b0764"}}>
-            <Lbl>Assigned Subcontractor</Lbl>
-            <div style={{fontSize:14,fontWeight:700,color:"#c084fc",marginBottom:4}}>{sub.name}</div>
-            <div style={{fontSize:11,color:"#94a3b8"}}>{sub.contact} · {sub.email} · {sub.phone}</div>
-          </Card>
         )}
-        {/* Sub log */}
-        <div style={{marginBottom:14}}><Lbl>Activity Log</Lbl><SubLog log={job.subcontractorLog} subcontractors={subcontractors}/></div>
-        {/* Sub quote */}
-        <SubQuotePanel job={job} subcontractors={subcontractors} onUpdate={onUpdate} showToast={showToast}/>
+
+        {tab==="labour"&&(
+          <div>
+            <Card style={{padding:14,marginBottom:12}}>
+              <Lbl>Labour Costing</Lbl>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
+                <div><Lbl>Hours</Lbl><Inp type="number" style={{width:"100%"}} value={editLabourH} onChange={e=>setEditLabourH(e.target.value)} step="0.5"/></div>
+                <div><Lbl>Rate (£/hr)</Lbl><Inp type="number" style={{width:"100%"}} value={editLabourR} onChange={e=>setEditLabourR(e.target.value)}/></div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:10}}>
+                <Card style={{padding:"10px 12px"}}><Lbl>Labour</Lbl><ClientChargeTxt>£{fmt(totalLabour)}</ClientChargeTxt></Card>
+                <Card style={{padding:"10px 12px"}}><Lbl>Materials</Lbl><ClientChargeTxt>£{fmt(totalMat)}</ClientChargeTxt></Card>
+                <Card style={{padding:"10px 12px"}}><Lbl>Total</Lbl><ClientChargeTxt>£{fmt(totalJob)}</ClientChargeTxt></Card>
+              </div>
+              {eng&&<div style={{fontSize:11,color:"#94a3b8",marginBottom:10}}>Engineer cost: <SubCostTxt>£{fmt(totalLabour/((editLabourR/eng.hourlyRate)||1)*eng.hourlyRate)}</SubCostTxt> · Labour margin: <ProfitTxt>£{fmt(totalLabour-(totalLabour/(editLabourR||1)*eng.hourlyRate))}</ProfitTxt></div>}
+              <Btn style={{width:"100%"}} onClick={saveJob}>Save Labour</Btn>
+            </Card>
+          </div>
+        )}
+
+        {tab==="materials"&&(
+          <div>
+            {job.materials.length>0&&(
+              <table style={{width:"100%",borderCollapse:"collapse",marginBottom:14,fontSize:11}}>
+                <thead><tr style={{color:"#475569",fontSize:9,textTransform:"uppercase"}}>{["PO","Description","Sup","Qty","Cost","Margin","Charged","Status"].map(h=><th key={h} style={{padding:"6px 8px",borderBottom:"1px solid #1e293b",textAlign:"left",fontWeight:700}}>{h}</th>)}</tr></thead>
+                <tbody>
+                  {job.materials.map(m=>(
+                    <tr key={m.id} style={{borderBottom:"1px solid #0a0f1e"}}>
+                      <td style={{padding:"7px 8px",color:"#818cf8",fontFamily:"monospace",fontSize:10}}>{m.poNumber}</td>
+                      <td style={{padding:"7px 8px",color:"#e2e8f0",fontWeight:600}}>{m.description}</td>
+                      <td style={{padding:"7px 8px",color:"#64748b"}}>{m.supplier}</td>
+                      <td style={{padding:"7px 8px",color:"#64748b",textAlign:"center"}}>{m.qty}</td>
+                      <td style={{padding:"7px 8px"}}><SubCostTxt>£{fmt(m.unitCost)}</SubCostTxt></td>
+                      <td style={{padding:"7px 8px",color:"#64748b"}}>{m.margin}%</td>
+                      <td style={{padding:"7px 8px"}}><ClientChargeTxt>£{fmt(m.charged)}</ClientChargeTxt></td>
+                      <td style={{padding:"7px 8px"}}><span style={{fontSize:9,color:m.status==="delivered"?"#34d399":"#f59e0b",fontWeight:800,textTransform:"uppercase"}}>{m.status}</span></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+            <Card style={{padding:13,border:"1px solid #1e3a5f"}}>
+              <Lbl>Raise PO</Lbl>
+              <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:8,marginBottom:8}}>
+                <div><Lbl>Description</Lbl><Inp style={{width:"100%"}} value={newMat.description} onChange={e=>setNewMat(p=>({...p,description:e.target.value}))}/></div>
+                <div><Lbl>Supplier</Lbl><Inp style={{width:"100%"}} value={newMat.supplier} onChange={e=>setNewMat(p=>({...p,supplier:e.target.value}))}/></div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:10}}>
+                <div><Lbl>Qty</Lbl><Inp type="number" style={{width:"100%"}} value={newMat.qty} onChange={e=>setNewMat(p=>({...p,qty:e.target.value}))}/></div>
+                <div><Lbl>Unit Cost (£)</Lbl><Inp type="number" style={{width:"100%"}} value={newMat.unitCost} onChange={e=>setNewMat(p=>({...p,unitCost:e.target.value}))}/></div>
+                <div><Lbl>Margin %</Lbl><Inp type="number" style={{width:"100%"}} value={newMat.margin} onChange={e=>setNewMat(p=>({...p,margin:e.target.value}))}/></div>
+              </div>
+              {newMat.unitCost>0&&<div style={{fontSize:11,marginBottom:8}}>Client charged: <ClientChargeTxt>£{fmt(newMat.unitCost*newMat.qty*(1+newMat.margin/100))}</ClientChargeTxt> · Margin: <ProfitTxt>£{fmt(newMat.unitCost*newMat.qty*newMat.margin/100)}</ProfitTxt></div>}
+              <Btn style={{width:"100%"}} onClick={addMat}>Raise PO</Btn>
+            </Card>
+          </div>
+        )}
+
+        {tab==="subcontractor"&&(
+          <div>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+              <div style={{fontSize:13,fontWeight:800,color:"#c084fc"}}>Subcontractor Management</div>
+              <Btn style={{background:"#6d28d9",fontSize:11}} onClick={()=>setShowDispatch(true)}>🔀 {sub?"Re-dispatch":"Dispatch"}</Btn>
+            </div>
+            {sub&&(
+              <Card style={{padding:12,marginBottom:14,border:"1px solid #3b0764"}}>
+                <Lbl>Assigned Subcontractor</Lbl>
+                <div style={{fontSize:14,fontWeight:700,color:"#c084fc",marginBottom:4}}>{sub.name}</div>
+                <div style={{fontSize:11,color:"#94a3b8"}}>{sub.contact} · {sub.email} · {sub.phone}</div>
+              </Card>
+            )}
+            {/* Sub log */}
+            <div style={{marginBottom:14}}><Lbl>Activity Log</Lbl><SubLog log={job.subcontractorLog} subcontractors={subcontractors}/></div>
+            {/* Sub quote */}
+            <SubQuotePanel job={job} subcontractors={subcontractors} onUpdate={onUpdate} showToast={showToast}/>
+          </div>
+        )}
+
+        {tab==="notes"&&(
+          <div>
+            {job.notes.map((n,i)=>(
+              <Card key={i} style={{padding:"10px 12px",marginBottom:8}}>
+                <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:11,fontWeight:700,color:"#7dd3fc"}}>{n.author}</span><span style={{fontSize:10,color:"#475569"}}>{timeAgo(n.time)}</span></div>
+                <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.5}}>{n.text}</div>
+              </Card>
+            ))}
+            <div style={{display:"flex",gap:8,marginTop:8}}>
+              <Inp style={{flex:1}} value={newNote} onChange={e=>setNewNote(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addNote()} placeholder="Add note…"/>
+              <Btn onClick={addNote}>Add</Btn>
+            </div>
+          </div>
+        )}
       </div>
-    )}
 
-    {tab==="notes"&&(
-      <div>
-        {job.notes.map((n,i)=>(
-          <Card key={i} style={{padding:"10px 12px",marginBottom:8}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}><span style={{fontSize:11,fontWeight:700,color:"#7dd3fc"}}>{n.author}</span><span style={{fontSize:10,color:"#475569"}}>{timeAgo(n.time)}</span></div>
-            <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.5}}>{n.text}</div>
-          </Card>
-        ))}
-        <div style={{display:"flex",gap:8,marginTop:8}}>
-          <Inp style={{flex:1}} value={newNote} onChange={e=>setNewNote(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addNote()} placeholder="Add note..."/>
-          <Btn onClick={addNote}>Add</Btn>
-        </div>
-      </div>
-    )}
-  </div>
-
-  {showDispatch&&<SubcontractorModal job={job} subcontractors={subcontractors} clients={clients} onClose={()=>setShowDispatch(false)} onDispatch={handleDispatch}/>}
-</div>
-```
-
-);
+      {showDispatch&&<SubcontractorModal job={job} subcontractors={subcontractors} clients={clients} onClose={()=>setShowDispatch(false)} onDispatch={handleDispatch}/>}
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -723,88 +696,88 @@ Respond by: <span style={{color:new Date(job.responseDeadline)<now?”#ef4444”
 // ══════════════════════════════════════════════════════════════════════════════
 
 function JobsTab({jobs, clients, engineers, subcontractors, compliance, onUpdate, showToast}) {
-const [selected, setSelected] = useState(null);
-const [showNew, setShowNew] = useState(false);
-const [fClient, setFClient] = useState(“all”);
-const [fStatus, setFStatus] = useState(“all”);
-const [fPri, setFPri] = useState(“all”);
-const [search, setSearch] = useState(””);
+  const [selected, setSelected] = useState(null);
+  const [showNew, setShowNew] = useState(false);
+  const [fClient, setFClient] = useState("all");
+  const [fStatus, setFStatus] = useState("all");
+  const [fPri, setFPri] = useState("all");
+  const [search, setSearch] = useState("");
 
-let visible = jobs;
-if(fClient!==“all”) visible=visible.filter(j=>j.clientId===fClient);
-if(fStatus!==“all”) visible=visible.filter(j=>j.status===fStatus);
-if(fPri!==“all”) visible=visible.filter(j=>j.priority===fPri);
-if(search){const q=search.toLowerCase();visible=visible.filter(j=>j.title.toLowerCase().includes(q)||j.id.toLowerCase().includes(q)||j.location.toLowerCase().includes(q));}
-const priO={P1:0,P2:1,P3:2,P4:3,P5:4};
-visible=[…visible].sort((a,b)=>{
-const as=getSLAStatus(a)===“breached”?-1:0,bs=getSLAStatus(b)===“breached”?-1:0;
-if(as!==bs) return as-bs;
-return (priO[a.priority]||4)-(priO[b.priority]||4);
-});
+  let visible = jobs;
+  if(fClient!=="all") visible=visible.filter(j=>j.clientId===fClient);
+  if(fStatus!=="all") visible=visible.filter(j=>j.status===fStatus);
+  if(fPri!=="all") visible=visible.filter(j=>j.priority===fPri);
+  if(search){const q=search.toLowerCase();visible=visible.filter(j=>j.title.toLowerCase().includes(q)||j.id.toLowerCase().includes(q)||j.location.toLowerCase().includes(q));}
+  const priO={P1:0,P2:1,P3:2,P4:3,P5:4};
+  visible=[...visible].sort((a,b)=>{
+    const as=getSLAStatus(a)==="breached"?-1:0,bs=getSLAStatus(b)==="breached"?-1:0;
+    if(as!==bs) return as-bs;
+    return (priO[a.priority]||4)-(priO[b.priority]||4);
+  });
 
-const handleUpdate=(updated)=>{onUpdate(jobs.map(j=>j.id===updated.id?updated:j));setSelected(updated);showToast(“Saved”);};
-const handleNew=(nj)=>{onUpdate([nj,…jobs]);setShowNew(false);showToast(`${nj.id} logged`);};
+  const handleUpdate=(updated)=>{onUpdate(jobs.map(j=>j.id===updated.id?updated:j));setSelected(updated);showToast("Saved");};
+  const handleNew=(nj)=>{onUpdate([nj,...jobs]);setShowNew(false);showToast(`${nj.id} logged`);};
 
-return (
-<div style={{display:“flex”,height:“100%”,overflow:“hidden”}}>
-<div style={{width:selected?“420px”:“100%”,flexShrink:0,display:“flex”,flexDirection:“column”,borderRight:selected?“1px solid #1e293b”:“none”,overflow:“hidden”}}>
-<div style={{padding:“12px 14px”,borderBottom:“1px solid #1e293b”,display:“flex”,gap:7,flexWrap:“wrap”,alignItems:“center”,flexShrink:0,background:”#030810”}}>
-<Inp style={{width:150}} placeholder=“Search…” value={search} onChange={e=>setSearch(e.target.value)}/>
-<Sel value={fClient} onChange={e=>setFClient(e.target.value)}><option value="all">All Clients</option>{clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</Sel>
-<Sel value={fStatus} onChange={e=>setFStatus(e.target.value)}><option value="all">All Statuses</option>{Object.entries(STATUS_CFG).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}</Sel>
-<Sel value={fPri} onChange={e=>setFPri(e.target.value)}><option value="all">All Priority</option>{Object.keys(PRIORITY_SLA).map(p=><option key={p} value={p}>{p}</option>)}</Sel>
-<div style={{marginLeft:“auto”,display:“flex”,gap:7,alignItems:“center”}}>
-<span style={{fontSize:10,color:”#475569”}}>{visible.length} jobs</span>
-<Btn style={{fontSize:11}} onClick={()=>setShowNew(true)}>+ New Job</Btn>
-</div>
-</div>
-<div style={{flex:1,overflowY:“auto”,padding:10}}>
-{visible.map(job=>{
-const client=clients.find(c=>c.id===job.clientId);
-const eng=engineers.find(e=>e.id===job.engineerId);
-const sub=subcontractors.find(s=>s.id===job.subcontractorId);
-const slaS=getSLAStatus(job);
-const isSel=selected && selected.id===job.id;
-const intel=getSiteIntelligence(job,jobs,compliance);
-const hasIntel=intel.jobs.length+intel.compliance.length>0;
-return (
-<div key={job.id} onClick={()=>setSelected(job)} style={{background:isSel?”#0d1b33”:”#080f20”,border:`1px solid ${isSel?"#38bdf8":slaS==="breached"?"#ef444466":"#1e293b"}`,borderRadius:9,padding:“11px 13px”,marginBottom:6,cursor:“pointer”,transition:“all 0.1s”}}>
-<div style={{display:“flex”,justifyContent:“space-between”,gap:8,marginBottom:4}}>
-<div style={{flex:1,minWidth:0}}>
-<div style={{fontSize:9,color:”#475569”,fontFamily:“monospace”,marginBottom:1}}>{job.id} · {job.category}</div>
-<div style={{fontSize:12,fontWeight:700,color:”#f1f5f9”,lineHeight:1.3}}>{job.title}</div>
-</div>
-<div style={{display:“flex”,flexDirection:“column”,gap:3,alignItems:“flex-end”,flexShrink:0}}>
-<PriBadge priority={job.priority}/>
-<Badge status={job.status}/>
-</div>
-</div>
-<div style={{fontSize:10,color:”#475569”,marginBottom:4}}><span style={{color:”#7dd3fc”}}>{(client && client.name)}</span> · {job.location}</div>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”}}>
-<div style={{fontSize:10,color:SLA_COLOR[slaS],display:“flex”,gap:4,alignItems:“center”}}>
-<span style={{width:5,height:5,borderRadius:“50%”,background:SLA_COLOR[slaS],display:“inline-block”}}/>
-{slaS===“met”?“SLA Met”:countdown(job.completionDeadline)}
-</div>
-<div style={{display:“flex”,gap:6,alignItems:“center”}}>
-{hasIntel&&<span style={{fontSize:9,color:”#4ade80”,fontWeight:700,background:”#0c1f0a”,border:“1px solid #4ade8033”,borderRadius:3,padding:“1px 5px”}}>🗺 SITE</span>}
-{sub&&<span style={{fontSize:9,color:”#c084fc”,fontWeight:700}}>🔀 {sub.name.split(” “)[0]}</span>}
-{eng&&<span style={{fontSize:9,color:”#94a3b8”}}>{eng.initials}</span>}
-</div>
-</div>
-</div>
-);
-})}
-{visible.length===0&&<div style={{textAlign:“center”,color:”#475569”,padding:60,fontSize:13}}>No jobs</div>}
-</div>
-</div>
-{selected&&(
-<div style={{flex:1,overflow:“hidden”}}>
-<JobDetail job={selected} clients={clients} engineers={engineers} subcontractors={subcontractors} allJobs={jobs} compliance={compliance} onClose={()=>setSelected(null)} onUpdate={handleUpdate} showToast={showToast}/>
-</div>
-)}
-{showNew&&<NewJobModal clients={clients} onClose={()=>setShowNew(false)} onSubmit={handleNew}/>}
-</div>
-);
+  return (
+    <div style={{display:"flex",height:"100%",overflow:"hidden"}}>
+      <div style={{width:selected?"420px":"100%",flexShrink:0,display:"flex",flexDirection:"column",borderRight:selected?"1px solid #1e293b":"none",overflow:"hidden"}}>
+        <div style={{padding:"12px 14px",borderBottom:"1px solid #1e293b",display:"flex",gap:7,flexWrap:"wrap",alignItems:"center",flexShrink:0,background:"#030810"}}>
+          <Inp style={{width:150}} placeholder="Search…" value={search} onChange={e=>setSearch(e.target.value)}/>
+          <Sel value={fClient} onChange={e=>setFClient(e.target.value)}><option value="all">All Clients</option>{clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</Sel>
+          <Sel value={fStatus} onChange={e=>setFStatus(e.target.value)}><option value="all">All Statuses</option>{Object.entries(STATUS_CFG).map(([k,v])=><option key={k} value={k}>{v.label}</option>)}</Sel>
+          <Sel value={fPri} onChange={e=>setFPri(e.target.value)}><option value="all">All Priority</option>{Object.keys(PRIORITY_SLA).map(p=><option key={p} value={p}>{p}</option>)}</Sel>
+          <div style={{marginLeft:"auto",display:"flex",gap:7,alignItems:"center"}}>
+            <span style={{fontSize:10,color:"#475569"}}>{visible.length} jobs</span>
+            <Btn style={{fontSize:11}} onClick={()=>setShowNew(true)}>+ New Job</Btn>
+          </div>
+        </div>
+        <div style={{flex:1,overflowY:"auto",padding:10}}>
+          {visible.map(job=>{
+            const client=clients.find(c=>c.id===job.clientId);
+            const eng=engineers.find(e=>e.id===job.engineerId);
+            const sub=subcontractors.find(s=>s.id===job.subcontractorId);
+            const slaS=getSLAStatus(job);
+            const isSel=selected?.id===job.id;
+            const intel=getSiteIntelligence(job,jobs,compliance);
+            const hasIntel=intel.jobs.length+intel.compliance.length>0;
+            return (
+              <div key={job.id} onClick={()=>setSelected(job)} style={{background:isSel?"#0d1b33":"#080f20",border:`1px solid ${isSel?"#38bdf8":slaS==="breached"?"#ef444466":"#1e293b"}`,borderRadius:9,padding:"11px 13px",marginBottom:6,cursor:"pointer",transition:"all 0.1s"}}>
+                <div style={{display:"flex",justifyContent:"space-between",gap:8,marginBottom:4}}>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:9,color:"#475569",fontFamily:"monospace",marginBottom:1}}>{job.id} · {job.category}</div>
+                    <div style={{fontSize:12,fontWeight:700,color:"#f1f5f9",lineHeight:1.3}}>{job.title}</div>
+                  </div>
+                  <div style={{display:"flex",flexDirection:"column",gap:3,alignItems:"flex-end",flexShrink:0}}>
+                    <PriBadge priority={job.priority}/>
+                    <Badge status={job.status}/>
+                  </div>
+                </div>
+                <div style={{fontSize:10,color:"#475569",marginBottom:4}}><span style={{color:"#7dd3fc"}}>{client?.name}</span> · {job.location}</div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <div style={{fontSize:10,color:SLA_COLOR[slaS],display:"flex",gap:4,alignItems:"center"}}>
+                    <span style={{width:5,height:5,borderRadius:"50%",background:SLA_COLOR[slaS],display:"inline-block"}}/>
+                    {slaS==="met"?"SLA Met":countdown(job.completionDeadline)}
+                  </div>
+                  <div style={{display:"flex",gap:6,alignItems:"center"}}>
+                    {hasIntel&&<span style={{fontSize:9,color:"#4ade80",fontWeight:700,background:"#0c1f0a",border:"1px solid #4ade8033",borderRadius:3,padding:"1px 5px"}}>🗺 SITE</span>}
+                    {sub&&<span style={{fontSize:9,color:"#c084fc",fontWeight:700}}>🔀 {sub.name.split(" ")[0]}</span>}
+                    {eng&&<span style={{fontSize:9,color:"#94a3b8"}}>{eng.initials}</span>}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {visible.length===0&&<div style={{textAlign:"center",color:"#475569",padding:60,fontSize:13}}>No jobs</div>}
+        </div>
+      </div>
+      {selected&&(
+        <div style={{flex:1,overflow:"hidden"}}>
+          <JobDetail job={selected} clients={clients} engineers={engineers} subcontractors={subcontractors} allJobs={jobs} compliance={compliance} onClose={()=>setSelected(null)} onUpdate={handleUpdate} showToast={showToast}/>
+        </div>
+      )}
+      {showNew&&<NewJobModal clients={clients} onClose={()=>setShowNew(false)} onSubmit={handleNew}/>}
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -812,185 +785,182 @@ return (
 // ══════════════════════════════════════════════════════════════════════════════
 
 function EngineerApp({jobs, clients, engineers, compliance, onUpdate, showToast}) {
-const [engId, setEngId] = useState(“E001”);
-const [quoteJobId, setQuoteJobId] = useState(null);
-const [quoteForm, setQuoteForm] = useState({});
-const [noteText, setNoteText] = useState({});
-const eng = engineers.find(e=>e.id===engId);
+  const [engId, setEngId] = useState("E001");
+  const [quoteJobId, setQuoteJobId] = useState(null);
+  const [quoteForm, setQuoteForm] = useState({});
+  const [noteText, setNoteText] = useState({});
+  const eng = engineers.find(e=>e.id===engId);
 
-const myJobs = […jobs.filter(j=>j.engineerId===engId&&![“invoiced”].includes(j.status))]
-.sort((a,b)=>{const o={travelling:0,“in-progress”:1,scheduled:2,pending:3,quote:4,“on-hold”:5,complete:6};return (o[a.status]||5)-(o[b.priority]||5);});
+  const myJobs = [...jobs.filter(j=>j.engineerId===engId&&!["invoiced"].includes(j.status))]
+    .sort((a,b)=>{const o={travelling:0,"in-progress":1,scheduled:2,pending:3,quote:4,"on-hold":5,complete:6};return (o[a.status]||5)-(o[b.priority]||5);});
 
-const hasActive = myJobs.some(j=>[“travelling”,“in-progress”].includes(j.status));
+  const hasActive = myJobs.some(j=>["travelling","in-progress"].includes(j.status));
 
-const updateStatus = (job, ns) => {
-if(ns!==job.status && hasActive && ![“on-hold”,“complete”,“quote”].includes(ns) && ![“travelling”,“in-progress”].includes(job.status)){
-const cur=myJobs.find(j=>[“travelling”,“in-progress”].includes(j.status));
-if(cur&&cur.id!==job.id){showToast(`Finish "${cur.title.slice(0,25)}..." first`);return;}
-}
-onUpdate(jobs.map(j=>j.id===job.id?{…j,status:ns,completedAt:ns===“complete”?new Date().toISOString():j.completedAt}:j));
-showToast(`→ ${(STATUS_CFG[ns] ? STATUS_CFG[ns].label : ns)}`);
-};
+  const updateStatus = (job, ns) => {
+    if(ns!==job.status && hasActive && !["on-hold","complete","quote"].includes(ns) && !["travelling","in-progress"].includes(job.status)){
+      const cur=myJobs.find(j=>["travelling","in-progress"].includes(j.status));
+      if(cur&&cur.id!==job.id){showToast(`Finish "${cur.title.slice(0,25)}…" first`);return;}
+    }
+    onUpdate(jobs.map(j=>j.id===job.id?{...j,status:ns,completedAt:ns==="complete"?new Date().toISOString():j.completedAt}:j));
+    showToast(`→ ${STATUS_CFG[ns]?.label}`);
+  };
 
-const addNote = (job,text) => {
-if(!text.trim()) return;
-onUpdate(jobs.map(j=>j.id===job.id?{…j,notes:[…j.notes,{author:(eng && eng.name)||“Engineer”,time:new Date().toISOString(),text:text.trim()}]}:j));
-};
+  const addNote = (job,text) => {
+    if(!text.trim()) return;
+    onUpdate(jobs.map(j=>j.id===job.id?{...j,notes:[...j.notes,{author:eng?.name||"Engineer",time:new Date().toISOString(),text:text.trim()}]}:j));
+  };
 
-const submitQuote = (job) => {
-onUpdate(jobs.map(j=>j.id===job.id?{…j,status:“quote”,quoteData:{…quoteForm}}:j));
-setQuoteJobId(null);setQuoteForm({});showToast(“Quote submitted”);
-};
+  const submitQuote = (job) => {
+    onUpdate(jobs.map(j=>j.id===job.id?{...j,status:"quote",quoteData:{...quoteForm}}:j));
+    setQuoteJobId(null);setQuoteForm({});showToast("Quote submitted");
+  };
 
-const openMaps = (job) => {
-const site=SITES_KV[job.siteKey];
-const addr = site ? `${site.lat},${site.lng}` : encodeURIComponent(job.location);
-const url = site ? `https://www.google.com/maps/dir/?api=1&destination=${site.lat},${site.lng}` : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(job.location)}`;
-window.open(url,”_blank”);
-};
+  const openMaps = (job) => {
+    const site=SITES_KV[job.siteKey];
+    const addr = site ? `${site.lat},${site.lng}` : encodeURIComponent(job.location);
+    const url = site ? `https://www.google.com/maps/dir/?api=1&destination=${site.lat},${site.lng}` : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(job.location)}`;
+    window.open(url,"_blank");
+  };
 
-const STATUS_FLOW = {pending:[“scheduled”],scheduled:[“travelling”],travelling:[“in-progress”],[“in-progress”]:[“complete”,“on-hold”,“quote”]};
+  const STATUS_FLOW = {pending:["scheduled"],scheduled:["travelling"],travelling:["in-progress"],["in-progress"]:["complete","on-hold","quote"]};
 
-return (
-<div style={{maxWidth:500,margin:“0 auto”,minHeight:“100%”,background:”#030810”}}>
-{/* Header */}
-<div style={{background:”#050d1a”,borderBottom:“1px solid #1e293b”,padding:“12px 14px”,position:“sticky”,top:0,zIndex:10}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:8}}>
-<div style={{fontSize:15,fontWeight:900,color:”#f1f5f9”}}>📱 Engineer App</div>
-<Sel value={engId} onChange={e=>setEngId(e.target.value)} style={{fontSize:11}}>{engineers.map(e=><option key={e.id} value={e.id}>{e.name}</option>)}</Sel>
-</div>
-<div style={{display:“flex”,alignItems:“center”,gap:10}}>
-<Av i={(eng && eng.initials)||”??”} size={38}/>
-<div>
-<div style={{fontSize:13,fontWeight:700,color:”#e2e8f0”}}>{(eng && eng.name)}</div>
-<div style={{fontSize:10,color:”#475569”}}>{myJobs.length} jobs · {myJobs.filter(j=>j.status===“complete”).length} complete · {myJobs.filter(j=>j.status===“pending”).length} pending</div>
-</div>
-<div style={{marginLeft:“auto”,textAlign:“right”}}>
-<div style={{fontSize:9,color:”#475569”,textTransform:“uppercase”,letterSpacing:“0.06em”}}>Day rate</div>
-<div style={{fontSize:14,fontWeight:900,color:”#4ade80”}}>£{(eng && eng.dayRate)}</div>
-</div>
-</div>
-</div>
-
-```
-  <div style={{padding:10}}>
-    {myJobs.length===0&&<div style={{textAlign:"center",color:"#475569",padding:60,fontSize:13}}>No jobs allocated today.</div>}
-    {myJobs.map((job,idx)=>{
-      const client=clients.find(c=>c.id===job.clientId);
-      const site=SITES_KV[job.siteKey];
-      const pri=PRIORITY_SLA[job.priority]||PRIORITY_SLA.P3;
-      const isActive=["travelling","in-progress"].includes(job.status);
-      const isHold=job.status==="on-hold";
-      const nextStatuses=STATUS_FLOW[job.status]||[];
-      const slaS=getSLAStatus(job);
-      const intel=getSiteIntelligence(job,jobs,compliance);
-      const hasIntel=intel.jobs.length+intel.compliance.length>0;
-
-      return (
-        <div key={job.id} style={{marginBottom:12}}>
-          <Card style={{padding:14,border:`2px solid ${isActive?"#38bdf8":isHold?"#f97316":"#1e293b"}`,boxShadow:isActive?"0 0 20px #38bdf820":undefined}}>
-            {/* Job header */}
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:3}}>
-                  <span style={{fontSize:9,color:"#475569",fontFamily:"monospace"}}>#{idx+1} · {job.id}</span>
-                  <PriBadge priority={job.priority}/>
-                </div>
-                <div style={{fontSize:14,fontWeight:800,color:"#f1f5f9",lineHeight:1.2}}>{job.title}</div>
-                <div style={{fontSize:10,color:"#7dd3fc",marginTop:2}}>{(client && client.name)}</div>
-              </div>
-              <Badge status={job.status}/>
-            </div>
-
-            {/* SLA */}
-            <div style={{fontSize:10,color:SLA_COLOR[slaS],marginBottom:8,fontWeight:600}}>
-              <span style={{width:5,height:5,borderRadius:"50%",background:SLA_COLOR[slaS],display:"inline-block",marginRight:4}}/>
-              {pri.desc} · {slaS==="met"?"Complete":countdown(job.completionDeadline)}
-            </div>
-
-            {/* Location + directions */}
-            <div style={{background:"#0a1628",border:"1px solid #1e3a5f",borderRadius:7,padding:"9px 11px",marginBottom:8}}>
-              <div style={{fontSize:10,color:"#94a3b8",marginBottom:4}}>📍 {job.location}</div>
-              {site&&<div style={{fontSize:9,color:"#475569",marginBottom:6}}>Site Ref: {site.siteRef} · Coords: {site.lat.toFixed(4)}, {site.lng.toFixed(4)}</div>}
-              <button onClick={()=>openMaps(job)} style={{background:"#1d4ed8",color:"#fff",border:"none",borderRadius:6,padding:"7px 14px",cursor:"pointer",fontSize:11,fontWeight:700,width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
-                🗺 Get Directions to Site
-              </button>
-            </div>
-
-            {/* Site intelligence */}
-            {hasIntel&&(
-              <div style={{background:"#0a1a09",border:"1px solid #4ade8033",borderRadius:7,padding:"8px 10px",marginBottom:8,fontSize:10}}>
-                <div style={{color:"#4ade80",fontWeight:700,marginBottom:4}}>🗺 Other work at this site:</div>
-                {intel.jobs.map(j=><div key={j.id} style={{color:"#86efac",marginBottom:2}}>· {j.title} <Badge status={j.status}/></div>)}
-                {intel.compliance.map(c=><div key={c.id} style={{color:"#fde68a",marginBottom:2}}>⚠ {c.title} – due {formatDate(c.nextDue)}</div>)}
-              </div>
-            )}
-
-            {/* On hold notice */}
-            {isHold&&job.onHoldReason&&(
-              <div style={{background:"#431407",border:"1px solid #f9731644",borderRadius:7,padding:"8px 10px",marginBottom:8,fontSize:11,color:"#fed7aa"}}>
-                ⏸ <strong>On Hold:</strong> {job.onHoldReason}
-              </div>
-            )}
-
-            <div style={{fontSize:11,color:"#94a3b8",lineHeight:1.5,marginBottom:8}}>{job.description}</div>
-
-            {/* Status flow */}
-            {!isHold&&nextStatuses.length>0&&(
-              <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:8}}>
-                {nextStatuses.map(s=>{
-                  const c=STATUS_CFG[s]||STATUS_CFG.pending;
-                  return <button key={s} onClick={()=>s==="quote"?setQuoteJobId(job.id):updateStatus(job,s)} style={{flex:1,background:c.bg,color:c.color,border:`1px solid ${c.color}55`,borderRadius:7,padding:"9px 8px",cursor:"pointer",fontSize:11,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>{c.icon} {c.label}</button>;
-                })}
-              </div>
-            )}
-
-            {/* Notes */}
-            {job.notes.length>0&&(
-              <div style={{background:"#030810",borderRadius:6,padding:"7px 9px",marginBottom:7}}>
-                {job.notes.slice(-2).map((n,i)=>(
-                  <div key={i} style={{marginBottom:3}}><span style={{fontSize:9,color:"#475569"}}>{n.author} · {timeAgo(n.time)} — </span><span style={{fontSize:10,color:"#94a3b8"}}>{n.text}</span></div>
-                ))}
-              </div>
-            )}
-            <div style={{display:"flex",gap:6}}>
-              <Inp style={{flex:1,fontSize:11}} placeholder="Add note..." value={noteText[job.id]||""} onChange={e=>setNoteText(p=>({...p,[job.id]:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"){addNote(job,noteText[job.id]||"");setNoteText(p=>({...p,[job.id]:""}));}}}/>
-              <Btn style={{padding:"7px 10px",fontSize:11}} onClick={()=>{addNote(job,noteText[job.id]||"");setNoteText(p=>({...p,[job.id]:""}));}}>+</Btn>
-            </div>
-          </Card>
-
-          {/* Quote form */}
-          {quoteJobId===job.id&&(
-            <Card style={{padding:14,marginTop:8,border:"2px solid #fb7185"}}>
-              <div style={{fontSize:13,fontWeight:800,color:"#fb7185",marginBottom:12}}>📋 Quote Information</div>
-              {[["accessEquipment","Access Equipment","text","Ladders, MEWP, scaffold..."],["personsRequired","Persons Required","number",""],["estimatedDays","Estimated Days","number",""],["clientComments","Client Comments","textarea",""],["accessRestrictions","Access Restrictions","textarea",""],["parkingRestrictions","Parking Restrictions","text",""],["materials","All Materials Required","textarea","Full list"],["itemsToOrder","Items to Order","textarea",""],["estimatedValue","Estimated Value (£)","number",""]].map(([k,l,t,ph])=>(
-                <div key={k} style={{marginBottom:9}}>
-                  <Lbl>{l}</Lbl>
-                  {t==="textarea"?<TA style={{width:"100%"}} rows={2} placeholder={ph} value={quoteForm[k]||""} onChange={e=>setQuoteForm(p=>({...p,[k]:e.target.value}))}/>:<Inp type={t} style={{width:"100%"}} placeholder={ph} value={quoteForm[k]||""} onChange={e=>setQuoteForm(p=>({...p,[k]:e.target.value}))}/>}
-                </div>
-              ))}
-              {[["hAndSRisk","H&S Risk?"],["madeSafe","Made Safe?"]].map(([k,l])=>(
-                <div key={k} style={{marginBottom:9,display:"flex",alignItems:"center",gap:10}}>
-                  <span style={{fontSize:11,color:"#94a3b8",fontWeight:600,flex:1}}>{l}</span>
-                  {["Yes","No"].map(v=><button key={v} onClick={()=>setQuoteForm(p=>({...p,[k]:v==="Yes"}))} style={{background:quoteForm[k]===(v==="Yes")?"#1d4ed8":"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:5,padding:"5px 12px",cursor:"pointer",fontSize:11,fontWeight:700}}>{v}</button>)}
-                </div>
-              ))}
-              {quoteForm.madeSafe&&<div style={{marginBottom:9}}><Lbl>Made Safe Notes</Lbl><TA style={{width:"100%"}} rows={2} value={quoteForm.madeSafeNotes||""} onChange={e=>setQuoteForm(p=>({...p,madeSafeNotes:e.target.value}))}/></div>}
-              <div style={{fontSize:10,color:"#475569",marginBottom:10}}>📷 Photos: tap to add (live integration adds to job)</div>
-              <div style={{display:"flex",gap:8}}>
-                <Btn style={{flex:1,background:"#9f1239"}} onClick={()=>submitQuote(job)}>Submit Quote</Btn>
-                <Btn style={{background:"#1e293b",color:"#94a3b8"}} onClick={()=>setQuoteJobId(null)}>Cancel</Btn>
-              </div>
-            </Card>
-          )}
+  return (
+    <div style={{maxWidth:500,margin:"0 auto",minHeight:"100%",background:"#030810"}}>
+      {/* Header */}
+      <div style={{background:"#050d1a",borderBottom:"1px solid #1e293b",padding:"12px 14px",position:"sticky",top:0,zIndex:10}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+          <div style={{fontSize:15,fontWeight:900,color:"#f1f5f9"}}>📱 Engineer App</div>
+          <Sel value={engId} onChange={e=>setEngId(e.target.value)} style={{fontSize:11}}>{engineers.map(e=><option key={e.id} value={e.id}>{e.name}</option>)}</Sel>
         </div>
-      );
-    })}
-  </div>
-</div>
-```
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <Av i={eng?.initials||"??"} size={38}/>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0"}}>{eng?.name}</div>
+            <div style={{fontSize:10,color:"#475569"}}>{myJobs.length} jobs · {myJobs.filter(j=>j.status==="complete").length} complete · {myJobs.filter(j=>j.status==="pending").length} pending</div>
+          </div>
+          <div style={{marginLeft:"auto",textAlign:"right"}}>
+            <div style={{fontSize:9,color:"#475569",textTransform:"uppercase",letterSpacing:"0.06em"}}>Day rate</div>
+            <div style={{fontSize:14,fontWeight:900,color:"#4ade80"}}>£{eng?.dayRate}</div>
+          </div>
+        </div>
+      </div>
 
-);
+      <div style={{padding:10}}>
+        {myJobs.length===0&&<div style={{textAlign:"center",color:"#475569",padding:60,fontSize:13}}>No jobs allocated today.</div>}
+        {myJobs.map((job,idx)=>{
+          const client=clients.find(c=>c.id===job.clientId);
+          const site=SITES_KV[job.siteKey];
+          const pri=PRIORITY_SLA[job.priority]||PRIORITY_SLA.P3;
+          const isActive=["travelling","in-progress"].includes(job.status);
+          const isHold=job.status==="on-hold";
+          const nextStatuses=STATUS_FLOW[job.status]||[];
+          const slaS=getSLAStatus(job);
+          const intel=getSiteIntelligence(job,jobs,compliance);
+          const hasIntel=intel.jobs.length+intel.compliance.length>0;
+
+          return (
+            <div key={job.id} style={{marginBottom:12}}>
+              <Card style={{padding:14,border:`2px solid ${isActive?"#38bdf8":isHold?"#f97316":"#1e293b"}`,boxShadow:isActive?"0 0 20px #38bdf820":undefined}}>
+                {/* Job header */}
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:3}}>
+                      <span style={{fontSize:9,color:"#475569",fontFamily:"monospace"}}>#{idx+1} · {job.id}</span>
+                      <PriBadge priority={job.priority}/>
+                    </div>
+                    <div style={{fontSize:14,fontWeight:800,color:"#f1f5f9",lineHeight:1.2}}>{job.title}</div>
+                    <div style={{fontSize:10,color:"#7dd3fc",marginTop:2}}>{client?.name}</div>
+                  </div>
+                  <Badge status={job.status}/>
+                </div>
+
+                {/* SLA */}
+                <div style={{fontSize:10,color:SLA_COLOR[slaS],marginBottom:8,fontWeight:600}}>
+                  <span style={{width:5,height:5,borderRadius:"50%",background:SLA_COLOR[slaS],display:"inline-block",marginRight:4}}/>
+                  {pri.desc} · {slaS==="met"?"Complete":countdown(job.completionDeadline)}
+                </div>
+
+                {/* Location + directions */}
+                <div style={{background:"#0a1628",border:"1px solid #1e3a5f",borderRadius:7,padding:"9px 11px",marginBottom:8}}>
+                  <div style={{fontSize:10,color:"#94a3b8",marginBottom:4}}>📍 {job.location}</div>
+                  {site&&<div style={{fontSize:9,color:"#475569",marginBottom:6}}>Site Ref: {site.siteRef} · Coords: {site.lat.toFixed(4)}, {site.lng.toFixed(4)}</div>}
+                  <button onClick={()=>openMaps(job)} style={{background:"#1d4ed8",color:"#fff",border:"none",borderRadius:6,padding:"7px 14px",cursor:"pointer",fontSize:11,fontWeight:700,width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+                    🗺 Get Directions to Site
+                  </button>
+                </div>
+
+                {/* Site intelligence */}
+                {hasIntel&&(
+                  <div style={{background:"#0a1a09",border:"1px solid #4ade8033",borderRadius:7,padding:"8px 10px",marginBottom:8,fontSize:10}}>
+                    <div style={{color:"#4ade80",fontWeight:700,marginBottom:4}}>🗺 Other work at this site:</div>
+                    {intel.jobs.map(j=><div key={j.id} style={{color:"#86efac",marginBottom:2}}>· {j.title} <Badge status={j.status}/></div>)}
+                    {intel.compliance.map(c=><div key={c.id} style={{color:"#fde68a",marginBottom:2}}>⚠ {c.title} – due {formatDate(c.nextDue)}</div>)}
+                  </div>
+                )}
+
+                {/* On hold notice */}
+                {isHold&&job.onHoldReason&&(
+                  <div style={{background:"#431407",border:"1px solid #f9731644",borderRadius:7,padding:"8px 10px",marginBottom:8,fontSize:11,color:"#fed7aa"}}>
+                    ⏸ <strong>On Hold:</strong> {job.onHoldReason}
+                  </div>
+                )}
+
+                <div style={{fontSize:11,color:"#94a3b8",lineHeight:1.5,marginBottom:8}}>{job.description}</div>
+
+                {/* Status flow */}
+                {!isHold&&nextStatuses.length>0&&(
+                  <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:8}}>
+                    {nextStatuses.map(s=>{
+                      const c=STATUS_CFG[s]||STATUS_CFG.pending;
+                      return <button key={s} onClick={()=>s==="quote"?setQuoteJobId(job.id):updateStatus(job,s)} style={{flex:1,background:c.bg,color:c.color,border:`1px solid ${c.color}55`,borderRadius:7,padding:"9px 8px",cursor:"pointer",fontSize:11,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>{c.icon} {c.label}</button>;
+                    })}
+                  </div>
+                )}
+
+                {/* Notes */}
+                {job.notes.length>0&&(
+                  <div style={{background:"#030810",borderRadius:6,padding:"7px 9px",marginBottom:7}}>
+                    {job.notes.slice(-2).map((n,i)=>(
+                      <div key={i} style={{marginBottom:3}}><span style={{fontSize:9,color:"#475569"}}>{n.author} · {timeAgo(n.time)} — </span><span style={{fontSize:10,color:"#94a3b8"}}>{n.text}</span></div>
+                    ))}
+                  </div>
+                )}
+                <div style={{display:"flex",gap:6}}>
+                  <Inp style={{flex:1,fontSize:11}} placeholder="Add note…" value={noteText[job.id]||""} onChange={e=>setNoteText(p=>({...p,[job.id]:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"){addNote(job,noteText[job.id]||"");setNoteText(p=>({...p,[job.id]:""}));}}}/>
+                  <Btn style={{padding:"7px 10px",fontSize:11}} onClick={()=>{addNote(job,noteText[job.id]||"");setNoteText(p=>({...p,[job.id]:""}));}}>+</Btn>
+                </div>
+              </Card>
+
+              {/* Quote form */}
+              {quoteJobId===job.id&&(
+                <Card style={{padding:14,marginTop:8,border:"2px solid #fb7185"}}>
+                  <div style={{fontSize:13,fontWeight:800,color:"#fb7185",marginBottom:12}}>📋 Quote Information</div>
+                  {[["accessEquipment","Access Equipment","text","Ladders, MEWP, scaffold…"],["personsRequired","Persons Required","number",""],["estimatedDays","Estimated Days","number",""],["clientComments","Client Comments","textarea",""],["accessRestrictions","Access Restrictions","textarea",""],["parkingRestrictions","Parking Restrictions","text",""],["materials","All Materials Required","textarea","Full list"],["itemsToOrder","Items to Order","textarea",""],["estimatedValue","Estimated Value (£)","number",""]].map(([k,l,t,ph])=>(
+                    <div key={k} style={{marginBottom:9}}>
+                      <Lbl>{l}</Lbl>
+                      {t==="textarea"?<TA style={{width:"100%"}} rows={2} placeholder={ph} value={quoteForm[k]||""} onChange={e=>setQuoteForm(p=>({...p,[k]:e.target.value}))}/>:<Inp type={t} style={{width:"100%"}} placeholder={ph} value={quoteForm[k]||""} onChange={e=>setQuoteForm(p=>({...p,[k]:e.target.value}))}/>}
+                    </div>
+                  ))}
+                  {[["hAndSRisk","H&S Risk?"],["madeSafe","Made Safe?"]].map(([k,l])=>(
+                    <div key={k} style={{marginBottom:9,display:"flex",alignItems:"center",gap:10}}>
+                      <span style={{fontSize:11,color:"#94a3b8",fontWeight:600,flex:1}}>{l}</span>
+                      {["Yes","No"].map(v=><button key={v} onClick={()=>setQuoteForm(p=>({...p,[k]:v==="Yes"}))} style={{background:quoteForm[k]===(v==="Yes")?"#1d4ed8":"#1e293b",color:"#e2e8f0",border:"1px solid #334155",borderRadius:5,padding:"5px 12px",cursor:"pointer",fontSize:11,fontWeight:700}}>{v}</button>)}
+                    </div>
+                  ))}
+                  {quoteForm.madeSafe&&<div style={{marginBottom:9}}><Lbl>Made Safe Notes</Lbl><TA style={{width:"100%"}} rows={2} value={quoteForm.madeSafeNotes||""} onChange={e=>setQuoteForm(p=>({...p,madeSafeNotes:e.target.value}))}/></div>}
+                  <div style={{fontSize:10,color:"#475569",marginBottom:10}}>📷 Photos: tap to add (live integration adds to job)</div>
+                  <div style={{display:"flex",gap:8}}>
+                    <Btn style={{flex:1,background:"#9f1239"}} onClick={()=>submitQuote(job)}>Submit Quote</Btn>
+                    <Btn style={{background:"#1e293b",color:"#94a3b8"}} onClick={()=>setQuoteJobId(null)}>Cancel</Btn>
+                  </div>
+                </Card>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -998,470 +968,452 @@ return (
 // ══════════════════════════════════════════════════════════════════════════════
 
 function SettingsTab({subcontractors, onSubsUpdate, engineers, showToast}) {
-const [tab, setTab] = useState(“subcontractors”);
-const [editing, setEditing] = useState(null);
-const [form, setForm] = useState({name:””,category:“Drainage”,contact:””,email:””,ccEmails:””,phone:””,defaultMargin:30,notes:””});
-const setF=(k,v)=>setForm(p=>({…p,[k]:v}));
+  const [tab, setTab] = useState("subcontractors");
+  const [editing, setEditing] = useState(null);
+  const [form, setForm] = useState({name:"",category:"Drainage",contact:"",email:"",ccEmails:"",phone:"",defaultMargin:30,notes:""});
+  const setF=(k,v)=>setForm(p=>({...p,[k]:v}));
 
-const startEdit=(s)=>{setEditing(s.id);setForm({…s,ccEmails:s.ccEmails.join(”, “)});};
-const startNew=()=>{setEditing(“new”);setForm({name:””,category:“Drainage”,contact:””,email:””,ccEmails:“office@yourcompany.co.uk”,phone:””,defaultMargin:30,notes:””});};
-const save=()=>{
-const updated={…form,id:editing===“new”?`SC${Date.now()}`:editing,ccEmails:form.ccEmails.split(”,”).map(e=>e.trim()).filter(Boolean)};
-if(editing===“new”) onSubsUpdate([…subcontractors,updated]);
-else onSubsUpdate(subcontractors.map(s=>s.id===editing?updated:s));
-setEditing(null);showToast(“Subcontractor saved”);
-};
-const remove=(id)=>{onSubsUpdate(subcontractors.filter(s=>s.id!==id));showToast(“Removed”);};
+  const startEdit=(s)=>{setEditing(s.id);setForm({...s,ccEmails:s.ccEmails.join(", ")});};
+  const startNew=()=>{setEditing("new");setForm({name:"",category:"Drainage",contact:"",email:"",ccEmails:"office@yourcompany.co.uk",phone:"",defaultMargin:30,notes:""});};
+  const save=()=>{
+    const updated={...form,id:editing==="new"?`SC${Date.now()}`:editing,ccEmails:form.ccEmails.split(",").map(e=>e.trim()).filter(Boolean)};
+    if(editing==="new") onSubsUpdate([...subcontractors,updated]);
+    else onSubsUpdate(subcontractors.map(s=>s.id===editing?updated:s));
+    setEditing(null);showToast("Subcontractor saved");
+  };
+  const remove=(id)=>{onSubsUpdate(subcontractors.filter(s=>s.id!==id));showToast("Removed");};
 
-const CATS=[“Drainage”,“Pest Control”,“Roofing”,“Electrical”,“Plumbing”,“HVAC”,“Groundworks”,“Other”];
+  const CATS=["Drainage","Pest Control","Roofing","Electrical","Plumbing","HVAC","Groundworks","Other"];
 
-return (
-<div style={{padding:24,maxWidth:900}}>
-<div style={{fontSize:20,fontWeight:900,color:”#f1f5f9”,marginBottom:4}}>Settings</div>
-<div style={{display:“flex”,gap:0,marginBottom:24,borderBottom:“1px solid #1e293b”}}>
-{[[“subcontractors”,“Subcontractors”],[“engineers”,“Engineer Rates”],[“priorities”,“Priority Config”],[“email”,“Email Integration”],[“sites”,“Site KV Data”]].map(([id,l])=>(
-<button key={id} onClick={()=>setTab(id)} style={{background:“none”,border:“none”,borderBottom:`2px solid ${tab===id?"#38bdf8":"transparent"}`,color:tab===id?”#38bdf8”:”#475569”,padding:“8px 14px”,cursor:“pointer”,fontSize:12,fontWeight:700}}>{l}</button>
-))}
-</div>
-
-```
-  {tab==="subcontractors"&&(
-    <div>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-        <div style={{fontSize:13,color:"#94a3b8"}}>Manage subcontractors, their contact details, CC lists and default margins.</div>
-        <Btn onClick={startNew}>+ Add Subcontractor</Btn>
+  return (
+    <div style={{padding:24,maxWidth:900}}>
+      <div style={{fontSize:20,fontWeight:900,color:"#f1f5f9",marginBottom:4}}>Settings</div>
+      <div style={{display:"flex",gap:0,marginBottom:24,borderBottom:"1px solid #1e293b"}}>
+        {[["subcontractors","Subcontractors"],["engineers","Engineer Rates"],["priorities","Priority Config"],["email","Email Integration"],["sites","Site KV Data"]].map(([id,l])=>(
+          <button key={id} onClick={()=>setTab(id)} style={{background:"none",border:"none",borderBottom:`2px solid ${tab===id?"#38bdf8":"transparent"}`,color:tab===id?"#38bdf8":"#475569",padding:"8px 14px",cursor:"pointer",fontSize:12,fontWeight:700}}>{l}</button>
+        ))}
       </div>
-      {subcontractors.map(s=>(
-        <Card key={s.id} style={{padding:16,marginBottom:10}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
-            <div style={{flex:1}}>
-              <div style={{fontSize:14,fontWeight:800,color:"#f1f5f9",marginBottom:2}}>{s.name}</div>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap",fontSize:11,color:"#64748b",marginBottom:6}}>
-                <span style={{color:"#c084fc",fontWeight:700,background:"#3b0764",padding:"1px 7px",borderRadius:3}}>{s.category}</span>
-                <span>{s.contact}</span><span>·</span><span>{s.phone}</span>
-              </div>
-              <div style={{fontSize:11,marginBottom:4}}>To: <span style={{color:"#818cf8"}}>{s.email}</span></div>
-              <div style={{fontSize:11,marginBottom:4}}>CC: <span style={{color:"#64748b"}}>{s.ccEmails.join(", ")}</span></div>
-              <div style={{fontSize:11}}>Default margin: <ProfitTxt>{s.defaultMargin}%</ProfitTxt></div>
-              {s.notes&&<div style={{fontSize:10,color:"#475569",marginTop:4,fontStyle:"italic"}}>{s.notes}</div>}
-            </div>
-            <div style={{display:"flex",gap:7}}>
-              <Btn style={{fontSize:11,background:"#1e3a5f",padding:"6px 12px"}} onClick={()=>startEdit(s)}>Edit</Btn>
-              <Btn style={{fontSize:11,background:"#450a0a",color:"#f87171",padding:"6px 12px"}} onClick={()=>remove(s.id)}>Remove</Btn>
-            </div>
-          </div>
-        </Card>
-      ))}
 
-      {editing&&(
-        <div style={{position:"fixed",inset:0,background:"#000000cc",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}}>
-          <Card style={{width:540,maxHeight:"90vh",overflowY:"auto",padding:24,border:"1px solid #334155"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-              <div style={{fontSize:15,fontWeight:900,color:"#f1f5f9"}}>{editing==="new"?"Add Subcontractor":"Edit Subcontractor"}</div>
-              <button onClick={()=>setEditing(null)} style={{background:"#1e293b",border:"1px solid #334155",color:"#94a3b8",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontSize:18}}>×</button>
+      {tab==="subcontractors"&&(
+        <div>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+            <div style={{fontSize:13,color:"#94a3b8"}}>Manage subcontractors, their contact details, CC lists and default margins.</div>
+            <Btn onClick={startNew}>+ Add Subcontractor</Btn>
+          </div>
+          {subcontractors.map(s=>(
+            <Card key={s.id} style={{padding:16,marginBottom:10}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:14,fontWeight:800,color:"#f1f5f9",marginBottom:2}}>{s.name}</div>
+                  <div style={{display:"flex",gap:8,flexWrap:"wrap",fontSize:11,color:"#64748b",marginBottom:6}}>
+                    <span style={{color:"#c084fc",fontWeight:700,background:"#3b0764",padding:"1px 7px",borderRadius:3}}>{s.category}</span>
+                    <span>{s.contact}</span><span>·</span><span>{s.phone}</span>
+                  </div>
+                  <div style={{fontSize:11,marginBottom:4}}>To: <span style={{color:"#818cf8"}}>{s.email}</span></div>
+                  <div style={{fontSize:11,marginBottom:4}}>CC: <span style={{color:"#64748b"}}>{s.ccEmails.join(", ")}</span></div>
+                  <div style={{fontSize:11}}>Default margin: <ProfitTxt>{s.defaultMargin}%</ProfitTxt></div>
+                  {s.notes&&<div style={{fontSize:10,color:"#475569",marginTop:4,fontStyle:"italic"}}>{s.notes}</div>}
+                </div>
+                <div style={{display:"flex",gap:7}}>
+                  <Btn style={{fontSize:11,background:"#1e3a5f",padding:"6px 12px"}} onClick={()=>startEdit(s)}>Edit</Btn>
+                  <Btn style={{fontSize:11,background:"#450a0a",color:"#f87171",padding:"6px 12px"}} onClick={()=>remove(s.id)}>Remove</Btn>
+                </div>
+              </div>
+            </Card>
+          ))}
+
+          {editing&&(
+            <div style={{position:"fixed",inset:0,background:"#000000cc",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}}>
+              <Card style={{width:540,maxHeight:"90vh",overflowY:"auto",padding:24,border:"1px solid #334155"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+                  <div style={{fontSize:15,fontWeight:900,color:"#f1f5f9"}}>{editing==="new"?"Add Subcontractor":"Edit Subcontractor"}</div>
+                  <button onClick={()=>setEditing(null)} style={{background:"#1e293b",border:"1px solid #334155",color:"#94a3b8",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontSize:18}}>×</button>
+                </div>
+                <div style={{display:"grid",gap:11}}>
+                  <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:10}}>
+                    <div><Lbl>Company Name</Lbl><Inp style={{width:"100%"}} value={form.name} onChange={e=>setF("name",e.target.value)}/></div>
+                    <div><Lbl>Category</Lbl><Sel style={{width:"100%"}} value={form.category} onChange={e=>setF("category",e.target.value)}>{CATS.map(c=><option key={c}>{c}</option>)}</Sel></div>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+                    <div><Lbl>Contact Name</Lbl><Inp style={{width:"100%"}} value={form.contact} onChange={e=>setF("contact",e.target.value)}/></div>
+                    <div><Lbl>Phone</Lbl><Inp style={{width:"100%"}} value={form.phone} onChange={e=>setF("phone",e.target.value)}/></div>
+                  </div>
+                  <div><Lbl>Email (To)</Lbl><Inp type="email" style={{width:"100%"}} value={form.email} onChange={e=>setF("email",e.target.value)}/></div>
+                  <div><Lbl>CC Emails (comma separated)</Lbl><Inp style={{width:"100%"}} value={form.ccEmails} onChange={e=>setF("ccEmails",e.target.value)} placeholder="admin@sub.co.uk, office@yourcompany.co.uk"/></div>
+                  <div><Lbl>Default Margin %</Lbl><Inp type="number" style={{width:120}} value={form.defaultMargin} onChange={e=>setF("defaultMargin",e.target.value)}/></div>
+                  <div><Lbl>Notes</Lbl><TA style={{width:"100%"}} rows={2} value={form.notes} onChange={e=>setF("notes",e.target.value)}/></div>
+                  <Btn style={{width:"100%",padding:11,fontSize:13}} onClick={save}>Save Subcontractor</Btn>
+                </div>
+              </Card>
             </div>
-            <div style={{display:"grid",gap:11}}>
-              <div style={{display:"grid",gridTemplateColumns:"2fr 1fr",gap:10}}>
-                <div><Lbl>Company Name</Lbl><Inp style={{width:"100%"}} value={form.name} onChange={e=>setF("name",e.target.value)}/></div>
-                <div><Lbl>Category</Lbl><Sel style={{width:"100%"}} value={form.category} onChange={e=>setF("category",e.target.value)}>{CATS.map(c=><option key={c}>{c}</option>)}</Sel></div>
+          )}
+        </div>
+      )}
+
+      {tab==="engineers"&&(
+        <div>
+          <div style={{fontSize:12,color:"#94a3b8",marginBottom:16}}>Engineer rates are visible to office/admin only and used for job costing and margin calculations.</div>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <thead><tr style={{color:"#475569",fontSize:9,textTransform:"uppercase",letterSpacing:"0.06em"}}>{["Engineer","Specialisms","Day Rate","Hourly Rate","Labour Margin (example 3h)"].map(h=><th key={h} style={{padding:"8px 12px",textAlign:"left",borderBottom:"1px solid #1e293b",fontWeight:700}}>{h}</th>)}</tr></thead>
+            <tbody>
+              {engineers.map(e=>(
+                <tr key={e.id} style={{borderBottom:"1px solid #0a0f1e"}}>
+                  <td style={{padding:"10px 12px"}}><div style={{display:"flex",alignItems:"center",gap:8}}><Av i={e.initials} size={30}/><div><div style={{fontWeight:700,color:"#e2e8f0"}}>{e.name}</div><div style={{fontSize:10,color:"#475569"}}>{e.phone}</div></div></div></td>
+                  <td style={{padding:"10px 12px",color:"#94a3b8"}}>{e.specialisms.join(", ")}</td>
+                  <td style={{padding:"10px 12px"}}><SubCostTxt>£{e.dayRate}</SubCostTxt></td>
+                  <td style={{padding:"10px 12px"}}><SubCostTxt>£{e.hourlyRate}/hr</SubCostTxt></td>
+                  <td style={{padding:"10px 12px"}}><ClientChargeTxt>£{(e.hourlyRate*1.2*3).toFixed(2)}</ClientChargeTxt> <span style={{color:"#475569",fontSize:10}}>vs cost </span><SubCostTxt>£{(e.hourlyRate*3).toFixed(2)}</SubCostTxt> <ProfitTxt>= +£{(e.hourlyRate*0.2*3).toFixed(2)}</ProfitTxt></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {tab==="priorities"&&(
+        <div>
+          <div style={{fontSize:12,color:"#94a3b8",marginBottom:16}}>Priority SLA configuration applied to all jobs.</div>
+          {Object.entries(PRIORITY_SLA).map(([key,p])=>(
+            <Card key={key} style={{padding:14,marginBottom:8,border:`1px solid ${p.color}44`}}>
+              <div style={{display:"flex",alignItems:"center",gap:14}}>
+                <span style={{fontSize:22,fontWeight:900,color:p.color,fontFamily:"monospace",minWidth:36}}>{p.label}</span>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0",marginBottom:2}}>{p.desc}</div>
+                  <div style={{fontSize:11,color:"#64748b"}}>Response: {p.respond}h · Completion: {p.complete}h</div>
+                </div>
+                <div style={{width:12,height:12,borderRadius:"50%",background:p.color,boxShadow:`0 0 8px ${p.color}`}}/>
               </div>
-              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                <div><Lbl>Contact Name</Lbl><Inp style={{width:"100%"}} value={form.contact} onChange={e=>setF("contact",e.target.value)}/></div>
-                <div><Lbl>Phone</Lbl><Inp style={{width:"100%"}} value={form.phone} onChange={e=>setF("phone",e.target.value)}/></div>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {tab==="email"&&(
+        <div>
+          <Card style={{padding:16,marginBottom:14,border:"1px solid #1e3a5f"}}>
+            <div style={{fontSize:13,fontWeight:700,color:"#38bdf8",marginBottom:10}}>📧 Email Integration</div>
+            <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6,marginBottom:14}}>
+              Connect your office inbox to auto-parse incoming reactive job requests from clients. The system will read new emails, extract job details and create draft jobs for your review before logging.
+            </div>
+            <div style={{display:"grid",gap:10}}>
+              <div><Lbl>Inbox to Monitor</Lbl><Inp style={{width:"100%"}} placeholder="jobs@yourcompany.co.uk"/></div>
+              <div><Lbl>Email Provider</Lbl><Sel style={{width:"100%"}}><option>Microsoft 365 / Outlook</option><option>Gmail / Google Workspace</option><option>IMAP (custom)</option></Sel></div>
+              <div style={{display:"flex",gap:8}}>
+                <Btn style={{flex:1}}>Connect Inbox</Btn>
+                <Btn style={{background:"#1e3a5f",flex:1}}>Test Connection</Btn>
               </div>
-              <div><Lbl>Email (To)</Lbl><Inp type="email" style={{width:"100%"}} value={form.email} onChange={e=>setF("email",e.target.value)}/></div>
-              <div><Lbl>CC Emails (comma separated)</Lbl><Inp style={{width:"100%"}} value={form.ccEmails} onChange={e=>setF("ccEmails",e.target.value)} placeholder="admin@sub.co.uk, office@yourcompany.co.uk"/></div>
-              <div><Lbl>Default Margin %</Lbl><Inp type="number" style={{width:120}} value={form.defaultMargin} onChange={e=>setF("defaultMargin",e.target.value)}/></div>
-              <div><Lbl>Notes</Lbl><TA style={{width:"100%"}} rows={2} value={form.notes} onChange={e=>setF("notes",e.target.value)}/></div>
-              <Btn style={{width:"100%",padding:11,fontSize:13}} onClick={save}>Save Subcontractor</Btn>
+            </div>
+          </Card>
+          <Card style={{padding:16,border:"1px solid #1e3a5f"}}>
+            <div style={{fontSize:13,fontWeight:700,color:"#38bdf8",marginBottom:10}}>📤 Outbound Email</div>
+            <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6,marginBottom:14}}>Used for subcontractor dispatches, client quote emails, and engineer notifications.</div>
+            <div style={{display:"grid",gap:10}}>
+              <div><Lbl>From Address</Lbl><Inp style={{width:"100%"}} placeholder="office@yourcompany.co.uk"/></div>
+              <div><Lbl>From Name</Lbl><Inp style={{width:"100%"}} placeholder="Your Company FM"/></div>
+              <Btn>Save Email Settings</Btn>
             </div>
           </Card>
         </div>
       )}
-    </div>
-  )}
 
-  {tab==="engineers"&&(
-    <div>
-      <div style={{fontSize:12,color:"#94a3b8",marginBottom:16}}>Engineer rates are visible to office/admin only and used for job costing and margin calculations.</div>
-      <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-        <thead><tr style={{color:"#475569",fontSize:9,textTransform:"uppercase",letterSpacing:"0.06em"}}>{["Engineer","Specialisms","Day Rate","Hourly Rate","Labour Margin (example 3h)"].map(h=><th key={h} style={{padding:"8px 12px",textAlign:"left",borderBottom:"1px solid #1e293b",fontWeight:700}}>{h}</th>)}</tr></thead>
-        <tbody>
-          {engineers.map(e=>(
-            <tr key={e.id} style={{borderBottom:"1px solid #0a0f1e"}}>
-              <td style={{padding:"10px 12px"}}><div style={{display:"flex",alignItems:"center",gap:8}}><Av i={e.initials} size={30}/><div><div style={{fontWeight:700,color:"#e2e8f0"}}>{e.name}</div><div style={{fontSize:10,color:"#475569"}}>{e.phone}</div></div></div></td>
-              <td style={{padding:"10px 12px",color:"#94a3b8"}}>{e.specialisms.join(", ")}</td>
-              <td style={{padding:"10px 12px"}}><SubCostTxt>£{e.dayRate}</SubCostTxt></td>
-              <td style={{padding:"10px 12px"}}><SubCostTxt>£{e.hourlyRate}/hr</SubCostTxt></td>
-              <td style={{padding:"10px 12px"}}><ClientChargeTxt>£{(e.hourlyRate*1.2*3).toFixed(2)}</ClientChargeTxt> <span style={{color:"#475569",fontSize:10}}>vs cost </span><SubCostTxt>£{(e.hourlyRate*3).toFixed(2)}</SubCostTxt> <ProfitTxt>= +£{(e.hourlyRate*0.2*3).toFixed(2)}</ProfitTxt></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )}
-
-  {tab==="priorities"&&(
-    <div>
-      <div style={{fontSize:12,color:"#94a3b8",marginBottom:16}}>Priority SLA configuration applied to all jobs.</div>
-      {Object.entries(PRIORITY_SLA).map(([key,p])=>(
-        <Card key={key} style={{padding:14,marginBottom:8,border:`1px solid ${p.color}44`}}>
-          <div style={{display:"flex",alignItems:"center",gap:14}}>
-            <span style={{fontSize:22,fontWeight:900,color:p.color,fontFamily:"monospace",minWidth:36}}>{p.label}</span>
-            <div style={{flex:1}}>
-              <div style={{fontSize:13,fontWeight:700,color:"#e2e8f0",marginBottom:2}}>{p.desc}</div>
-              <div style={{fontSize:11,color:"#64748b"}}>Response: {p.respond}h · Completion: {p.complete}h</div>
-            </div>
-            <div style={{width:12,height:12,borderRadius:"50%",background:p.color,boxShadow:`0 0 8px ${p.color}`}}/>
-          </div>
-        </Card>
-      ))}
-    </div>
-  )}
-
-  {tab==="email"&&(
-    <div>
-      <Card style={{padding:16,marginBottom:14,border:"1px solid #1e3a5f"}}>
-        <div style={{fontSize:13,fontWeight:700,color:"#38bdf8",marginBottom:10}}>📧 Email Integration</div>
-        <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6,marginBottom:14}}>
-          Connect your office inbox to auto-parse incoming reactive job requests from clients. The system will read new emails, extract job details and create draft jobs for your review before logging.
-        </div>
-        <div style={{display:"grid",gap:10}}>
-          <div><Lbl>Inbox to Monitor</Lbl><Inp style={{width:"100%"}} placeholder="jobs@yourcompany.co.uk"/></div>
-          <div><Lbl>Email Provider</Lbl><Sel style={{width:"100%"}}><option>Microsoft 365 / Outlook</option><option>Gmail / Google Workspace</option><option>IMAP (custom)</option></Sel></div>
-          <div style={{display:"flex",gap:8}}>
-            <Btn style={{flex:1}}>Connect Inbox</Btn>
-            <Btn style={{background:"#1e3a5f",flex:1}}>Test Connection</Btn>
+      {tab==="sites"&&(
+        <div>
+          <div style={{fontSize:12,color:"#94a3b8",marginBottom:14}}>Site KV store – coordinates and references loaded from your existing data. These power site intelligence and engineer directions.</div>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+            <thead><tr style={{color:"#475569",fontSize:9,textTransform:"uppercase",letterSpacing:"0.06em"}}>{["Site Ref","Site Name","Client","Address","Lat","Lng"].map(h=><th key={h} style={{padding:"7px 10px",textAlign:"left",borderBottom:"1px solid #1e293b",fontWeight:700}}>{h}</th>)}</tr></thead>
+            <tbody>
+              {Object.entries(SITES_KV).map(([k,s])=>{
+                const client=CLIENTS.find(c=>c.id===s.clientId);
+                return (
+                  <tr key={k} style={{borderBottom:"1px solid #0a0f1e"}}>
+                    <td style={{padding:"7px 10px",color:"#818cf8",fontFamily:"monospace",fontWeight:700}}>{s.siteRef}</td>
+                    <td style={{padding:"7px 10px",color:"#e2e8f0",fontWeight:600}}>{s.name}</td>
+                    <td style={{padding:"7px 10px",color:"#7dd3fc"}}>{client?.name}</td>
+                    <td style={{padding:"7px 10px",color:"#64748b"}}>{s.address}</td>
+                    <td style={{padding:"7px 10px",color:"#94a3b8",fontFamily:"monospace"}}>{s.lat}</td>
+                    <td style={{padding:"7px 10px",color:"#94a3b8",fontFamily:"monospace"}}>{s.lng}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <div style={{marginTop:14}}>
+            <Btn style={{background:"#064e3b",fontSize:11}}>📂 Import Site KV (CSV)</Btn>
           </div>
         </div>
-      </Card>
-      <Card style={{padding:16,border:"1px solid #1e3a5f"}}>
-        <div style={{fontSize:13,fontWeight:700,color:"#38bdf8",marginBottom:10}}>📤 Outbound Email</div>
-        <div style={{fontSize:12,color:"#94a3b8",lineHeight:1.6,marginBottom:14}}>Used for subcontractor dispatches, client quote emails, and engineer notifications.</div>
-        <div style={{display:"grid",gap:10}}>
-          <div><Lbl>From Address</Lbl><Inp style={{width:"100%"}} placeholder="office@yourcompany.co.uk"/></div>
-          <div><Lbl>From Name</Lbl><Inp style={{width:"100%"}} placeholder="Your Company FM"/></div>
-          <Btn>Save Email Settings</Btn>
-        </div>
-      </Card>
+      )}
     </div>
-  )}
-
-  {tab==="sites"&&(
-    <div>
-      <div style={{fontSize:12,color:"#94a3b8",marginBottom:14}}>Site KV store – coordinates and references loaded from your existing data. These power site intelligence and engineer directions.</div>
-      <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-        <thead><tr style={{color:"#475569",fontSize:9,textTransform:"uppercase",letterSpacing:"0.06em"}}>{["Site Ref","Site Name","Client","Address","Lat","Lng"].map(h=><th key={h} style={{padding:"7px 10px",textAlign:"left",borderBottom:"1px solid #1e293b",fontWeight:700}}>{h}</th>)}</tr></thead>
-        <tbody>
-          {Object.entries(SITES_KV).map(([k,s])=>{
-            const client=CLIENTS.find(c=>c.id===s.clientId);
-            return (
-              <tr key={k} style={{borderBottom:"1px solid #0a0f1e"}}>
-                <td style={{padding:"7px 10px",color:"#818cf8",fontFamily:"monospace",fontWeight:700}}>{s.siteRef}</td>
-                <td style={{padding:"7px 10px",color:"#e2e8f0",fontWeight:600}}>{s.name}</td>
-                <td style={{padding:"7px 10px",color:"#7dd3fc"}}>{(client && client.name)}</td>
-                <td style={{padding:"7px 10px",color:"#64748b"}}>{s.address}</td>
-                <td style={{padding:"7px 10px",color:"#94a3b8",fontFamily:"monospace"}}>{s.lat}</td>
-                <td style={{padding:"7px 10px",color:"#94a3b8",fontFamily:"monospace"}}>{s.lng}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div style={{marginTop:14}}>
-        <Btn style={{background:"#064e3b",fontSize:11}}>📂 Import Site KV (CSV)</Btn>
-      </div>
-    </div>
-  )}
-</div>
-```
-
-);
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // COMPLIANCE TAB (simplified)
 // ══════════════════════════════════════════════════════════════════════════════
 function ComplianceTab({schedule, clients, jobs, onUpdate, showToast}) {
-const urgency=(item)=>{const days=(new Date(item.nextDue)-now)/86400000;if(days<0)return”overdue”;if(days<7)return”urgent”;if(days<30)return”due-soon”;return”ok”;};
-const UC={overdue:”#ef4444”,urgent:”#f97316”,“due-soon”:”#eab308”,ok:”#34d399”};
-const generate=(item)=>{
-const client=clients.find(c=>c.id===item.clientId);
-const site=SITES_KV[item.siteKey];
-const pri=urgency(item)===“overdue”?“P1”:urgency(item)===“urgent”?“P2”:“P3”;
-const priConf=PRIORITY_SLA[pri];
-const nj={id:`JOB-${Date.now().toString().slice(-4)}`,clientId:item.clientId,siteKey:item.siteKey,title:item.title,type:“compliance”,category:item.category,priority:pri,status:“pending”,engineerId:null,location:(site && site.address)||(client && client.name)||””,description:`Compliance: ${item.title}. Due: ${formatDate(item.nextDue)}.`,createdAt:new Date().toISOString(),responseDeadline:new Date(now.getTime()+priConf.respond*3600000).toISOString(),completionDeadline:new Date(now.getTime()+priConf.complete*3600000).toISOString(),labourHours:0,labourRate:35,labourCost:0,materials:[],notes:[{author:“System”,time:new Date().toISOString(),text:`Auto-generated. Schedule item: ${item.id}`}],attachments:[],completedAt:null,invoiced:false,invoiceMonth:null,subcontractorId:null,subcontractorLog:[],subQuote:null,calloutCharged:false,quoteData:null,onHoldReason:null};
-onUpdate(prev=>[nj,…prev]);showToast(`Job created: ${nj.id}`);
-};
-return (
-<div style={{padding:24,maxWidth:1000}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:20}}>
-<div><div style={{fontSize:20,fontWeight:900,color:”#f1f5f9”}}>Compliance Schedule</div><div style={{fontSize:11,color:”#475569”,marginTop:2}}>Auto-create jobs from due compliance items</div></div>
-<Btn style={{background:”#064e3b”,fontSize:11}}>📂 Import Schedule (CSV)</Btn>
-</div>
-{[…schedule].sort((a,b)=>new Date(a.nextDue)-new Date(b.nextDue)).map(item=>{
-const client=clients.find(c=>c.id===item.clientId);
-const site=SITES_KV[item.siteKey];
-const u=urgency(item);
-const days=Math.round((new Date(item.nextDue)-now)/86400000);
-const existing=jobs.find(j=>j.notes && j.notes.some(n=>n.text && n.text.includes(item.id)));
-return (
-<Card key={item.id} style={{padding:14,marginBottom:8,border:`1px solid ${UC[u]}44`}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”}}>
-<div style={{flex:1}}>
-<div style={{display:“flex”,gap:7,alignItems:“center”,marginBottom:5}}>
-<span style={{fontSize:9,fontWeight:900,color:UC[u],background:UC[u]+“22”,border:`1px solid ${UC[u]}44`,padding:“2px 8px”,borderRadius:3,textTransform:“uppercase”}}>{days<0?`${Math.abs(days)}d OVERDUE`:`${days}d`}</span>
-<span style={{fontSize:9,color:”#475569”,textTransform:“uppercase”,letterSpacing:“0.06em”}}>{item.frequency} · {item.category}</span>
-</div>
-<div style={{fontSize:13,fontWeight:700,color:”#f1f5f9”,marginBottom:2}}>{item.title}</div>
-<div style={{fontSize:11,color:”#7dd3fc”,marginBottom:2}}>{(client && client.name)}</div>
-{site&&<div style={{fontSize:10,color:”#475569”}}>{site.siteRef} · {site.address}</div>}
-</div>
-<div style={{textAlign:“right”,flexShrink:0}}>
-<div style={{fontSize:12,fontWeight:700,color:UC[u],marginBottom:6}}>{formatDate(item.nextDue)}</div>
-{existing?<span style={{fontSize:10,color:”#34d399”,fontWeight:700}}>✓ Job raised</span>:<Btn style={{fontSize:11,padding:“6px 12px”,background:u===“overdue”?”#dc2626”:u===“urgent”?”#9a3412”:”#1d4ed8”}} onClick={()=>generate(item)}>Create Job</Btn>}
-</div>
-</div>
-</Card>
-);
-})}
-</div>
-);
+  const urgency=(item)=>{const days=(new Date(item.nextDue)-now)/86400000;if(days<0)return"overdue";if(days<7)return"urgent";if(days<30)return"due-soon";return"ok";};
+  const UC={overdue:"#ef4444",urgent:"#f97316","due-soon":"#eab308",ok:"#34d399"};
+  const generate=(item)=>{
+    const client=clients.find(c=>c.id===item.clientId);
+    const site=SITES_KV[item.siteKey];
+    const pri=urgency(item)==="overdue"?"P1":urgency(item)==="urgent"?"P2":"P3";
+    const priConf=PRIORITY_SLA[pri];
+    const nj={id:`JOB-${Date.now().toString().slice(-4)}`,clientId:item.clientId,siteKey:item.siteKey,title:item.title,type:"compliance",category:item.category,priority:pri,status:"pending",engineerId:null,location:site?.address||client?.name||"",description:`Compliance: ${item.title}. Due: ${formatDate(item.nextDue)}.`,createdAt:new Date().toISOString(),responseDeadline:new Date(now.getTime()+priConf.respond*3600000).toISOString(),completionDeadline:new Date(now.getTime()+priConf.complete*3600000).toISOString(),labourHours:0,labourRate:35,labourCost:0,materials:[],notes:[{author:"System",time:new Date().toISOString(),text:`Auto-generated. Schedule item: ${item.id}`}],attachments:[],completedAt:null,invoiced:false,invoiceMonth:null,subcontractorId:null,subcontractorLog:[],subQuote:null,calloutCharged:false,quoteData:null,onHoldReason:null};
+    onUpdate(prev=>[nj,...prev]);showToast(`Job created: ${nj.id}`);
+  };
+  return (
+    <div style={{padding:24,maxWidth:1000}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+        <div><div style={{fontSize:20,fontWeight:900,color:"#f1f5f9"}}>Compliance Schedule</div><div style={{fontSize:11,color:"#475569",marginTop:2}}>Auto-create jobs from due compliance items</div></div>
+        <Btn style={{background:"#064e3b",fontSize:11}}>📂 Import Schedule (CSV)</Btn>
+      </div>
+      {[...schedule].sort((a,b)=>new Date(a.nextDue)-new Date(b.nextDue)).map(item=>{
+        const client=clients.find(c=>c.id===item.clientId);
+        const site=SITES_KV[item.siteKey];
+        const u=urgency(item);
+        const days=Math.round((new Date(item.nextDue)-now)/86400000);
+        const existing=jobs.find(j=>j.notes?.some(n=>n.text?.includes(item.id)));
+        return (
+          <Card key={item.id} style={{padding:14,marginBottom:8,border:`1px solid ${UC[u]}44`}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+              <div style={{flex:1}}>
+                <div style={{display:"flex",gap:7,alignItems:"center",marginBottom:5}}>
+                  <span style={{fontSize:9,fontWeight:900,color:UC[u],background:UC[u]+"22",border:`1px solid ${UC[u]}44`,padding:"2px 8px",borderRadius:3,textTransform:"uppercase"}}>{days<0?`${Math.abs(days)}d OVERDUE`:`${days}d`}</span>
+                  <span style={{fontSize:9,color:"#475569",textTransform:"uppercase",letterSpacing:"0.06em"}}>{item.frequency} · {item.category}</span>
+                </div>
+                <div style={{fontSize:13,fontWeight:700,color:"#f1f5f9",marginBottom:2}}>{item.title}</div>
+                <div style={{fontSize:11,color:"#7dd3fc",marginBottom:2}}>{client?.name}</div>
+                {site&&<div style={{fontSize:10,color:"#475569"}}>{site.siteRef} · {site.address}</div>}
+              </div>
+              <div style={{textAlign:"right",flexShrink:0}}>
+                <div style={{fontSize:12,fontWeight:700,color:UC[u],marginBottom:6}}>{formatDate(item.nextDue)}</div>
+                {existing?<span style={{fontSize:10,color:"#34d399",fontWeight:700}}>✓ Job raised</span>:<Btn style={{fontSize:11,padding:"6px 12px",background:u==="overdue"?"#dc2626":u==="urgent"?"#9a3412":"#1d4ed8"}} onClick={()=>generate(item)}>Create Job</Btn>}
+              </div>
+            </div>
+          </Card>
+        );
+      })}
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // INVOICING (simplified but with subcontractor costs)
 // ══════════════════════════════════════════════════════════════════════════════
 function InvoicingTab({jobs, clients, engineers, onUpdate, showToast}) {
-const [month,setMonth]=useState(“2025-01”);
-const [showMargins,setShowMargins]=useState(true);
-const calcJob=(j)=>{
-const matCharged=j.materials.reduce((s,m)=>s+m.charged,0);
-const labour=j.labourHours*j.labourRate;
-const subCharge=((j.subQuote ? j.subQuote.calloutCharge : 0)||0)+((j.subQuote ? j.subQuote.clientCharge : 0)||0);
-const matCost=j.materials.reduce((s,m)=>s+m.unitCost*m.qty,0);
-const labourCost=j.labourHours*((engineers.find(e=>e.id===j.engineerId) ? engineers.find(e=>e.id===j.engineerId).hourlyRate : 0)||0);
-const subCost=((j.subQuote ? j.subQuote.calloutSubCost : 0)||0)+((j.subQuote ? j.subQuote.subCost : 0)||0);
-const total=matCharged+labour+subCharge;
-const cost=matCost+labourCost+subCost;
-return {matCharged,labour,subCharge,total,cost,margin:total-cost};
-};
-const markInvoiced=(ids)=>{onUpdate(prev=>prev.map(j=>ids.includes(j.id)?{…j,invoiced:true,invoiceMonth:month,status:“invoiced”}:j));showToast(`${ids.length} job(s) invoiced`);};
+  const [month,setMonth]=useState("2025-01");
+  const [showMargins,setShowMargins]=useState(true);
+  const calcJob=(j)=>{
+    const matCharged=j.materials.reduce((s,m)=>s+m.charged,0);
+    const labour=j.labourHours*j.labourRate;
+    const subCharge=(j.subQuote?.calloutCharge||0)+(j.subQuote?.clientCharge||0);
+    const matCost=j.materials.reduce((s,m)=>s+m.unitCost*m.qty,0);
+    const labourCost=j.labourHours*(engineers.find(e=>e.id===j.engineerId)?.hourlyRate||0);
+    const subCost=(j.subQuote?.calloutSubCost||0)+(j.subQuote?.subCost||0);
+    const total=matCharged+labour+subCharge;
+    const cost=matCost+labourCost+subCost;
+    return {matCharged,labour,subCharge,total,cost,margin:total-cost};
+  };
+  const markInvoiced=(ids)=>{onUpdate(prev=>prev.map(j=>ids.includes(j.id)?{...j,invoiced:true,invoiceMonth:month,status:"invoiced"}:j));showToast(`${ids.length} job(s) invoiced`);};
 
-return (
-<div style={{padding:24,maxWidth:1100}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:16}}>
-<div><div style={{fontSize:20,fontWeight:900,color:”#f1f5f9”}}>Monthly Invoicing</div><div style={{fontSize:11,color:”#475569”,marginTop:2}}>Job-level breakdown · margins office-only</div></div>
-<div style={{display:“flex”,gap:8,alignItems:“center”}}>
-<div style={{display:“flex”,alignItems:“center”,gap:6,background:”#080f20”,border:“1px solid #1e293b”,borderRadius:7,padding:“6px 10px”}}>
-<span style={{fontSize:11,color:”#475569”}}>Margins</span>
-<button onClick={()=>setShowMargins(p=>!p)} style={{background:showMargins?”#1d4ed8”:”#1e293b”,border:“1px solid #334155”,color:”#e2e8f0”,borderRadius:20,padding:“3px 10px”,cursor:“pointer”,fontSize:11,fontWeight:700}}>{showMargins?“ON”:“OFF”}</button>
-</div>
-<Sel value={month} onChange={e=>setMonth(e.target.value)}><option value="2025-01">January 2025</option><option value="2024-12">December 2024</option></Sel>
-</div>
-</div>
-<div style={{fontSize:10,color:”#f97316”,background:”#431407”,border:“1px solid #f9731644”,borderRadius:6,padding:“7px 12px”,marginBottom:18}}>🔒 Cost and margin columns are office/admin only – not included in client invoice exports.</div>
-
-```
-  {clients.map(c=>{
-    const billable=jobs.filter(j=>j.clientId===c.id&&["complete","invoiced"].includes(j.status));
-    const uninvoiced=billable.filter(j=>!j.invoiced);
-    const grand=billable.reduce((s,j)=>{ const r=calcJob(j); return {total:s.total+r.total,cost:s.cost+r.cost,margin:s.margin+r.margin}; },{total:0,cost:0,margin:0});
-    return (
-      <Card key={c.id} style={{marginBottom:20,overflow:"hidden"}}>
-        <div style={{padding:"13px 16px",borderBottom:"1px solid #1e293b",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div><div style={{fontSize:14,fontWeight:800,color:"#f1f5f9"}}>{c.name}</div><div style={{fontSize:10,color:"#64748b"}}>{c.contact} · {c.email}</div></div>
-          <div style={{display:"flex",gap:10,alignItems:"center"}}>
-            {showMargins&&<div style={{textAlign:"right"}}><div style={{fontSize:9,color:"#475569"}}>MARGIN</div><ProfitTxt>£{fmt(grand.margin)}</ProfitTxt></div>}
-            <div style={{textAlign:"right"}}><div style={{fontSize:9,color:"#475569"}}>INVOICE</div><div style={{fontSize:20,fontWeight:900,color:"#38bdf8"}}>£{fmt(grand.total)}</div></div>
-            {uninvoiced.length>0&&<Btn style={{fontSize:11}} onClick={()=>markInvoiced(uninvoiced.map(j=>j.id))}>Mark All Invoiced</Btn>}
-            <Btn style={{background:"#064e3b",color:"#34d399",fontSize:11}}>Export</Btn>
+  return (
+    <div style={{padding:24,maxWidth:1100}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+        <div><div style={{fontSize:20,fontWeight:900,color:"#f1f5f9"}}>Monthly Invoicing</div><div style={{fontSize:11,color:"#475569",marginTop:2}}>Job-level breakdown · margins office-only</div></div>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:6,background:"#080f20",border:"1px solid #1e293b",borderRadius:7,padding:"6px 10px"}}>
+            <span style={{fontSize:11,color:"#475569"}}>Margins</span>
+            <button onClick={()=>setShowMargins(p=>!p)} style={{background:showMargins?"#1d4ed8":"#1e293b",border:"1px solid #334155",color:"#e2e8f0",borderRadius:20,padding:"3px 10px",cursor:"pointer",fontSize:11,fontWeight:700}}>{showMargins?"ON":"OFF"}</button>
           </div>
+          <Sel value={month} onChange={e=>setMonth(e.target.value)}><option value="2025-01">January 2025</option><option value="2024-12">December 2024</option></Sel>
         </div>
-        {billable.length===0&&<div style={{padding:16,fontSize:12,color:"#475569",fontStyle:"italic"}}>No completed jobs.</div>}
-        {billable.length>0&&(
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <thead><tr style={{background:"#030810",color:"#475569",fontSize:9,textTransform:"uppercase"}}>
-              {["Job","Description","Cat","Labour","Materials","Sub","Total",showMargins&&"Cost",showMargins&&"Profit","Status"].filter(Boolean).map(h=><th key={h} style={{padding:"7px 10px",textAlign:"left",borderBottom:"1px solid #1e293b",fontWeight:700}}>{h}</th>)}
-            </tr></thead>
-            <tbody>
-              {billable.map(j=>{
-                const r=calcJob(j);
-                return (
-                  <tr key={j.id} style={{borderBottom:"1px solid #080f20"}}>
-                    <td style={{padding:"7px 10px",color:"#818cf8",fontFamily:"monospace",fontSize:10}}>{j.id}</td>
-                    <td style={{padding:"7px 10px",color:"#e2e8f0",fontWeight:600,maxWidth:180,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{j.title}</td>
-                    <td style={{padding:"7px 10px",color:"#64748b"}}>{j.category}</td>
-                    <td style={{padding:"7px 10px"}}><ClientChargeTxt>£{fmt(r.labour)}</ClientChargeTxt></td>
-                    <td style={{padding:"7px 10px"}}><ClientChargeTxt>£{fmt(r.matCharged)}</ClientChargeTxt></td>
-                    <td style={{padding:"7px 10px"}}>{r.subCharge>0?<ClientChargeTxt>£{fmt(r.subCharge)}</ClientChargeTxt>:<span style={{color:"#334155"}}>—</span>}</td>
-                    <td style={{padding:"7px 10px",fontWeight:700,color:"#38bdf8"}}>£{fmt(r.total)}</td>
-                    {showMargins&&<td style={{padding:"7px 10px"}}><SubCostTxt>£{fmt(r.cost)}</SubCostTxt></td>}
-                    {showMargins&&<td style={{padding:"7px 10px"}}><ProfitTxt>£{fmt(r.margin)}</ProfitTxt></td>}
-                    <td style={{padding:"7px 10px"}}>{j.invoiced?<span style={{fontSize:9,color:"#34d399",fontWeight:800}}>✓ INVOICED</span>:<span style={{fontSize:9,color:"#f59e0b",fontWeight:800}}>PENDING</span>}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
-      </Card>
-    );
-  })}
-</div>
-```
+      </div>
+      <div style={{fontSize:10,color:"#f97316",background:"#431407",border:"1px solid #f9731644",borderRadius:6,padding:"7px 12px",marginBottom:18}}>🔒 Cost and margin columns are office/admin only – not included in client invoice exports.</div>
 
-);
+      {clients.map(c=>{
+        const billable=jobs.filter(j=>j.clientId===c.id&&["complete","invoiced"].includes(j.status));
+        const uninvoiced=billable.filter(j=>!j.invoiced);
+        const grand=billable.reduce((s,j)=>{ const r=calcJob(j); return {total:s.total+r.total,cost:s.cost+r.cost,margin:s.margin+r.margin}; },{total:0,cost:0,margin:0});
+        return (
+          <Card key={c.id} style={{marginBottom:20,overflow:"hidden"}}>
+            <div style={{padding:"13px 16px",borderBottom:"1px solid #1e293b",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div><div style={{fontSize:14,fontWeight:800,color:"#f1f5f9"}}>{c.name}</div><div style={{fontSize:10,color:"#64748b"}}>{c.contact} · {c.email}</div></div>
+              <div style={{display:"flex",gap:10,alignItems:"center"}}>
+                {showMargins&&<div style={{textAlign:"right"}}><div style={{fontSize:9,color:"#475569"}}>MARGIN</div><ProfitTxt>£{fmt(grand.margin)}</ProfitTxt></div>}
+                <div style={{textAlign:"right"}}><div style={{fontSize:9,color:"#475569"}}>INVOICE</div><div style={{fontSize:20,fontWeight:900,color:"#38bdf8"}}>£{fmt(grand.total)}</div></div>
+                {uninvoiced.length>0&&<Btn style={{fontSize:11}} onClick={()=>markInvoiced(uninvoiced.map(j=>j.id))}>Mark All Invoiced</Btn>}
+                <Btn style={{background:"#064e3b",color:"#34d399",fontSize:11}}>Export</Btn>
+              </div>
+            </div>
+            {billable.length===0&&<div style={{padding:16,fontSize:12,color:"#475569",fontStyle:"italic"}}>No completed jobs.</div>}
+            {billable.length>0&&(
+              <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+                <thead><tr style={{background:"#030810",color:"#475569",fontSize:9,textTransform:"uppercase"}}>
+                  {["Job","Description","Cat","Labour","Materials","Sub","Total",showMargins&&"Cost",showMargins&&"Profit","Status"].filter(Boolean).map(h=><th key={h} style={{padding:"7px 10px",textAlign:"left",borderBottom:"1px solid #1e293b",fontWeight:700}}>{h}</th>)}
+                </tr></thead>
+                <tbody>
+                  {billable.map(j=>{
+                    const r=calcJob(j);
+                    return (
+                      <tr key={j.id} style={{borderBottom:"1px solid #080f20"}}>
+                        <td style={{padding:"7px 10px",color:"#818cf8",fontFamily:"monospace",fontSize:10}}>{j.id}</td>
+                        <td style={{padding:"7px 10px",color:"#e2e8f0",fontWeight:600,maxWidth:180,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{j.title}</td>
+                        <td style={{padding:"7px 10px",color:"#64748b"}}>{j.category}</td>
+                        <td style={{padding:"7px 10px"}}><ClientChargeTxt>£{fmt(r.labour)}</ClientChargeTxt></td>
+                        <td style={{padding:"7px 10px"}}><ClientChargeTxt>£{fmt(r.matCharged)}</ClientChargeTxt></td>
+                        <td style={{padding:"7px 10px"}}>{r.subCharge>0?<ClientChargeTxt>£{fmt(r.subCharge)}</ClientChargeTxt>:<span style={{color:"#334155"}}>—</span>}</td>
+                        <td style={{padding:"7px 10px",fontWeight:700,color:"#38bdf8"}}>£{fmt(r.total)}</td>
+                        {showMargins&&<td style={{padding:"7px 10px"}}><SubCostTxt>£{fmt(r.cost)}</SubCostTxt></td>}
+                        {showMargins&&<td style={{padding:"7px 10px"}}><ProfitTxt>£{fmt(r.margin)}</ProfitTxt></td>}
+                        <td style={{padding:"7px 10px"}}>{j.invoiced?<span style={{fontSize:9,color:"#34d399",fontWeight:800}}>✓ INVOICED</span>:<span style={{fontSize:9,color:"#f59e0b",fontWeight:800}}>PENDING</span>}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            )}
+          </Card>
+        );
+      })}
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // NEW JOB MODAL
 // ══════════════════════════════════════════════════════════════════════════════
 function NewJobModal({clients, onClose, onSubmit}) {
-const [f,setF]=useState({title:””,clientId:””,siteKey:””,category:“HVAC”,priority:“P1”,location:””,description:””,type:“reactive”});
-const set=(k,v)=>setF(p=>({…p,[k]:v}));
-const clientSites=f.clientId?Object.entries(SITES_KV).filter(([k,s])=>s.clientId===f.clientId):[];
-const submit=()=>{
-if(!f.title||!f.clientId) return;
-const pri=PRIORITY_SLA[f.priority]||PRIORITY_SLA.P1;
-const site=SITES_KV[f.siteKey];
-onSubmit({id:`JOB-${Date.now().toString().slice(-4)}`,clientId:f.clientId,siteKey:f.siteKey||null,title:f.title,type:f.type,category:f.category,priority:f.priority,status:“pending”,engineerId:null,location:f.siteKey&&site?site.address:f.location,description:f.description,createdAt:new Date().toISOString(),responseDeadline:new Date(Date.now()+pri.respond*3600000).toISOString(),completionDeadline:new Date(Date.now()+pri.complete*3600000).toISOString(),labourHours:0,labourRate:35,labourCost:0,materials:[],notes:[],attachments:[],completedAt:null,invoiced:false,invoiceMonth:null,subcontractorId:null,subcontractorLog:[],subQuote:null,calloutCharged:false,quoteData:null,onHoldReason:null});
-};
-const iS={width:“100%”};
-return (
-<div style={{position:“fixed”,inset:0,background:”#000000cc”,zIndex:100,display:“flex”,alignItems:“center”,justifyContent:“center”,backdropFilter:“blur(4px)”}}>
-<Card style={{width:520,maxHeight:“90vh”,overflowY:“auto”,padding:22,border:“1px solid #1e3a5f”}}>
-<div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”,marginBottom:16}}>
-<div style={{fontSize:15,fontWeight:900,color:”#f1f5f9”}}>Log New Job</div>
-<button onClick={onClose} style={{background:”#1e293b”,border:“1px solid #334155”,color:”#94a3b8”,borderRadius:6,padding:“4px 10px”,cursor:“pointer”,fontSize:18}}>×</button>
-</div>
-<div style={{display:“grid”,gap:11}}>
-<div style={{display:“flex”,gap:6}}>{[“reactive”,“compliance”].map(t=><button key={t} onClick={()=>set(“type”,t)} style={{flex:1,background:f.type===t?”#1d4ed8”:”#1e293b”,color:f.type===t?”#fff”:”#64748b”,border:“1px solid #334155”,borderRadius:6,padding:“7px”,cursor:“pointer”,fontSize:12,fontWeight:700,textTransform:“capitalize”}}>{t===“reactive”?“⚡ Reactive”:“📋 Compliance”}</button>)}</div>
-<div><Lbl>Job Title</Lbl><Inp style={iS} value={f.title} onChange={e=>set(“title”,e.target.value)} placeholder=“Fault description…”/></div>
-<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:10}}>
-<div><Lbl>Client</Lbl><Sel style={iS} value={f.clientId} onChange={e=>{set(“clientId”,e.target.value);set(“siteKey”,””);}}><option value="">Select client…</option>{clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</Sel></div>
-<div><Lbl>Site</Lbl><Sel style={iS} value={f.siteKey} onChange={e=>set(“siteKey”,e.target.value)} disabled={!f.clientId}><option value="">Select site…</option>{clientSites.map(([k,s])=><option key={k} value={k}>{s.name}</option>)}</Sel></div>
-</div>
-<div style={{display:“grid”,gridTemplateColumns:“1fr 1fr”,gap:10}}>
-<div><Lbl>Category</Lbl><Sel style={iS} value={f.category} onChange={e=>set(“category”,e.target.value)}>{[“HVAC”,“Electrical”,“Plumbing”,“Gas”,“Fire Safety”,“Drainage”,“Roofing”,“Pest Control”,“Mechanical”,“Refrigeration”,“General”].map(c=><option key={c}>{c}</option>)}</Sel></div>
-<div><Lbl>Priority</Lbl><Sel style={iS} value={f.priority} onChange={e=>set(“priority”,e.target.value)}>{Object.entries(PRIORITY_SLA).map(([k,v])=><option key={k} value={k}>{k} – {v.desc}</option>)}</Sel></div>
-</div>
-{!f.siteKey&&<div><Lbl>Location (manual)</Lbl><Inp style={iS} value={f.location} onChange={e=>set(“location”,e.target.value)} placeholder=“Site address…”/></div>}
-<div><Lbl>Description</Lbl><TA style={iS} rows={3} value={f.description} onChange={e=>set(“description”,e.target.value)} placeholder=“Fault / works description…”/></div>
-{f.priority&&<div style={{background:”#080f20”,border:`1px solid ${(PRIORITY_SLA[f.priority] ? PRIORITY_SLA[f.priority].color : '#94a3b8')}44`,borderRadius:7,padding:“9px 12px”,fontSize:11,color:(PRIORITY_SLA[f.priority] ? PRIORITY_SLA[f.priority].color : ‘#94a3b8’)}}>⏱ {f.priority}: {(PRIORITY_SLA[f.priority] ? PRIORITY_SLA[f.priority].desc : ‘’)}</div>}
-<Btn style={{width:“100%”,padding:11,fontSize:13}} onClick={submit}>Log Job</Btn>
-</div>
-</Card>
-</div>
-);
+  const [f,setF]=useState({title:"",clientId:"",siteKey:"",category:"HVAC",priority:"P1",location:"",description:"",type:"reactive"});
+  const set=(k,v)=>setF(p=>({...p,[k]:v}));
+  const clientSites=f.clientId?Object.entries(SITES_KV).filter(([k,s])=>s.clientId===f.clientId):[];
+  const submit=()=>{
+    if(!f.title||!f.clientId) return;
+    const pri=PRIORITY_SLA[f.priority]||PRIORITY_SLA.P1;
+    const site=SITES_KV[f.siteKey];
+    onSubmit({id:`JOB-${Date.now().toString().slice(-4)}`,clientId:f.clientId,siteKey:f.siteKey||null,title:f.title,type:f.type,category:f.category,priority:f.priority,status:"pending",engineerId:null,location:f.siteKey&&site?site.address:f.location,description:f.description,createdAt:new Date().toISOString(),responseDeadline:new Date(Date.now()+pri.respond*3600000).toISOString(),completionDeadline:new Date(Date.now()+pri.complete*3600000).toISOString(),labourHours:0,labourRate:35,labourCost:0,materials:[],notes:[],attachments:[],completedAt:null,invoiced:false,invoiceMonth:null,subcontractorId:null,subcontractorLog:[],subQuote:null,calloutCharged:false,quoteData:null,onHoldReason:null});
+  };
+  const iS={width:"100%"};
+  return (
+    <div style={{position:"fixed",inset:0,background:"#000000cc",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}}>
+      <Card style={{width:520,maxHeight:"90vh",overflowY:"auto",padding:22,border:"1px solid #1e3a5f"}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+          <div style={{fontSize:15,fontWeight:900,color:"#f1f5f9"}}>Log New Job</div>
+          <button onClick={onClose} style={{background:"#1e293b",border:"1px solid #334155",color:"#94a3b8",borderRadius:6,padding:"4px 10px",cursor:"pointer",fontSize:18}}>×</button>
+        </div>
+        <div style={{display:"grid",gap:11}}>
+          <div style={{display:"flex",gap:6}}>{["reactive","compliance"].map(t=><button key={t} onClick={()=>set("type",t)} style={{flex:1,background:f.type===t?"#1d4ed8":"#1e293b",color:f.type===t?"#fff":"#64748b",border:"1px solid #334155",borderRadius:6,padding:"7px",cursor:"pointer",fontSize:12,fontWeight:700,textTransform:"capitalize"}}>{t==="reactive"?"⚡ Reactive":"📋 Compliance"}</button>)}</div>
+          <div><Lbl>Job Title</Lbl><Inp style={iS} value={f.title} onChange={e=>set("title",e.target.value)} placeholder="Fault description…"/></div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+            <div><Lbl>Client</Lbl><Sel style={iS} value={f.clientId} onChange={e=>{set("clientId",e.target.value);set("siteKey","");}}><option value="">Select client…</option>{clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</Sel></div>
+            <div><Lbl>Site</Lbl><Sel style={iS} value={f.siteKey} onChange={e=>set("siteKey",e.target.value)} disabled={!f.clientId}><option value="">Select site…</option>{clientSites.map(([k,s])=><option key={k} value={k}>{s.name}</option>)}</Sel></div>
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+            <div><Lbl>Category</Lbl><Sel style={iS} value={f.category} onChange={e=>set("category",e.target.value)}>{["HVAC","Electrical","Plumbing","Gas","Fire Safety","Drainage","Roofing","Pest Control","Mechanical","Refrigeration","General"].map(c=><option key={c}>{c}</option>)}</Sel></div>
+            <div><Lbl>Priority</Lbl><Sel style={iS} value={f.priority} onChange={e=>set("priority",e.target.value)}>{Object.entries(PRIORITY_SLA).map(([k,v])=><option key={k} value={k}>{k} – {v.desc}</option>)}</Sel></div>
+          </div>
+          {!f.siteKey&&<div><Lbl>Location (manual)</Lbl><Inp style={iS} value={f.location} onChange={e=>set("location",e.target.value)} placeholder="Site address…"/></div>}
+          <div><Lbl>Description</Lbl><TA style={iS} rows={3} value={f.description} onChange={e=>set("description",e.target.value)} placeholder="Fault / works description…"/></div>
+          {f.priority&&<div style={{background:"#080f20",border:`1px solid ${PRIORITY_SLA[f.priority]?.color}44`,borderRadius:7,padding:"9px 12px",fontSize:11,color:PRIORITY_SLA[f.priority]?.color}}>⏱ {f.priority}: {PRIORITY_SLA[f.priority]?.desc}</div>}
+          <Btn style={{width:"100%",padding:11,fontSize:13}} onClick={submit}>Log Job</Btn>
+        </div>
+      </Card>
+    </div>
+  );
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ROOT APP
 // ══════════════════════════════════════════════════════════════════════════════
 const TABS_CFG = [
-{id:“dashboard”,l:“Dashboard”,i:“◼”},
-{id:“jobs”,l:“All Jobs”,i:“≡”},
-{id:“compliance”,l:“Compliance”,i:“✓”},
-{id:“engineer”,l:“Engineer App”,i:“📱”},
-{id:“invoicing”,l:“Invoicing”,i:“£”},
-{id:“settings”,l:“Settings”,i:“⚙”},
+  {id:"dashboard",l:"Dashboard",i:"◼"},
+  {id:"jobs",l:"All Jobs",i:"≡"},
+  {id:"compliance",l:"Compliance",i:"✓"},
+  {id:"engineer",l:"Engineer App",i:"📱"},
+  {id:"invoicing",l:"Invoicing",i:"£"},
+  {id:"settings",l:"Settings",i:"⚙"},
 ];
 
-function FieldOpsPro() {
-const [tab, setTab] = useState(“jobs”);
-const [jobs, setJobs] = useState(INITIAL_JOBS);
-const [subs, setSubs] = useState(INIT_SUBCONTRACTORS);
-const [toast, setToast] = useState(null);
+export default function FieldOpsPro() {
+  const [tab, setTab] = useState("jobs");
+  const [jobs, setJobs] = useState(INITIAL_JOBS);
+  const [subs, setSubs] = useState(INIT_SUBCONTRACTORS);
+  const [toast, setToast] = useState(null);
 
-const showToast=(msg)=>{setToast(msg);setTimeout(()=>setToast(null),3000);};
-const updateJobs=(updater)=>setJobs(typeof updater===“function”?updater:updater);
+  const showToast=(msg)=>{setToast(msg);setTimeout(()=>setToast(null),3000);};
+  const updateJobs=(updater)=>setJobs(typeof updater==="function"?updater:updater);
 
-// Dashboard data
-const active=jobs.filter(j=>![“invoiced”].includes(j.status));
-const critical=jobs.filter(j=>j.priority===“P1”&&![“complete”,“invoiced”].includes(j.status));
-const breached=jobs.filter(j=>getSLAStatus(j)===“breached”);
-const subcontracted=jobs.filter(j=>[“subcontracted”,“sub-quoted”].includes(j.status));
-const invoiceable=jobs.filter(j=>j.status===“complete”);
+  // Dashboard data
+  const active=jobs.filter(j=>!["invoiced"].includes(j.status));
+  const critical=jobs.filter(j=>j.priority==="P1"&&!["complete","invoiced"].includes(j.status));
+  const breached=jobs.filter(j=>getSLAStatus(j)==="breached");
+  const subcontracted=jobs.filter(j=>["subcontracted","sub-quoted"].includes(j.status));
+  const invoiceable=jobs.filter(j=>j.status==="complete");
 
-return (
-<div style={{background:”#030810”,minHeight:“100vh”,color:”#e2e8f0”,fontFamily:”‘Syne’,‘DM Sans’,‘Segoe UI’,sans-serif”,display:“flex”,flexDirection:“column”,height:“100vh”,overflow:“hidden”}}>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet"/>
+  return (
+    <div style={{background:"#030810",minHeight:"100vh",color:"#e2e8f0",fontFamily:"'Syne','DM Sans','Segoe UI',sans-serif",display:"flex",flexDirection:"column",height:"100vh",overflow:"hidden"}}>
+      <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&display=swap" rel="stylesheet"/>
 
-```
-  {/* Top bar */}
-  <div style={{background:"#050d1a",borderBottom:"1px solid #1e293b",padding:"8px 18px",display:"flex",alignItems:"center",flexShrink:0}}>
-    <div style={{display:"flex",alignItems:"center",gap:10,marginRight:28}}>
-      <div style={{background:"linear-gradient(135deg,#1d4ed8,#6d28d9)",borderRadius:8,width:32,height:32,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15}}>⚡</div>
-      <div><div style={{fontSize:14,fontWeight:900,color:"#f1f5f9",letterSpacing:"-0.02em"}}>FieldOps Pro</div><div style={{fontSize:8,color:"#334155",letterSpacing:"0.1em",textTransform:"uppercase"}}>FM Management</div></div>
-    </div>
-    {TABS_CFG.map(t=>(
-      <button key={t.id} onClick={()=>setTab(t.id)} style={{background:"none",border:"none",borderBottom:`2px solid ${tab===t.id?"#38bdf8":"transparent"}`,color:tab===t.id?"#38bdf8":"#475569",padding:"8px 12px",cursor:"pointer",fontSize:11,fontWeight:700,whiteSpace:"nowrap"}}>
-        {t.i} {t.l}
-      </button>
-    ))}
-    <div style={{marginLeft:"auto",display:"flex",gap:14,alignItems:"center"}}>
-      {[{l:"P1 Active",v:critical.length,c:"#ef4444"},{l:"Breached",v:breached.length,c:"#f97316"},{l:"Subcontracted",v:subcontracted.length,c:"#c084fc"},{l:"To Invoice",v:invoiceable.length,c:"#34d399"}].map(s=>(
-        <div key={s.l} style={{textAlign:"center"}}>
-          <div style={{fontSize:14,fontWeight:900,color:s.c,lineHeight:1}}>{s.v}</div>
-          <div style={{fontSize:8,color:"#334155",textTransform:"uppercase",letterSpacing:"0.06em"}}>{s.l}</div>
+      {/* Top bar */}
+      <div style={{background:"#050d1a",borderBottom:"1px solid #1e293b",padding:"8px 18px",display:"flex",alignItems:"center",flexShrink:0}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginRight:28}}>
+          <div style={{background:"linear-gradient(135deg,#1d4ed8,#6d28d9)",borderRadius:8,width:32,height:32,display:"flex",alignItems:"center",justifyContent:"center",fontSize:15}}>⚡</div>
+          <div><div style={{fontSize:14,fontWeight:900,color:"#f1f5f9",letterSpacing:"-0.02em"}}>FieldOps Pro</div><div style={{fontSize:8,color:"#334155",letterSpacing:"0.1em",textTransform:"uppercase"}}>FM Management</div></div>
         </div>
-      ))}
-    </div>
-  </div>
-
-  {/* Email banner */}
-  <div style={{background:"#0a1628",borderBottom:"1px solid #1e3a5f",padding:"5px 18px",display:"flex",alignItems:"center",gap:10,flexShrink:0,fontSize:11}}>
-    <span style={{color:"#38bdf8",fontWeight:700}}>📧 Email Integration</span>
-    <span style={{color:"#334155"}}>Connect inbox to auto-import reactive jobs ·</span>
-    <span style={{color:"#38bdf8",cursor:"pointer"}} onClick={()=>setTab("settings")}>Configure in Settings →</span>
-    <div style={{marginLeft:"auto",color:"#334155",fontSize:10}}>3 unread · last checked 2m ago</div>
-  </div>
-
-  {/* Content */}
-  <div style={{flex:1,overflow:"auto"}}>
-    {tab==="dashboard"&&(
-      <div style={{padding:24}}>
-        <div style={{fontSize:22,fontWeight:900,color:"#f1f5f9",marginBottom:20}}>Operations Overview</div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:12,marginBottom:24}}>
-          {[{l:"Active Jobs",v:active.length,c:"#38bdf8"},{l:"P1 Critical",v:critical.length,c:"#ef4444"},{l:"SLA Breached",v:breached.length,c:"#f97316"},{l:"Subcontracted",v:subcontracted.length,c:"#c084fc"},{l:"Sub Quoted",v:jobs.filter(j=>j.status==="sub-quoted").length,c:"#818cf8"},{l:"Ready to Invoice",v:invoiceable.length,c:"#34d399"}].map(s=>(
-            <Card key={s.l} style={{padding:"14px 16px",cursor:"pointer",border:`1px solid ${s.c}22`}} onClick={()=>setTab("jobs")}>
-              <div style={{fontSize:28,fontWeight:900,color:s.c,fontFamily:"monospace",lineHeight:1}}>{s.v}</div>
-              <div style={{fontSize:10,color:"#94a3b8",marginTop:6,fontWeight:700}}>{s.l}</div>
-            </Card>
+        {TABS_CFG.map(t=>(
+          <button key={t.id} onClick={()=>setTab(t.id)} style={{background:"none",border:"none",borderBottom:`2px solid ${tab===t.id?"#38bdf8":"transparent"}`,color:tab===t.id?"#38bdf8":"#475569",padding:"8px 12px",cursor:"pointer",fontSize:11,fontWeight:700,whiteSpace:"nowrap"}}>
+            {t.i} {t.l}
+          </button>
+        ))}
+        <div style={{marginLeft:"auto",display:"flex",gap:14,alignItems:"center"}}>
+          {[{l:"P1 Active",v:critical.length,c:"#ef4444"},{l:"Breached",v:breached.length,c:"#f97316"},{l:"Subcontracted",v:subcontracted.length,c:"#c084fc"},{l:"To Invoice",v:invoiceable.length,c:"#34d399"}].map(s=>(
+            <div key={s.l} style={{textAlign:"center"}}>
+              <div style={{fontSize:14,fontWeight:900,color:s.c,lineHeight:1}}>{s.v}</div>
+              <div style={{fontSize:8,color:"#334155",textTransform:"uppercase",letterSpacing:"0.06em"}}>{s.l}</div>
+            </div>
           ))}
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
-          <Card style={{padding:16}}>
-            <div style={{fontSize:13,fontWeight:800,color:"#e2e8f0",marginBottom:12}}>Client Summary</div>
-            {CLIENTS.map(c=>{const cj=jobs.filter(j=>j.clientId===c.id&&!["invoiced"].includes(j.status));return(<div key={c.id} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid #1e293b"}}><div><div style={{fontSize:12,fontWeight:700,color:"#e2e8f0"}}>{c.name}</div><div style={{fontSize:10,color:"#475569"}}>{c.type}</div></div><div style={{textAlign:"right"}}><div style={{fontSize:13,fontWeight:700,color:"#38bdf8"}}>{cj.length} active</div></div></div>);})}
-          </Card>
-          <Card style={{padding:16}}>
-            <div style={{fontSize:13,fontWeight:800,color:"#e2e8f0",marginBottom:12}}>Subcontractor Activity</div>
-            {subs.map(s=>{const sj=jobs.filter(j=>j.subcontractorId===s.id);return(<div key={s.id} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid #1e293b"}}><div><div style={{fontSize:12,fontWeight:700,color:"#c084fc"}}>{s.name}</div><div style={{fontSize:10,color:"#475569"}}>{s.category} · {s.defaultMargin}% margin</div></div><div style={{textAlign:"right"}}><div style={{fontSize:12,fontWeight:700,color:"#e2e8f0"}}>{sj.length} jobs</div></div></div>);})}
-          </Card>
-        </div>
       </div>
-    )}
-    {tab==="jobs"&&<JobsTab jobs={jobs} clients={CLIENTS} engineers={ENGINEERS} subcontractors={subs} compliance={COMPLIANCE_SCHEDULE} onUpdate={updateJobs} showToast={showToast}/>}
-    {tab==="compliance"&&<ComplianceTab schedule={COMPLIANCE_SCHEDULE} clients={CLIENTS} jobs={jobs} onUpdate={updateJobs} showToast={showToast}/>}
-    {tab==="engineer"&&<EngineerApp jobs={jobs} clients={CLIENTS} engineers={ENGINEERS} compliance={COMPLIANCE_SCHEDULE} onUpdate={updateJobs} showToast={showToast}/>}
-    {tab==="invoicing"&&<InvoicingTab jobs={jobs} clients={CLIENTS} engineers={ENGINEERS} onUpdate={updateJobs} showToast={showToast}/>}
-    {tab==="settings"&&<SettingsTab subcontractors={subs} onSubsUpdate={setSubs} engineers={ENGINEERS} showToast={showToast}/>}
-  </div>
 
-  {toast&&<div style={{position:"fixed",bottom:20,right:20,background:"#1d4ed8",color:"#fff",borderRadius:8,padding:"10px 18px",fontSize:13,fontWeight:700,boxShadow:"0 4px 24px #00000080",zIndex:300}}>✓ {toast}</div>}
-</div>
-```
+      {/* Email banner */}
+      <div style={{background:"#0a1628",borderBottom:"1px solid #1e3a5f",padding:"5px 18px",display:"flex",alignItems:"center",gap:10,flexShrink:0,fontSize:11}}>
+        <span style={{color:"#38bdf8",fontWeight:700}}>📧 Email Integration</span>
+        <span style={{color:"#334155"}}>Connect inbox to auto-import reactive jobs ·</span>
+        <span style={{color:"#38bdf8",cursor:"pointer"}} onClick={()=>setTab("settings")}>Configure in Settings →</span>
+        <div style={{marginLeft:"auto",color:"#334155",fontSize:10}}>3 unread · last checked 2m ago</div>
+      </div>
 
-);
+      {/* Content */}
+      <div style={{flex:1,overflow:"auto"}}>
+        {tab==="dashboard"&&(
+          <div style={{padding:24}}>
+            <div style={{fontSize:22,fontWeight:900,color:"#f1f5f9",marginBottom:20}}>Operations Overview</div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(160px,1fr))",gap:12,marginBottom:24}}>
+              {[{l:"Active Jobs",v:active.length,c:"#38bdf8"},{l:"P1 Critical",v:critical.length,c:"#ef4444"},{l:"SLA Breached",v:breached.length,c:"#f97316"},{l:"Subcontracted",v:subcontracted.length,c:"#c084fc"},{l:"Sub Quoted",v:jobs.filter(j=>j.status==="sub-quoted").length,c:"#818cf8"},{l:"Ready to Invoice",v:invoiceable.length,c:"#34d399"}].map(s=>(
+                <Card key={s.l} style={{padding:"14px 16px",cursor:"pointer",border:`1px solid ${s.c}22`}} onClick={()=>setTab("jobs")}>
+                  <div style={{fontSize:28,fontWeight:900,color:s.c,fontFamily:"monospace",lineHeight:1}}>{s.v}</div>
+                  <div style={{fontSize:10,color:"#94a3b8",marginTop:6,fontWeight:700}}>{s.l}</div>
+                </Card>
+              ))}
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+              <Card style={{padding:16}}>
+                <div style={{fontSize:13,fontWeight:800,color:"#e2e8f0",marginBottom:12}}>Client Summary</div>
+                {CLIENTS.map(c=>{const cj=jobs.filter(j=>j.clientId===c.id&&!["invoiced"].includes(j.status));return(<div key={c.id} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid #1e293b"}}><div><div style={{fontSize:12,fontWeight:700,color:"#e2e8f0"}}>{c.name}</div><div style={{fontSize:10,color:"#475569"}}>{c.type}</div></div><div style={{textAlign:"right"}}><div style={{fontSize:13,fontWeight:700,color:"#38bdf8"}}>{cj.length} active</div></div></div>);})}
+              </Card>
+              <Card style={{padding:16}}>
+                <div style={{fontSize:13,fontWeight:800,color:"#e2e8f0",marginBottom:12}}>Subcontractor Activity</div>
+                {subs.map(s=>{const sj=jobs.filter(j=>j.subcontractorId===s.id);return(<div key={s.id} style={{display:"flex",justifyContent:"space-between",padding:"9px 0",borderBottom:"1px solid #1e293b"}}><div><div style={{fontSize:12,fontWeight:700,color:"#c084fc"}}>{s.name}</div><div style={{fontSize:10,color:"#475569"}}>{s.category} · {s.defaultMargin}% margin</div></div><div style={{textAlign:"right"}}><div style={{fontSize:12,fontWeight:700,color:"#e2e8f0"}}>{sj.length} jobs</div></div></div>);})}
+              </Card>
+            </div>
+          </div>
+        )}
+        {tab==="jobs"&&<JobsTab jobs={jobs} clients={CLIENTS} engineers={ENGINEERS} subcontractors={subs} compliance={COMPLIANCE_SCHEDULE} onUpdate={updateJobs} showToast={showToast}/>}
+        {tab==="compliance"&&<ComplianceTab schedule={COMPLIANCE_SCHEDULE} clients={CLIENTS} jobs={jobs} onUpdate={updateJobs} showToast={showToast}/>}
+        {tab==="engineer"&&<EngineerApp jobs={jobs} clients={CLIENTS} engineers={ENGINEERS} compliance={COMPLIANCE_SCHEDULE} onUpdate={updateJobs} showToast={showToast}/>}
+        {tab==="invoicing"&&<InvoicingTab jobs={jobs} clients={CLIENTS} engineers={ENGINEERS} onUpdate={updateJobs} showToast={showToast}/>}
+        {tab==="settings"&&<SettingsTab subcontractors={subs} onSubsUpdate={setSubs} engineers={ENGINEERS} showToast={showToast}/>}
+      </div>
+
+      {toast&&<div style={{position:"fixed",bottom:20,right:20,background:"#1d4ed8",color:"#fff",borderRadius:8,padding:"10px 18px",fontSize:13,fontWeight:700,boxShadow:"0 4px 24px #00000080",zIndex:300}}>✓ {toast}</div>}
+    </div>
+  );
 }
-
-```
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(FieldOpsPro));
-```
-
-  </script>
-</body>
-</html>
