@@ -12,7 +12,10 @@
     .card { background: #080f20; border: 1px solid #1e293b; border-radius: 12px; }
     .status-badge { padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
     .modal { animation: modalPop 0.2s ease-out forwards; }
-    @keyframes modalPop { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.95) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
   </style>
@@ -29,7 +32,7 @@
     </div>
 
     <div class="flex gap-8 text-sm font-medium" id="tabs">
-      <a href="#" data-tab="dashboard" class="tab-link active text-blue-400">Dashboard</a>
+      <a href="#" data-tab="dashboard" class="tab-link text-blue-400">Dashboard</a>
       <a href="#" data-tab="jobs" class="tab-link">All Jobs</a>
       <a href="#" data-tab="settings" class="tab-link">Settings</a>
     </div>
@@ -62,21 +65,36 @@
     <div id="settings" class="tab-content">
       <div class="max-w-6xl mx-auto">
         <h1 class="syne text-3xl font-black mb-8">Master Data</h1>
-        <div class="grid grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div class="card p-6">
-            <h2 class="font-semibold mb-4 flex justify-between">Clients <button onclick="addMasterItem('clients')" class="text-blue-400 text-sm">+ Add</button></h2>
+            <h2 class="font-semibold mb-4 flex justify-between">
+              Clients
+              <button onclick="addMasterItem('clients')" class="text-blue-400 text-sm">+ Add</button>
+            </h2>
             <div id="clients-list" class="space-y-3"></div>
           </div>
+
           <div class="card p-6">
-            <h2 class="font-semibold mb-4 flex justify-between">Subcontractors <button onclick="addMasterItem('subcontractors')" class="text-blue-400 text-sm">+ Add</button></h2>
+            <h2 class="font-semibold mb-4 flex justify-between">
+              Subcontractors
+              <button onclick="addMasterItem('subcontractors')" class="text-blue-400 text-sm">+ Add</button>
+            </h2>
             <div id="subcontractors-list" class="space-y-3"></div>
           </div>
+
           <div class="card p-6">
-            <h2 class="font-semibold mb-4 flex justify-between">Engineers <button onclick="addMasterItem('engineers')" class="text-blue-400 text-sm">+ Add</button></h2>
+            <h2 class="font-semibold mb-4 flex justify-between">
+              Engineers
+              <button onclick="addMasterItem('engineers')" class="text-blue-400 text-sm">+ Add</button>
+            </h2>
             <div id="engineers-list" class="space-y-3"></div>
           </div>
+
           <div class="card p-6">
-            <h2 class="font-semibold mb-4 flex justify-between">Vehicles <button onclick="addMasterItem('vehicles')" class="text-blue-400 text-sm">+ Add</button></h2>
+            <h2 class="font-semibold mb-4 flex justify-between">
+              Vehicles
+              <button onclick="addMasterItem('vehicles')" class="text-blue-400 text-sm">+ Add</button>
+            </h2>
             <div id="vehicles-list" class="space-y-3"></div>
           </div>
         </div>
@@ -84,8 +102,8 @@
     </div>
   </div>
 
-  <!-- Rich Job Detail Modal (with pills, engineer, SLA, etc.) -->
-  <div id="job-detail-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+  <!-- Job Detail Modal -->
+  <div id="job-detail-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
     <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-4xl max-h-[92vh] overflow-hidden flex flex-col">
       <div class="border-b border-slate-700 px-8 py-5 flex items-center justify-between">
         <div>
@@ -97,13 +115,13 @@
       <div class="flex-1 overflow-auto p-8" id="job-modal-body"></div>
       <div class="border-t border-slate-700 px-8 py-5 flex justify-end gap-3">
         <button onclick="closeJobModal()" class="px-6 py-2.5 text-slate-400">Close</button>
-        <button onclick="dispatchToSub()" class="bg-purple-600 px-6 py-2.5 rounded-xl">Dispatch to Subcontractor</button>
+        <button onclick="dispatchToSub()" class="bg-purple-600 hover:bg-purple-700 px-6 py-2.5 rounded-xl">Dispatch to Subcontractor</button>
       </div>
     </div>
   </div>
 
   <!-- New Job Modal -->
-  <div id="new-job-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+  <div id="new-job-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
     <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-lg p-8">
       <h3 class="text-xl font-semibold mb-6">New Job</h3>
       <div class="space-y-4">
@@ -111,26 +129,29 @@
         <select id="job-client" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4"></select>
         <select id="job-priority" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
           <option value="P1">P1 - Emergency</option>
-          <option value="P2">P2 - High</option>
+          <option value="P2" selected>P2 - High</option>
           <option value="P3">P3 - Normal</option>
+          <option value="P4">P4 - Low</option>
+          <option value="P5">P5 - Planned</option>
         </select>
+        <input id="job-location" placeholder="Location" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
         <textarea id="job-description" rows="4" placeholder="Description" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4"></textarea>
       </div>
       <div class="flex gap-3 mt-8">
         <button onclick="closeNewJobModal()" class="flex-1 py-3 text-slate-400">Cancel</button>
-        <button onclick="createNewJob()" class="flex-1 py-3 bg-blue-600 rounded-xl">Create Job</button>
+        <button onclick="createNewJob()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl">Create Job</button>
       </div>
     </div>
   </div>
 
   <!-- Master Data Modal -->
-  <div id="master-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+  <div id="master-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
     <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-md p-8">
       <h3 id="master-modal-title" class="text-xl font-semibold mb-6"></h3>
       <div id="master-modal-form" class="space-y-4"></div>
       <div class="flex gap-3 mt-8">
         <button onclick="closeMasterModal()" class="flex-1 py-3 text-slate-400">Cancel</button>
-        <button onclick="saveMasterItem()" class="flex-1 py-3 bg-blue-600 rounded-xl">Save</button>
+        <button onclick="saveMasterItem()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl">Save</button>
       </div>
     </div>
   </div>
@@ -147,60 +168,152 @@
     let currentMasterId = null;
     let currentJob = null;
     let jobs = [];
+    let clientsCache = [];
 
     async function apiRequest(endpoint, method = "GET", body = null) {
-      const opts = { method, headers: {"Content-Type": "application/json"} };
+      const opts = {
+        method,
+        headers: { "Content-Type": "application/json" }
+      };
+
       if (body) opts.body = JSON.stringify(body);
+
       const res = await fetch(API_BASE + endpoint, opts);
-      if (!res.ok) throw new Error(`API error ${res.status}`);
-      return res.json();
+
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`API error ${res.status}: ${text}`);
+      }
+
+      const contentType = res.headers.get("content-type") || "";
+      if (contentType.includes("application/json")) return res.json();
+      return res.text();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      document.getElementById("toast-text").textContent = msg;
+      t.classList.remove("hidden");
+      setTimeout(() => t.classList.add("hidden"), 3000);
+    }
+
+    function getClientName(clientId) {
+      const match = clientsCache.find(c => c.id === clientId);
+      return match ? match.name : (clientId || "Unknown client");
+    }
+
+    function getPriorityClass(priority) {
+      switch (priority) {
+        case "P1": return "bg-red-900 text-red-300";
+        case "P2": return "bg-orange-900 text-orange-300";
+        case "P3": return "bg-amber-900 text-amber-300";
+        case "P4": return "bg-blue-900 text-blue-300";
+        case "P5": return "bg-slate-700 text-slate-200";
+        default: return "bg-slate-800 text-slate-300";
+      }
+    }
+
+    async function loadJobs() {
+      try {
+        const data = await apiRequest("/api/jobs");
+        jobs = Array.isArray(data) ? data : [];
+        jobs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        renderDashboard();
+        renderAllJobs();
+      } catch (e) {
+        console.error("Failed to load jobs:", e);
+        jobs = [];
+        renderDashboard();
+        renderAllJobs();
+        showToast("Failed to load jobs");
+      }
+    }
+
+    async function loadClientsCache() {
+      try {
+        const data = await apiRequest("/api/clients");
+        clientsCache = Array.isArray(data) ? data : [];
+      } catch (e) {
+        clientsCache = [];
+      }
     }
 
     async function renderSettings() {
-      const clients = await apiRequest("/api/clients").catch(() => []);
-      const subs = await apiRequest("/api/subcontractors").catch(() => []);
-      const engineers = await apiRequest("/api/engineers").catch(() => []);
-      const vehicles = await apiRequest("/api/vehicles").catch(() => []);
+      const [clients, subs, engineers, vehicles] = await Promise.all([
+        apiRequest("/api/clients").catch(() => []),
+        apiRequest("/api/subcontractors").catch(() => []),
+        apiRequest("/api/engineers").catch(() => []),
+        apiRequest("/api/vehicles").catch(() => [])
+      ]);
 
-      document.getElementById("clients-list").innerHTML = clients.map(c => `
-        <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${c.name}</div></div>
-          <div class="flex gap-3">
-            <button onclick="editMasterItem('clients', ${JSON.stringify(c)})" class="text-blue-400">Edit</button>
-            <button onclick="deleteMasterItem('clients', '${c.id}')" class="text-red-400">Delete</button>
-          </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 py-8 text-center">No clients yet</p>';
+      clientsCache = Array.isArray(clients) ? clients : [];
 
-      document.getElementById("subcontractors-list").innerHTML = subs.map(s => `
-        <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${s.name}</div></div>
-          <div class="flex gap-3">
-            <button onclick="editMasterItem('subcontractors', ${JSON.stringify(s)})" class="text-blue-400">Edit</button>
-            <button onclick="deleteMasterItem('subcontractors', '${s.id}')" class="text-red-400">Delete</button>
+      document.getElementById("clients-list").innerHTML = clientsCache.length
+        ? clientsCache.map(c => `
+          <div class="flex justify-between gap-4 bg-[#0a1628] p-4 rounded-xl">
+            <div>
+              <div class="font-medium">${escapeHtml(c.name)}</div>
+              <div class="text-xs text-slate-400">${escapeHtml(c.email || "")}</div>
+            </div>
+            <div class="flex gap-3 shrink-0">
+              <button onclick="editMasterItem('clients', '${c.id}')" class="text-blue-400">Edit</button>
+              <button onclick="deleteMasterItem('clients', '${c.id}')" class="text-red-400">Delete</button>
+            </div>
           </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 py-8 text-center">No subcontractors yet</p>';
+        `).join("")
+        : '<p class="text-slate-400 py-8 text-center">No clients yet</p>';
 
-      document.getElementById("engineers-list").innerHTML = engineers.map(e => `
-        <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${e.name}</div></div>
-          <div class="flex gap-3">
-            <button onclick="editMasterItem('engineers', ${JSON.stringify(e)})" class="text-blue-400">Edit</button>
-            <button onclick="deleteMasterItem('engineers', '${e.id}')" class="text-red-400">Delete</button>
+      document.getElementById("subcontractors-list").innerHTML = Array.isArray(subs) && subs.length
+        ? subs.map(s => `
+          <div class="flex justify-between gap-4 bg-[#0a1628] p-4 rounded-xl">
+            <div>
+              <div class="font-medium">${escapeHtml(s.name)}</div>
+              <div class="text-xs text-slate-400">${escapeHtml(s.category || "")}</div>
+            </div>
+            <div class="flex gap-3 shrink-0">
+              <button onclick="editMasterItem('subcontractors', '${s.id}')" class="text-blue-400">Edit</button>
+              <button onclick="deleteMasterItem('subcontractors', '${s.id}')" class="text-red-400">Delete</button>
+            </div>
           </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 py-8 text-center">No engineers yet</p>';
+        `).join("")
+        : '<p class="text-slate-400 py-8 text-center">No subcontractors yet</p>';
 
-      document.getElementById("vehicles-list").innerHTML = vehicles.map(v => `
-        <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${v.name || v.registration}</div></div>
-          <div class="flex gap-3">
-            <button onclick="editMasterItem('vehicles', ${JSON.stringify(v)})" class="text-blue-400">Edit</button>
-            <button onclick="deleteMasterItem('vehicles', '${v.id}')" class="text-red-400">Delete</button>
+      document.getElementById("engineers-list").innerHTML = Array.isArray(engineers) && engineers.length
+        ? engineers.map(e => `
+          <div class="flex justify-between gap-4 bg-[#0a1628] p-4 rounded-xl">
+            <div><div class="font-medium">${escapeHtml(e.name)}</div></div>
+            <div class="flex gap-3 shrink-0">
+              <button onclick="editMasterItem('engineers', '${e.id}')" class="text-blue-400">Edit</button>
+              <button onclick="deleteMasterItem('engineers', '${e.id}')" class="text-red-400">Delete</button>
+            </div>
           </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 py-8 text-center">No vehicles yet</p>';
+        `).join("")
+        : '<p class="text-slate-400 py-8 text-center">No engineers yet</p>';
+
+      document.getElementById("vehicles-list").innerHTML = Array.isArray(vehicles) && vehicles.length
+        ? vehicles.map(v => `
+          <div class="flex justify-between gap-4 bg-[#0a1628] p-4 rounded-xl">
+            <div><div class="font-medium">${escapeHtml(v.name || v.registration || "")}</div></div>
+            <div class="flex gap-3 shrink-0">
+              <button onclick="editMasterItem('vehicles', '${v.id}')" class="text-blue-400">Edit</button>
+              <button onclick="deleteMasterItem('vehicles', '${v.id}')" class="text-red-400">Delete</button>
+            </div>
+          </div>
+        `).join("")
+        : '<p class="text-slate-400 py-8 text-center">No vehicles yet</p>';
+    }
+
+    async function getMasterItem(coll, id) {
+      return apiRequest(`/api/${coll}/${id}`);
     }
 
     function addMasterItem(coll) {
@@ -209,36 +322,43 @@
       showMasterModal(coll, {});
     }
 
-    function editMasterItem(coll, item) {
-      currentMasterCollection = coll;
-      currentMasterId = item.id;
-      showMasterModal(coll, item);
+    async function editMasterItem(coll, id) {
+      try {
+        currentMasterCollection = coll;
+        currentMasterId = id;
+        const item = await getMasterItem(coll, id);
+        showMasterModal(coll, item || {});
+      } catch (e) {
+        console.error(e);
+        showToast("Failed to load item");
+      }
     }
 
     function showMasterModal(coll, item) {
-      let title = item.id ? `Edit ${coll}` : `Add ${coll}`;
+      const title = item.id ? `Edit ${coll}` : `Add ${coll}`;
       document.getElementById("master-modal-title").textContent = title;
 
-      let formHTML = '';
-      if (coll === 'clients') {
+      let formHTML = "";
+
+      if (coll === "clients") {
         formHTML = `
-          <input id="m-name" value="${item.name||''}" placeholder="Client Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-          <input id="m-contact" value="${item.contact||''}" placeholder="Contact" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-          <input id="m-email" value="${item.email||''}" placeholder="Email" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-name" value="${escapeHtml(item.name || "")}" placeholder="Client Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-contact" value="${escapeHtml(item.contact || "")}" placeholder="Contact" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-email" value="${escapeHtml(item.email || "")}" placeholder="Email" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
         `;
-      } else if (coll === 'subcontractors') {
+      } else if (coll === "subcontractors") {
         formHTML = `
-          <input id="m-name" value="${item.name||''}" placeholder="Company Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-          <input id="m-category" value="${item.category||''}" placeholder="Category" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-          <input id="m-email" value="${item.email||''}" placeholder="Email" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-name" value="${escapeHtml(item.name || "")}" placeholder="Company Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-category" value="${escapeHtml(item.category || "")}" placeholder="Category" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-email" value="${escapeHtml(item.email || "")}" placeholder="Email" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
         `;
-      } else if (coll === 'engineers') {
+      } else if (coll === "engineers") {
         formHTML = `
-          <input id="m-name" value="${item.name||''}" placeholder="Engineer Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-name" value="${escapeHtml(item.name || "")}" placeholder="Engineer Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
         `;
-      } else if (coll === 'vehicles') {
+      } else if (coll === "vehicles") {
         formHTML = `
-          <input id="m-name" value="${item.name||''}" placeholder="Vehicle Name/Reg" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-name" value="${escapeHtml(item.name || "")}" placeholder="Vehicle Name / Reg" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
         `;
       }
 
@@ -252,65 +372,90 @@
 
     async function saveMasterItem() {
       const coll = currentMasterCollection;
-      const data = { id: currentMasterId };
+      const data = {};
+
+      if (currentMasterId) data.id = currentMasterId;
 
       document.querySelectorAll("#master-modal-form input").forEach(input => {
-        data[input.id.replace('m-', '')] = input.value.trim();
+        data[input.id.replace("m-", "")] = input.value.trim();
       });
 
       try {
-        await saveItem(coll, data);
+        if (data.id) {
+          await apiRequest(`/api/${coll}/${data.id}`, "PUT", data);
+        } else {
+          await apiRequest(`/api/${coll}`, "POST", data);
+        }
+
         showToast("Saved successfully");
         closeMasterModal();
-        renderSettings();
+        await renderSettings();
       } catch (e) {
+        console.error(e);
         showToast("Save failed");
       }
     }
 
-    async function saveItem(coll, item) {
-      if (item.id) {
-        await apiRequest(`/api/${coll}/${item.id}`, "PUT", item);
-      } else {
-        await apiRequest(`/api/${coll}`, "POST", item);
+    async function deleteMasterItem(coll, id) {
+      if (!confirm("Delete this item?")) return;
+
+      try {
+        await apiRequest(`/api/${coll}/${id}`, "DELETE");
+        showToast("Deleted");
+        await renderSettings();
+      } catch (e) {
+        console.error(e);
+        showToast("Delete failed");
       }
     }
 
-    async function deleteItem(coll, id) {
-      await apiRequest(`/api/${coll}/${id}`, "DELETE");
+    function openJobModalById(jobId) {
+      const job = jobs.find(j => j.id === jobId);
+      if (!job) return;
+      openJobModal(job);
     }
 
-    function deleteMasterItem(coll, id) {
-      if (confirm("Delete?")) {
-        deleteItem(coll, id).then(() => {
-          showToast("Deleted");
-          renderSettings();
-        });
-      }
-    }
-
-    // Rich Job Detail Modal
     function openJobModal(job) {
       currentJob = job;
-      document.getElementById("modal-job-id").textContent = job.id;
-      document.getElementById("modal-title").textContent = job.title;
+      document.getElementById("modal-job-id").textContent = job.id || "";
+      document.getElementById("modal-title").textContent = job.title || "Untitled Job";
 
       const body = `
-        <div class="grid grid-cols-2 gap-8">
+        <div class="grid md:grid-cols-2 gap-8">
           <div>
-            <div class="flex gap-3 mb-6">
-              <span class="status-badge bg-amber-900 text-amber-400">P${job.priority}</span>
-              <span class="status-badge bg-blue-900 text-blue-400">In Progress</span>
+            <div class="flex gap-3 mb-6 flex-wrap">
+              <span class="status-badge ${getPriorityClass(job.priority)}">${escapeHtml(job.priority || "N/A")}</span>
+              <span class="status-badge bg-blue-900 text-blue-300">${escapeHtml(job.status || "pending")}</span>
             </div>
+
             <div class="space-y-6">
-              <div><div class="text-xs text-slate-400">CLIENT</div><div class="font-medium">${job.clientId}</div></div>
-              <div><div class="text-xs text-slate-400">LOCATION</div><div class="text-sm">${job.location || 'Not assigned'}</div></div>
-              <div><div class="text-xs text-slate-400">ENGINEER</div><div class="font-medium">${job.engineer || 'Unassigned'}</div></div>
+              <div>
+                <div class="text-xs text-slate-400">CLIENT</div>
+                <div class="font-medium">${escapeHtml(getClientName(job.clientId))}</div>
+              </div>
+
+              <div>
+                <div class="text-xs text-slate-400">LOCATION</div>
+                <div class="text-sm">${escapeHtml(job.location || "Not assigned")}</div>
+              </div>
+
+              <div>
+                <div class="text-xs text-slate-400">ENGINEER</div>
+                <div class="font-medium">${escapeHtml(job.engineer || "Unassigned")}</div>
+              </div>
+
+              <div>
+                <div class="text-xs text-slate-400">CREATED</div>
+                <div class="text-sm">${escapeHtml(job.createdAt ? new Date(job.createdAt).toLocaleString() : "Unknown")}</div>
+              </div>
             </div>
           </div>
+
           <div>
             <div class="text-xs text-slate-400 mb-2">DESCRIPTION</div>
-            <div class="bg-[#0a1628] p-5 rounded-xl border border-slate-700 text-sm">${job.description}</div>
+            <div class="bg-[#0a1628] p-5 rounded-xl border border-slate-700 text-sm whitespace-pre-wrap">
+              ${escapeHtml(job.description || "No description")}
+            </div>
           </div>
         </div>
       `;
@@ -323,92 +468,168 @@
       document.getElementById("job-detail-modal").classList.add("hidden");
     }
 
-    // New Job Modal
     async function openNewJobModal() {
       document.getElementById("new-job-modal").classList.remove("hidden");
-      const clients = await apiRequest("/api/clients").catch(() => []);
+
+      try {
+        const clients = await apiRequest("/api/clients");
+        clientsCache = Array.isArray(clients) ? clients : [];
+      } catch (e) {
+        clientsCache = [];
+      }
+
       const select = document.getElementById("job-client");
-      select.innerHTML = '<option value="">Select Client...</option>' + clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+      select.innerHTML =
+        '<option value="">Select Client...</option>' +
+        clientsCache.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join("");
     }
 
     function closeNewJobModal() {
       document.getElementById("new-job-modal").classList.add("hidden");
+      document.getElementById("job-title").value = "";
+      document.getElementById("job-client").value = "";
+      document.getElementById("job-priority").value = "P2";
+      document.getElementById("job-location").value = "";
+      document.getElementById("job-description").value = "";
     }
 
-    function createNewJob() {
+    async function createNewJob() {
       const title = document.getElementById("job-title").value.trim();
       const clientId = document.getElementById("job-client").value;
-      if (!title || !clientId) return showToast("Title and client required");
+      const priority = document.getElementById("job-priority").value;
+      const location = document.getElementById("job-location").value.trim();
+      const description = document.getElementById("job-description").value.trim();
+
+      if (!title || !clientId) {
+        showToast("Title and client required");
+        return;
+      }
 
       const newJob = {
-        id: "JOB-" + Date.now().toString().slice(-6),
         title,
         clientId,
-        priority: "P2",
+        priority,
         status: "pending",
-        description: document.getElementById("job-description").value || "No description",
+        description: description || "No description",
         createdAt: new Date().toISOString(),
-        completionDeadline: new Date(Date.now() + 7*86400000).toISOString(),
-        location: "To be assigned",
+        completionDeadline: new Date(Date.now() + 7 * 86400000).toISOString(),
+        location: location || "To be assigned",
         engineer: "Unassigned"
       };
 
-      jobs.unshift(newJob);
-      showToast("Job created");
-      closeNewJobModal();
-      renderAllJobs();
-      renderDashboard();
+      try {
+        const saved = await apiRequest("/api/jobs", "POST", newJob);
+        jobs.unshift(saved);
+        jobs.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        renderDashboard();
+        renderAllJobs();
+        closeNewJobModal();
+        showToast("Job created");
+      } catch (e) {
+        console.error(e);
+        showToast("Failed to create job");
+      }
     }
 
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      document.getElementById('toast-text').textContent = msg;
-      t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), 3000);
+    function dispatchToSub() {
+      if (!currentJob) {
+        showToast("No job selected");
+        return;
+      }
+      showToast(`Dispatch placeholder for ${currentJob.id}`);
     }
 
     function switchTab(tab) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.getElementById(tab).classList.add('active');
-      document.querySelectorAll('.tab-link').forEach(l => l.classList.toggle('text-blue-400', l.getAttribute('data-tab') === tab));
-      if (tab === 'settings') renderSettings();
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+      document.getElementById(tab).classList.add("active");
+
+      document.querySelectorAll(".tab-link").forEach(link => {
+        const isActive = link.getAttribute("data-tab") === tab;
+        link.classList.toggle("text-blue-400", isActive);
+        link.classList.toggle("text-slate-300", !isActive);
+      });
+
+      if (tab === "settings") renderSettings();
     }
 
     function renderDashboard() {
+      const activeJobs = jobs.filter(j => (j.status || "").toLowerCase() !== "completed").length;
+      const p1Jobs = jobs.filter(j => j.priority === "P1").length;
+      const pendingJobs = jobs.filter(j => (j.status || "").toLowerCase() === "pending").length;
+      const inProgressJobs = jobs.filter(j => (j.status || "").toLowerCase() === "in progress").length;
+
       document.getElementById("stats").innerHTML = `
-        <div class="card p-6"><div class="text-5xl font-bold text-blue-400">${jobs.length}</div><div class="text-slate-400">Active Jobs</div></div>
-      `;
-      document.getElementById("recent-jobs").innerHTML = jobs.slice(0,4).map(j => `
-        <div onclick="openJobModal(${JSON.stringify(j)})" class="card p-6 hover:border-blue-500 cursor-pointer">
-          <div class="font-medium">${j.title}</div>
-          <div class="text-xs text-slate-400">${j.description.substring(0,60)}...</div>
+        <div class="card p-6">
+          <div class="text-5xl font-bold text-blue-400">${activeJobs}</div>
+          <div class="text-slate-400">Active Jobs</div>
         </div>
-      `).join('');
+        <div class="card p-6">
+          <div class="text-5xl font-bold text-red-400">${p1Jobs}</div>
+          <div class="text-slate-400">P1 Jobs</div>
+        </div>
+        <div class="card p-6">
+          <div class="text-5xl font-bold text-amber-400">${pendingJobs}</div>
+          <div class="text-slate-400">Pending</div>
+        </div>
+        <div class="card p-6">
+          <div class="text-5xl font-bold text-violet-400">${inProgressJobs}</div>
+          <div class="text-slate-400">In Progress</div>
+        </div>
+      `;
+
+      const recent = jobs.slice(0, 4);
+
+      document.getElementById("recent-jobs").innerHTML = recent.length
+        ? recent.map(j => `
+          <button onclick="openJobModalById('${j.id}')" class="card p-6 hover:border-blue-500 cursor-pointer text-left">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <div class="font-medium">${escapeHtml(j.title)}</div>
+                <div class="text-xs text-slate-400 mt-1">${escapeHtml(getClientName(j.clientId))}</div>
+                <div class="text-xs text-slate-500 mt-2">${escapeHtml((j.description || "").substring(0, 90))}${(j.description || "").length > 90 ? "..." : ""}</div>
+              </div>
+              <span class="status-badge ${getPriorityClass(j.priority)}">${escapeHtml(j.priority || "N/A")}</span>
+            </div>
+          </button>
+        `).join("")
+        : '<div class="card p-6 text-slate-400">No jobs found</div>';
     }
 
     function renderAllJobs() {
-      document.getElementById("all-jobs-list").innerHTML = jobs.map(j => `
-        <div onclick="openJobModal(${JSON.stringify(j)})" class="card p-6 hover:border-blue-500 cursor-pointer">
-          <div class="flex justify-between">
-            <div>
-              <span class="status-badge bg-amber-900 text-amber-400">${j.priority}</span>
-              <div class="font-semibold mt-2">${j.title}</div>
+      document.getElementById("all-jobs-list").innerHTML = jobs.length
+        ? jobs.map(j => `
+          <button onclick="openJobModalById('${j.id}')" class="card p-6 hover:border-blue-500 cursor-pointer text-left">
+            <div class="flex justify-between gap-4">
+              <div>
+                <span class="status-badge ${getPriorityClass(j.priority)}">${escapeHtml(j.priority || "N/A")}</span>
+                <div class="font-semibold mt-3">${escapeHtml(j.title)}</div>
+                <div class="text-sm text-slate-400 mt-1">${escapeHtml(getClientName(j.clientId))}</div>
+                <div class="text-xs text-slate-500 mt-2">${escapeHtml(j.location || "No location")}</div>
+              </div>
+              <div class="text-right text-slate-400 text-sm shrink-0">
+                <div>${escapeHtml(j.status || "pending")}</div>
+                <div class="text-xs text-slate-500 mt-1">${escapeHtml(j.id || "")}</div>
+              </div>
             </div>
-            <div class="text-right text-slate-400 text-sm">${j.clientId}</div>
-          </div>
-        </div>
-      `).join('');
+          </button>
+        `).join("")
+        : '<div class="card p-6 text-slate-400">No jobs found</div>';
     }
 
-    window.onload = () => {
-      document.querySelectorAll('.tab-link').forEach(link => {
-        link.addEventListener('click', e => {
+    async function initialise() {
+      document.querySelectorAll(".tab-link").forEach(link => {
+        link.addEventListener("click", e => {
           e.preventDefault();
-          switchTab(link.getAttribute('data-tab'));
+          switchTab(link.getAttribute("data-tab"));
         });
       });
-      switchTab('dashboard');
-    };
+
+      await loadClientsCache();
+      await loadJobs();
+      switchTab("dashboard");
+    }
+
+    window.addEventListener("load", initialise);
   </script>
 </body>
 </html>
