@@ -7,9 +7,11 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root { --primary: #1d4ed8; }
     body { font-family: 'DM Sans', system-ui, sans-serif; }
     .syne { font-family: 'Syne', sans-serif; }
     .card { background: #080f20; border: 1px solid #1e293b; border-radius: 12px; }
+    .status-badge { padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
     .modal { animation: modalPop 0.2s ease-out forwards; }
     @keyframes modalPop { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     .tab-content { display: none; }
@@ -18,9 +20,11 @@
 </head>
 <body class="bg-[#030810] text-slate-200 min-h-screen">
 
+  <!-- Top Nav -->
   <nav class="bg-[#050d1a] border-b border-slate-800 py-3 px-6 flex items-center justify-between sticky top-0 z-50">
     <div class="flex items-center gap-3">
-      <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-violet-600 rounded-xl flex items-center justify-center text-xl">⚡</div>
+      <img id="company-logo" src="" alt="Logo" class="h-9 w-9 rounded-xl object-cover hidden">
+      <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-violet-600 rounded-xl flex items-center justify-center text-xl" id="default-logo">⚡</div>
       <div>
         <div class="syne text-2xl font-black tracking-tighter">FieldOps Pro</div>
         <div class="text-[10px] text-slate-500 tracking-[1px] uppercase">Facilities Management</div>
@@ -30,13 +34,22 @@
     <div class="flex gap-8 text-sm font-medium" id="tabs">
       <a href="#" data-tab="dashboard" class="tab-link active text-blue-400">Dashboard</a>
       <a href="#" data-tab="jobs" class="tab-link">All Jobs</a>
+      <a href="#" data-tab="compliance" class="tab-link">Compliance</a>
+      <a href="#" data-tab="engineer" class="tab-link">Engineer App</a>
+      <a href="#" data-tab="invoicing" class="tab-link">Invoicing</a>
       <a href="#" data-tab="settings" class="tab-link">Settings</a>
     </div>
   </nav>
 
+  <!-- Email Banner -->
+  <div class="bg-[#0a1628] border-b border-slate-700 py-2 px-6 text-sm flex items-center gap-3">
+    <span class="text-blue-400 font-semibold">📧 Email Integration Active</span>
+    <span class="text-slate-400">• Ready to dispatch jobs</span>
+  </div>
+
   <div class="p-6">
 
-    <!-- Dashboard -->
+    <!-- DASHBOARD -->
     <div id="dashboard" class="tab-content active">
       <div class="max-w-7xl mx-auto">
         <h1 class="syne text-4xl font-black mb-8">Operations Overview</h1>
@@ -46,7 +59,7 @@
       </div>
     </div>
 
-    <!-- All Jobs -->
+    <!-- ALL JOBS -->
     <div id="jobs" class="tab-content">
       <div class="max-w-7xl mx-auto">
         <div class="flex justify-between items-center mb-6">
@@ -57,11 +70,19 @@
       </div>
     </div>
 
-    <!-- Settings -->
+    <!-- SETTINGS -->
     <div id="settings" class="tab-content">
       <div class="max-w-6xl mx-auto">
-        <h1 class="syne text-3xl font-black mb-8">Master Data</h1>
-        <div class="grid grid-cols-2 gap-8">
+        <h1 class="syne text-3xl font-black mb-8">Settings</h1>
+        
+        <div class="flex gap-2 mb-6 border-b border-slate-700">
+          <button onclick="switchSettingsTab(0)" class="settings-tab active px-6 py-2 text-blue-400">Master Data</button>
+          <button onclick="switchSettingsTab(1)" class="settings-tab px-6 py-2">Theme & Logo</button>
+          <button onclick="switchSettingsTab(2)" class="settings-tab px-6 py-2">Email Templates</button>
+        </div>
+
+        <!-- Master Data -->
+        <div id="settings-master" class="grid grid-cols-2 gap-8">
           <div class="card p-6">
             <h2 class="font-semibold mb-4 flex justify-between">Clients <button onclick="addMasterItem('clients')" class="text-blue-400 text-sm">+ Add</button></h2>
             <div id="clients-list" class="space-y-3"></div>
@@ -79,11 +100,66 @@
             <div id="vehicles-list" class="space-y-3"></div>
           </div>
         </div>
+
+        <!-- Theme & Logo -->
+        <div id="settings-theme" class="hidden">
+          <div class="card p-8">
+            <h2 class="font-semibold mb-6">Theme Colour</h2>
+            <input type="color" id="theme-color" value="#1d4ed8" class="w-12 h-12 rounded-xl cursor-pointer">
+            <button onclick="applyTheme()" class="ml-4 bg-blue-600 px-6 py-2 rounded-xl">Apply Theme</button>
+
+            <h2 class="font-semibold mt-10 mb-4">Company Logo</h2>
+            <input type="file" id="logo-upload" accept="image/*" class="block mb-4">
+            <button onclick="uploadLogo()" class="bg-blue-600 px-6 py-2 rounded-xl">Upload Logo</button>
+            <div id="logo-preview" class="mt-4"></div>
+          </div>
+        </div>
+
+        <!-- Email Templates -->
+        <div id="settings-templates" class="hidden">
+          <div class="card p-8">
+            <h2 class="font-semibold mb-6">Subcontractor Dispatch Template</h2>
+            <textarea id="dispatch-template" rows="8" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">Dear {sub_name},
+
+Please attend job {job_id} for {client_name}.
+
+Site: {location}
+Priority: {priority}
+Description: {description}
+
+Please confirm attendance.
+
+Kind regards,
+FieldOps Pro</textarea>
+            <button onclick="saveTemplate()" class="mt-4 bg-blue-600 px-6 py-2 rounded-xl">Save Template</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Master Edit Modal -->
+  <!-- New Job Modal -->
+  <div id="new-job-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+    <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-lg p-8">
+      <h3 class="text-xl font-semibold mb-6">New Job</h3>
+      <div class="space-y-4">
+        <input id="job-title" placeholder="Job Title" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        <select id="job-client" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4"></select>
+        <select id="job-priority" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <option value="P1">P1 - Emergency</option>
+          <option value="P2">P2 - High</option>
+          <option value="P3">P3 - Normal</option>
+        </select>
+        <textarea id="job-description" rows="4" placeholder="Description" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4"></textarea>
+      </div>
+      <div class="flex gap-3 mt-8">
+        <button onclick="closeNewJobModal()" class="flex-1 py-3 text-slate-400">Cancel</button>
+        <button onclick="createNewJob()" class="flex-1 py-3 bg-blue-600 rounded-xl">Create Job</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Master Data Modal -->
   <div id="master-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
     <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-md p-8">
       <h3 id="master-modal-title" class="text-xl font-semibold mb-6"></h3>
@@ -105,34 +181,23 @@
 
     let currentMasterCollection = null;
     let currentMasterId = null;
+    let jobs = [];
 
     async function apiRequest(endpoint, method = "GET", body = null) {
-      try {
-        const opts = { method, headers: {"Content-Type": "application/json"} };
-        if (body) opts.body = JSON.stringify(body);
-
-        const res = await fetch(API_BASE + endpoint, opts);
-        
-        if (!res.ok) {
-          const errorText = await res.text().catch(() => "Unknown error");
-          console.error(`API Error ${res.status}:`, errorText);
-          showToast(`Error ${res.status}: ${errorText.substring(0, 80)}`);
-          return null;
-        }
-        return await res.json().catch(() => null);
-      } catch (err) {
-        console.error("Fetch error:", err);
-        showToast("Cannot reach Worker. Check if deployed and binding is 'fieldops_kv'");
-        return null;
-      }
+      const opts = { method, headers: {"Content-Type": "application/json"} };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(API_BASE + endpoint, opts);
+      if (!res.ok) throw new Error(`API ${res.status}`);
+      return res.json();
     }
 
     async function renderSettings() {
-      const clients = await apiRequest("/api/clients") || [];
-      const subs = await apiRequest("/api/subcontractors") || [];
-      const engineers = await apiRequest("/api/engineers") || [];
-      const vehicles = await apiRequest("/api/vehicles") || [];
+      const clients = await apiRequest("/api/clients").catch(() => []);
+      const subs = await apiRequest("/api/subcontractors").catch(() => []);
+      const engineers = await apiRequest("/api/engineers").catch(() => []);
+      const vehicles = await apiRequest("/api/vehicles").catch(() => []);
 
+      // Render each list
       document.getElementById("clients-list").innerHTML = clients.map(c => `
         <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
           <div><div class="font-medium">${c.name}</div></div>
@@ -145,7 +210,7 @@
 
       document.getElementById("subcontractors-list").innerHTML = subs.map(s => `
         <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${s.name}</div></div>
+          <div><div class="font-medium">${s.name}</div><div class="text-xs text-slate-400">${s.category||''}</div></div>
           <div class="flex gap-3">
             <button onclick="editMasterItem('subcontractors', ${JSON.stringify(s)})" class="text-blue-400">Edit</button>
             <button onclick="deleteMasterItem('subcontractors', '${s.id}')" class="text-red-400">Delete</button>
@@ -165,7 +230,7 @@
 
       document.getElementById("vehicles-list").innerHTML = vehicles.map(v => `
         <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${v.name || v.registration || 'Vehicle'}</div></div>
+          <div><div class="font-medium">${v.name || v.registration}</div></div>
           <div class="flex gap-3">
             <button onclick="editMasterItem('vehicles', ${JSON.stringify(v)})" class="text-blue-400">Edit</button>
             <button onclick="deleteMasterItem('vehicles', '${v.id}')" class="text-red-400">Delete</button>
@@ -187,9 +252,7 @@
     }
 
     function showMasterModal(coll, item) {
-      let title = `Add ${coll.charAt(0).toUpperCase() + coll.slice(1)}`;
-      if (item.id) title = `Edit ${coll.charAt(0).toUpperCase() + coll.slice(1)}`;
-
+      let title = item.id ? `Edit ${coll}` : `Add ${coll}`;
       document.getElementById("master-modal-title").textContent = title;
 
       let formHTML = '';
@@ -203,14 +266,16 @@
         formHTML = `
           <input id="m-name" value="${item.name||''}" placeholder="Company Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
           <input id="m-category" value="${item.category||''}" placeholder="Category" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-email" value="${item.email||''}" placeholder="Email" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-cc" value="${item.ccEmails ? item.ccEmails.join(', ') : ''}" placeholder="CC Emails (comma separated)" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
         `;
       } else if (coll === 'engineers') {
         formHTML = `
-          <input id="m-name" value="${item.name||''}" placeholder="Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-name" value="${item.name||''}" placeholder="Engineer Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
         `;
       } else if (coll === 'vehicles') {
         formHTML = `
-          <input id="m-name" value="${item.name||''}" placeholder="Vehicle Name/Reg" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-name" value="${item.name||''}" placeholder="Vehicle Name / Registration" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
         `;
       }
 
@@ -227,7 +292,11 @@
       const data = { id: currentMasterId };
 
       document.querySelectorAll("#master-modal-form input").forEach(input => {
-        data[input.id.replace('m-', '')] = input.value.trim();
+        if (input.id === "m-cc") {
+          data.ccEmails = input.value.split(',').map(e => e.trim()).filter(Boolean);
+        } else {
+          data[input.id.replace('m-', '')] = input.value.trim();
+        }
       });
 
       try {
@@ -236,7 +305,7 @@
         closeMasterModal();
         renderSettings();
       } catch (e) {
-        showToast("Save failed - check Worker code and binding");
+        showToast("Save failed");
         console.error(e);
       }
     }
@@ -254,12 +323,47 @@
     }
 
     function deleteMasterItem(coll, id) {
-      if (confirm("Delete this item?")) {
+      if (confirm("Delete permanently?")) {
         deleteItem(coll, id).then(() => {
           showToast("Deleted");
           renderSettings();
         });
       }
+    }
+
+    // New Job Modal
+    async function openNewJobModal() {
+      document.getElementById("new-job-modal").classList.remove("hidden");
+      const clients = await apiRequest("/api/clients").catch(() => []);
+      const select = document.getElementById("job-client");
+      select.innerHTML = '<option value="">Select Client...</option>' + clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+    }
+
+    function closeNewJobModal() {
+      document.getElementById("new-job-modal").classList.add("hidden");
+    }
+
+    function createNewJob() {
+      const title = document.getElementById("job-title").value.trim();
+      const clientId = document.getElementById("job-client").value;
+      const priority = document.getElementById("job-priority").value;
+      const description = document.getElementById("job-description").value.trim();
+
+      if (!title || !clientId) return showToast("Title and client required");
+
+      const newJob = {
+        id: "JOB-" + Date.now().toString().slice(-6),
+        title, clientId, priority, status: "pending",
+        description: description || "No description",
+        createdAt: new Date().toISOString(),
+        completionDeadline: new Date(Date.now() + 7*86400000).toISOString()
+      };
+
+      jobs.unshift(newJob);
+      showToast("Job created");
+      closeNewJobModal();
+      renderAllJobs();
+      renderDashboard();
     }
 
     function showToast(msg) {
@@ -274,6 +378,25 @@
       document.getElementById(tab).classList.add('active');
       document.querySelectorAll('.tab-link').forEach(l => l.classList.toggle('text-blue-400', l.getAttribute('data-tab') === tab));
       if (tab === 'settings') renderSettings();
+    }
+
+    function renderDashboard() {
+      document.getElementById("stats").innerHTML = `
+        <div class="card p-6"><div class="text-5xl font-bold text-blue-400">${jobs.length}</div><div class="text-slate-400">Active Jobs</div></div>
+      `;
+      document.getElementById("recent-jobs").innerHTML = jobs.slice(0,4).map(j => `
+        <div class="card p-6 hover:border-blue-500 cursor-pointer" onclick="alert('Detail for ${j.id}')">
+          <div class="font-medium">${j.title}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderAllJobs() {
+      document.getElementById("all-jobs-list").innerHTML = jobs.map(j => `
+        <div class="card p-6 hover:border-blue-500 cursor-pointer" onclick="alert('Detail for ${j.id}')">
+          <div class="font-medium">${j.title}</div>
+        </div>
+      `).join('');
     }
 
     window.onload = () => {
