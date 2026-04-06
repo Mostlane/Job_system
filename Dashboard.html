@@ -1,4 +1,22 @@
-import { useState, useEffect, useRef } from “react”;
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FieldOps Pro</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #030810; color: #e2e8f0; font-family: system-ui, sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect, useRef } = React;
 
 // ══════════════════════════════════════════════════════════════════════════════
 // SEED DATA
@@ -174,7 +192,7 @@ calloutCharged:false, quoteData:null, onHoldReason:null,
 // HELPERS
 // ══════════════════════════════════════════════════════════════════════════════
 
-const fmt = (n) => n?.toLocaleString(“en-GB”,{minimumFractionDigits:2,maximumFractionDigits:2}) ?? “0.00”;
+const fmt = (n) => ((n || 0).toLocaleString(“en-GB”,{minimumFractionDigits:2,maximumFractionDigits:2})) || “0.00”;
 const formatDate = (iso) => !iso ? “—” : new Date(iso).toLocaleDateString(“en-GB”,{day:“numeric”,month:“short”,year:“numeric”});
 const formatDateTime = (iso) => !iso ? “—” : new Date(iso).toLocaleString(“en-GB”,{day:“numeric”,month:“short”,hour:“2-digit”,minute:“2-digit”});
 const timeAgo = (iso) => {
@@ -243,7 +261,7 @@ const site = SITES_KV[job.siteKey];
 return (
 <div style={{background:”#0c1f0a”,border:“2px solid #4ade8066”,borderRadius:8,padding:“12px 14px”,marginBottom:14}}>
 <div style={{fontSize:11,fontWeight:800,color:”#4ade80”,marginBottom:8}}>
-🗺 Site Intelligence – {site?.name || job.location}
+🗺 Site Intelligence – {(site && site.name) || job.location}
 </div>
 {intel.jobs.length>0&&(
 <div style={{marginBottom:8}}>
@@ -277,7 +295,7 @@ return (
 // ══════════════════════════════════════════════════════════════════════════════
 
 function SubcontractorModal({job, subcontractors, clients, onClose, onDispatch}) {
-const [selectedSub, setSelectedSub] = useState(subcontractors[0]?.id||””);
+const [selectedSub, setSelectedSub] = useState((subcontractors[0] ? subcontractors[0].id : ‘’)||””);
 const [message, setMessage] = useState(””);
 const [confirmed, setConfirmed] = useState(false);
 const sub = subcontractors.find(s=>s.id===selectedSub);
@@ -285,7 +303,7 @@ const client = clients.find(c=>c.id===job.clientId);
 const site = SITES_KV[job.siteKey];
 const pri = PRIORITY_SLA[job.priority];
 
-const defaultMsg = sub ? `Dear ${sub.contact},\n\nPlease attend the following job:\n\nJOB REF: ${job.id}\nCLIENT: ${client?.name}\nSITE: ${job.location}\nPRIORITY: ${job.priority} – ${pri?.desc}\nCATEGORY: ${job.category}\n\nDESCRIPTION:\n${job.description}\n\nPlease confirm attendance and provide an ETA.\n\nKind regards,\nFieldOps Pro` : “”;
+const defaultMsg = sub ? `Dear ${sub.contact},\n\nPlease attend the following job:\n\nJOB REF: ${job.id}\nCLIENT: ${(client && client.name)}\nSITE: ${job.location}\nPRIORITY: ${job.priority} – ${(pri ? pri.desc : '')}\nCATEGORY: ${job.category}\n\nDESCRIPTION:\n${job.description}\n\nPlease confirm attendance and provide an ETA.\n\nKind regards,\nFieldOps Pro` : “”;
 
 useEffect(()=>{ setMessage(defaultMsg); setConfirmed(false); },[selectedSub]);
 
@@ -357,11 +375,11 @@ return (
 
 function SubQuotePanel({job, subcontractors, onUpdate, showToast}) {
 const sub = subcontractors.find(s=>s.id===job.subcontractorId);
-const [subCost, setSubCost] = useState(job.subQuote?.subCost||””);
-const [subDesc, setSubDesc] = useState(job.subQuote?.subDescription||””);
-const [margin, setMargin] = useState(job.subQuote?.margin||sub?.defaultMargin||35);
-const [calloutSubCost, setCalloutSubCost] = useState(job.subQuote?.calloutSubCost||””);
-const [calloutMargin, setCalloutMargin] = useState(job.subQuote?.calloutMargin||sub?.defaultMargin||35);
+const [subCost, setSubCost] = useState((job.subQuote ? job.subQuote.subCost : 0)||””);
+const [subDesc, setSubDesc] = useState((job.subQuote ? job.subQuote.subDescription : ‘’)||””);
+const [margin, setMargin] = useState((job.subQuote ? job.subQuote.margin : 35)||(sub && sub.defaultMargin)||35);
+const [calloutSubCost, setCalloutSubCost] = useState((job.subQuote ? job.subQuote.calloutSubCost : 0)||””);
+const [calloutMargin, setCalloutMargin] = useState((job.subQuote ? job.subQuote.calloutMargin : 35)||(sub && sub.defaultMargin)||35);
 
 const clientCharge = parseFloat(subCost) * (1 + parseFloat(margin)/100);
 const calloutCharge = parseFloat(calloutSubCost) * (1 + parseFloat(calloutMargin)/100);
@@ -384,9 +402,9 @@ showToast(“Client quote sent (simulated)”);
 };
 
 const approveAndDispatch = () => {
-const logEntry = {time:new Date().toISOString(), action:“works-approved”, sentBy:“Office Admin”, subcontractorName:sub?.name, note:`Works approved. Sub cost £${fmt(job.subQuote?.subCost)}. Client approved £${fmt(job.subQuote?.clientCharge)}.`};
+const logEntry = {time:new Date().toISOString(), action:“works-approved”, sentBy:“Office Admin”, subcontractorName:(sub && sub.name), note:`Works approved. Sub cost £${fmt((job.subQuote ? job.subQuote.subCost : 0))}. Client approved £${fmt((job.subQuote ? job.subQuote.clientCharge : 0))}.`};
 onUpdate({…job, subQuote:{…job.subQuote, approved:true}, subcontractorLog:[…(job.subcontractorLog||[]), logEntry]});
-showToast(`Works dispatched back to ${sub?.name}`);
+showToast(`Works dispatched back to ${(sub && sub.name)}`);
 };
 
 return (
@@ -460,10 +478,10 @@ return (
         {job.subQuote.sentToClient&&!job.subQuote.approved&&(
           <Btn style={{background:"#7c3aed",fontSize:11}} onClick={approveAndDispatch}>✅ Client Approved – Dispatch Works</Btn>
         )}
-        {job.subQuote.approved&&<div style={{fontSize:11,color:"#4ade80",fontWeight:700,padding:"8px 12px",background:"#064e3b",borderRadius:6}}>✓ Approved & Dispatched to {sub?.name}</div>}
+        {job.subQuote.approved&&<div style={{fontSize:11,color:"#4ade80",fontWeight:700,padding:"8px 12px",background:"#064e3b",borderRadius:6}}>✓ Approved & Dispatched to {(sub && sub.name)}</div>}
       </div>
       <div style={{fontSize:10,color:"#475569",marginTop:8,fontStyle:"italic"}}>
-        Note: Sub contractor will receive their quoted price (£{fmt(job.subQuote?.subCost)}), not the marked-up client charge.
+        Note: Sub contractor will receive their quoted price (£{fmt((job.subQuote ? job.subQuote.subCost : 0))}), not the marked-up client charge.
       </div>
     </Card>
   )}
@@ -489,7 +507,7 @@ return (
 <span style={{fontSize:11,fontWeight:700,color:actionColor[l.action]||”#94a3b8”}}>{actionLabel[l.action]||l.action} – {l.subcontractorName}</span>
 <span style={{fontSize:10,color:”#475569”}}>{formatDateTime(l.time)}</span>
 </div>
-{l.to&&<div style={{fontSize:10,color:”#64748b”}}>To: <span style={{color:”#818cf8”}}>{l.to}</span>{l.cc?.length>0&&<> · CC: <span style={{color:”#64748b”}}>{l.cc.join(”, “)}</span></>}</div>}
+{l.to&&<div style={{fontSize:10,color:”#64748b”}}>To: <span style={{color:”#818cf8”}}>{l.to}</span>{(l.cc && l.cc.length)>0&&<> · CC: <span style={{color:”#64748b”}}>{l.cc.join(”, “)}</span></>}</div>}
 {l.note&&<div style={{fontSize:11,color:”#94a3b8”,marginTop:4}}>{l.note}</div>}
 {l.message&&<div style={{fontSize:10,color:”#475569”,marginTop:4,whiteSpace:“pre-wrap”,maxHeight:80,overflow:“hidden”}}>{l.message.slice(0,200)}…</div>}
 {l.sentBy&&<div style={{fontSize:10,color:”#334155”,marginTop:4}}>Sent by: {l.sentBy}</div>}
@@ -521,7 +539,7 @@ const slaS = getSLAStatus(job);
 const pri = PRIORITY_SLA[job.priority]||PRIORITY_SLA.P3;
 const totalMat = job.materials.reduce((s,m)=>s+m.charged,0);
 const totalLabour = (parseFloat(editLabourH)||0)*(parseFloat(editLabourR)||0);
-const subTotal = (job.subQuote?.calloutCharge||0)+(job.subQuote?.clientCharge||0);
+const subTotal = ((job.subQuote ? job.subQuote.calloutCharge : 0)||0)+((job.subQuote ? job.subQuote.clientCharge : 0)||0);
 const totalJob = totalMat + totalLabour + subTotal;
 
 const addNote = () => { if(!newNote.trim()) return; onUpdate({…job,notes:[…job.notes,{author:“Office Admin”,time:new Date().toISOString(),text:newNote.trim()}]}); setNewNote(””); };
@@ -549,7 +567,7 @@ return (
 <div style={{flex:1,paddingRight:10}}>
 <div style={{fontSize:9,color:”#475569”,fontFamily:“monospace”,marginBottom:2}}>{job.id} · {job.type===“compliance”?“📋”:“⚡”} {job.type}</div>
 <div style={{fontSize:15,fontWeight:900,color:”#f1f5f9”,lineHeight:1.2}}>{job.title}</div>
-<div style={{fontSize:11,color:”#64748b”,marginTop:2}}>{client?.name} · {job.location}</div>
+<div style={{fontSize:11,color:”#64748b”,marginTop:2}}>{(client && client.name)} · {job.location}</div>
 </div>
 <button onClick={onClose} style={{background:”#1e293b”,border:“1px solid #334155”,color:”#94a3b8”,borderRadius:6,padding:“4px 10px”,cursor:“pointer”,fontSize:16}}>×</button>
 </div>
@@ -578,7 +596,7 @@ Respond by: <span style={{color:new Date(job.responseDeadline)<now?”#ef4444”
       <div>
         <SiteIntelligenceBanner job={job} allJobs={allJobs} compliance={compliance}/>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:14}}>
-          {[[`Client`,client?.name],[`Contact`,client?.contact],[`Priority`,`${job.priority} – ${pri.desc}`],[`Category`,job.category],[`Logged`,timeAgo(job.createdAt)],[`Engineer`,eng?.name||"Unassigned"],[`Respond By`,formatDateTime(job.responseDeadline)],[`Complete By`,formatDateTime(job.completionDeadline)],[`Site Ref`,site?.siteRef||"—"],[`Invoice`,job.invoiced?`✓ ${job.invoiceMonth}`:"Not invoiced"]].map(([l,v])=>(
+          {[[`Client`,(client && client.name)],[`Contact`,(client && client.contact)],[`Priority`,`${job.priority} – ${pri.desc}`],[`Category`,job.category],[`Logged`,timeAgo(job.createdAt)],[`Engineer`,(eng && eng.name)||"Unassigned"],[`Respond By`,formatDateTime(job.responseDeadline)],[`Complete By`,formatDateTime(job.completionDeadline)],[`Site Ref`,(site && site.siteRef)||"—"],[`Invoice`,job.invoiced?`✓ ${job.invoiceMonth}`:"Not invoiced"]].map(([l,v])=>(
             <Card key={l} style={{padding:"9px 11px"}}><Lbl>{l}</Lbl><div style={{fontSize:12,color:"#e2e8f0",fontWeight:600}}>{v||"—"}</div></Card>
           ))}
         </div>
@@ -686,7 +704,7 @@ Respond by: <span style={{color:new Date(job.responseDeadline)<now?”#ef4444”
           </Card>
         ))}
         <div style={{display:"flex",gap:8,marginTop:8}}>
-          <Inp style={{flex:1}} value={newNote} onChange={e=>setNewNote(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addNote()} placeholder="Add note…"/>
+          <Inp style={{flex:1}} value={newNote} onChange={e=>setNewNote(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addNote()} placeholder="Add note..."/>
           <Btn onClick={addNote}>Add</Btn>
         </div>
       </div>
@@ -746,7 +764,7 @@ const client=clients.find(c=>c.id===job.clientId);
 const eng=engineers.find(e=>e.id===job.engineerId);
 const sub=subcontractors.find(s=>s.id===job.subcontractorId);
 const slaS=getSLAStatus(job);
-const isSel=selected?.id===job.id;
+const isSel=selected && selected.id===job.id;
 const intel=getSiteIntelligence(job,jobs,compliance);
 const hasIntel=intel.jobs.length+intel.compliance.length>0;
 return (
@@ -761,7 +779,7 @@ return (
 <Badge status={job.status}/>
 </div>
 </div>
-<div style={{fontSize:10,color:”#475569”,marginBottom:4}}><span style={{color:”#7dd3fc”}}>{client?.name}</span> · {job.location}</div>
+<div style={{fontSize:10,color:”#475569”,marginBottom:4}}><span style={{color:”#7dd3fc”}}>{(client && client.name)}</span> · {job.location}</div>
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“center”}}>
 <div style={{fontSize:10,color:SLA_COLOR[slaS],display:“flex”,gap:4,alignItems:“center”}}>
 <span style={{width:5,height:5,borderRadius:“50%”,background:SLA_COLOR[slaS],display:“inline-block”}}/>
@@ -808,15 +826,15 @@ const hasActive = myJobs.some(j=>[“travelling”,“in-progress”].includes(j
 const updateStatus = (job, ns) => {
 if(ns!==job.status && hasActive && ![“on-hold”,“complete”,“quote”].includes(ns) && ![“travelling”,“in-progress”].includes(job.status)){
 const cur=myJobs.find(j=>[“travelling”,“in-progress”].includes(j.status));
-if(cur&&cur.id!==job.id){showToast(`Finish "${cur.title.slice(0,25)}…" first`);return;}
+if(cur&&cur.id!==job.id){showToast(`Finish "${cur.title.slice(0,25)}..." first`);return;}
 }
 onUpdate(jobs.map(j=>j.id===job.id?{…j,status:ns,completedAt:ns===“complete”?new Date().toISOString():j.completedAt}:j));
-showToast(`→ ${STATUS_CFG[ns]?.label}`);
+showToast(`→ ${(STATUS_CFG[ns] ? STATUS_CFG[ns].label : ns)}`);
 };
 
 const addNote = (job,text) => {
 if(!text.trim()) return;
-onUpdate(jobs.map(j=>j.id===job.id?{…j,notes:[…j.notes,{author:eng?.name||“Engineer”,time:new Date().toISOString(),text:text.trim()}]}:j));
+onUpdate(jobs.map(j=>j.id===job.id?{…j,notes:[…j.notes,{author:(eng && eng.name)||“Engineer”,time:new Date().toISOString(),text:text.trim()}]}:j));
 };
 
 const submitQuote = (job) => {
@@ -842,14 +860,14 @@ return (
 <Sel value={engId} onChange={e=>setEngId(e.target.value)} style={{fontSize:11}}>{engineers.map(e=><option key={e.id} value={e.id}>{e.name}</option>)}</Sel>
 </div>
 <div style={{display:“flex”,alignItems:“center”,gap:10}}>
-<Av i={eng?.initials||”??”} size={38}/>
+<Av i={(eng && eng.initials)||”??”} size={38}/>
 <div>
-<div style={{fontSize:13,fontWeight:700,color:”#e2e8f0”}}>{eng?.name}</div>
+<div style={{fontSize:13,fontWeight:700,color:”#e2e8f0”}}>{(eng && eng.name)}</div>
 <div style={{fontSize:10,color:”#475569”}}>{myJobs.length} jobs · {myJobs.filter(j=>j.status===“complete”).length} complete · {myJobs.filter(j=>j.status===“pending”).length} pending</div>
 </div>
 <div style={{marginLeft:“auto”,textAlign:“right”}}>
 <div style={{fontSize:9,color:”#475569”,textTransform:“uppercase”,letterSpacing:“0.06em”}}>Day rate</div>
-<div style={{fontSize:14,fontWeight:900,color:”#4ade80”}}>£{eng?.dayRate}</div>
+<div style={{fontSize:14,fontWeight:900,color:”#4ade80”}}>£{(eng && eng.dayRate)}</div>
 </div>
 </div>
 </div>
@@ -879,7 +897,7 @@ return (
                   <PriBadge priority={job.priority}/>
                 </div>
                 <div style={{fontSize:14,fontWeight:800,color:"#f1f5f9",lineHeight:1.2}}>{job.title}</div>
-                <div style={{fontSize:10,color:"#7dd3fc",marginTop:2}}>{client?.name}</div>
+                <div style={{fontSize:10,color:"#7dd3fc",marginTop:2}}>{(client && client.name)}</div>
               </div>
               <Badge status={job.status}/>
             </div>
@@ -936,7 +954,7 @@ return (
               </div>
             )}
             <div style={{display:"flex",gap:6}}>
-              <Inp style={{flex:1,fontSize:11}} placeholder="Add note…" value={noteText[job.id]||""} onChange={e=>setNoteText(p=>({...p,[job.id]:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"){addNote(job,noteText[job.id]||"");setNoteText(p=>({...p,[job.id]:""}));}}}/>
+              <Inp style={{flex:1,fontSize:11}} placeholder="Add note..." value={noteText[job.id]||""} onChange={e=>setNoteText(p=>({...p,[job.id]:e.target.value}))} onKeyDown={e=>{if(e.key==="Enter"){addNote(job,noteText[job.id]||"");setNoteText(p=>({...p,[job.id]:""}));}}}/>
               <Btn style={{padding:"7px 10px",fontSize:11}} onClick={()=>{addNote(job,noteText[job.id]||"");setNoteText(p=>({...p,[job.id]:""}));}}>+</Btn>
             </div>
           </Card>
@@ -945,7 +963,7 @@ return (
           {quoteJobId===job.id&&(
             <Card style={{padding:14,marginTop:8,border:"2px solid #fb7185"}}>
               <div style={{fontSize:13,fontWeight:800,color:"#fb7185",marginBottom:12}}>📋 Quote Information</div>
-              {[["accessEquipment","Access Equipment","text","Ladders, MEWP, scaffold…"],["personsRequired","Persons Required","number",""],["estimatedDays","Estimated Days","number",""],["clientComments","Client Comments","textarea",""],["accessRestrictions","Access Restrictions","textarea",""],["parkingRestrictions","Parking Restrictions","text",""],["materials","All Materials Required","textarea","Full list"],["itemsToOrder","Items to Order","textarea",""],["estimatedValue","Estimated Value (£)","number",""]].map(([k,l,t,ph])=>(
+              {[["accessEquipment","Access Equipment","text","Ladders, MEWP, scaffold..."],["personsRequired","Persons Required","number",""],["estimatedDays","Estimated Days","number",""],["clientComments","Client Comments","textarea",""],["accessRestrictions","Access Restrictions","textarea",""],["parkingRestrictions","Parking Restrictions","text",""],["materials","All Materials Required","textarea","Full list"],["itemsToOrder","Items to Order","textarea",""],["estimatedValue","Estimated Value (£)","number",""]].map(([k,l,t,ph])=>(
                 <div key={k} style={{marginBottom:9}}>
                   <Lbl>{l}</Lbl>
                   {t==="textarea"?<TA style={{width:"100%"}} rows={2} placeholder={ph} value={quoteForm[k]||""} onChange={e=>setQuoteForm(p=>({...p,[k]:e.target.value}))}/>:<Inp type={t} style={{width:"100%"}} placeholder={ph} value={quoteForm[k]||""} onChange={e=>setQuoteForm(p=>({...p,[k]:e.target.value}))}/>}
@@ -1141,7 +1159,7 @@ return (
               <tr key={k} style={{borderBottom:"1px solid #0a0f1e"}}>
                 <td style={{padding:"7px 10px",color:"#818cf8",fontFamily:"monospace",fontWeight:700}}>{s.siteRef}</td>
                 <td style={{padding:"7px 10px",color:"#e2e8f0",fontWeight:600}}>{s.name}</td>
-                <td style={{padding:"7px 10px",color:"#7dd3fc"}}>{client?.name}</td>
+                <td style={{padding:"7px 10px",color:"#7dd3fc"}}>{(client && client.name)}</td>
                 <td style={{padding:"7px 10px",color:"#64748b"}}>{s.address}</td>
                 <td style={{padding:"7px 10px",color:"#94a3b8",fontFamily:"monospace"}}>{s.lat}</td>
                 <td style={{padding:"7px 10px",color:"#94a3b8",fontFamily:"monospace"}}>{s.lng}</td>
@@ -1172,7 +1190,7 @@ const client=clients.find(c=>c.id===item.clientId);
 const site=SITES_KV[item.siteKey];
 const pri=urgency(item)===“overdue”?“P1”:urgency(item)===“urgent”?“P2”:“P3”;
 const priConf=PRIORITY_SLA[pri];
-const nj={id:`JOB-${Date.now().toString().slice(-4)}`,clientId:item.clientId,siteKey:item.siteKey,title:item.title,type:“compliance”,category:item.category,priority:pri,status:“pending”,engineerId:null,location:site?.address||client?.name||””,description:`Compliance: ${item.title}. Due: ${formatDate(item.nextDue)}.`,createdAt:new Date().toISOString(),responseDeadline:new Date(now.getTime()+priConf.respond*3600000).toISOString(),completionDeadline:new Date(now.getTime()+priConf.complete*3600000).toISOString(),labourHours:0,labourRate:35,labourCost:0,materials:[],notes:[{author:“System”,time:new Date().toISOString(),text:`Auto-generated. Schedule item: ${item.id}`}],attachments:[],completedAt:null,invoiced:false,invoiceMonth:null,subcontractorId:null,subcontractorLog:[],subQuote:null,calloutCharged:false,quoteData:null,onHoldReason:null};
+const nj={id:`JOB-${Date.now().toString().slice(-4)}`,clientId:item.clientId,siteKey:item.siteKey,title:item.title,type:“compliance”,category:item.category,priority:pri,status:“pending”,engineerId:null,location:(site && site.address)||(client && client.name)||””,description:`Compliance: ${item.title}. Due: ${formatDate(item.nextDue)}.`,createdAt:new Date().toISOString(),responseDeadline:new Date(now.getTime()+priConf.respond*3600000).toISOString(),completionDeadline:new Date(now.getTime()+priConf.complete*3600000).toISOString(),labourHours:0,labourRate:35,labourCost:0,materials:[],notes:[{author:“System”,time:new Date().toISOString(),text:`Auto-generated. Schedule item: ${item.id}`}],attachments:[],completedAt:null,invoiced:false,invoiceMonth:null,subcontractorId:null,subcontractorLog:[],subQuote:null,calloutCharged:false,quoteData:null,onHoldReason:null};
 onUpdate(prev=>[nj,…prev]);showToast(`Job created: ${nj.id}`);
 };
 return (
@@ -1186,7 +1204,7 @@ const client=clients.find(c=>c.id===item.clientId);
 const site=SITES_KV[item.siteKey];
 const u=urgency(item);
 const days=Math.round((new Date(item.nextDue)-now)/86400000);
-const existing=jobs.find(j=>j.notes?.some(n=>n.text?.includes(item.id)));
+const existing=jobs.find(j=>j.notes && j.notes.some(n=>n.text && n.text.includes(item.id)));
 return (
 <Card key={item.id} style={{padding:14,marginBottom:8,border:`1px solid ${UC[u]}44`}}>
 <div style={{display:“flex”,justifyContent:“space-between”,alignItems:“flex-start”}}>
@@ -1196,7 +1214,7 @@ return (
 <span style={{fontSize:9,color:”#475569”,textTransform:“uppercase”,letterSpacing:“0.06em”}}>{item.frequency} · {item.category}</span>
 </div>
 <div style={{fontSize:13,fontWeight:700,color:”#f1f5f9”,marginBottom:2}}>{item.title}</div>
-<div style={{fontSize:11,color:”#7dd3fc”,marginBottom:2}}>{client?.name}</div>
+<div style={{fontSize:11,color:”#7dd3fc”,marginBottom:2}}>{(client && client.name)}</div>
 {site&&<div style={{fontSize:10,color:”#475569”}}>{site.siteRef} · {site.address}</div>}
 </div>
 <div style={{textAlign:“right”,flexShrink:0}}>
@@ -1220,10 +1238,10 @@ const [showMargins,setShowMargins]=useState(true);
 const calcJob=(j)=>{
 const matCharged=j.materials.reduce((s,m)=>s+m.charged,0);
 const labour=j.labourHours*j.labourRate;
-const subCharge=(j.subQuote?.calloutCharge||0)+(j.subQuote?.clientCharge||0);
+const subCharge=((j.subQuote ? j.subQuote.calloutCharge : 0)||0)+((j.subQuote ? j.subQuote.clientCharge : 0)||0);
 const matCost=j.materials.reduce((s,m)=>s+m.unitCost*m.qty,0);
-const labourCost=j.labourHours*(engineers.find(e=>e.id===j.engineerId)?.hourlyRate||0);
-const subCost=(j.subQuote?.calloutSubCost||0)+(j.subQuote?.subCost||0);
+const labourCost=j.labourHours*((engineers.find(e=>e.id===j.engineerId) ? engineers.find(e=>e.id===j.engineerId).hourlyRate : 0)||0);
+const subCost=((j.subQuote ? j.subQuote.calloutSubCost : 0)||0)+((j.subQuote ? j.subQuote.subCost : 0)||0);
 const total=matCharged+labour+subCharge;
 const cost=matCost+labourCost+subCost;
 return {matCharged,labour,subCharge,total,cost,margin:total-cost};
@@ -1330,7 +1348,7 @@ return (
 </div>
 {!f.siteKey&&<div><Lbl>Location (manual)</Lbl><Inp style={iS} value={f.location} onChange={e=>set(“location”,e.target.value)} placeholder=“Site address…”/></div>}
 <div><Lbl>Description</Lbl><TA style={iS} rows={3} value={f.description} onChange={e=>set(“description”,e.target.value)} placeholder=“Fault / works description…”/></div>
-{f.priority&&<div style={{background:”#080f20”,border:`1px solid ${PRIORITY_SLA[f.priority]?.color}44`,borderRadius:7,padding:“9px 12px”,fontSize:11,color:PRIORITY_SLA[f.priority]?.color}}>⏱ {f.priority}: {PRIORITY_SLA[f.priority]?.desc}</div>}
+{f.priority&&<div style={{background:”#080f20”,border:`1px solid ${(PRIORITY_SLA[f.priority] ? PRIORITY_SLA[f.priority].color : '#94a3b8')}44`,borderRadius:7,padding:“9px 12px”,fontSize:11,color:(PRIORITY_SLA[f.priority] ? PRIORITY_SLA[f.priority].color : ‘#94a3b8’)}}>⏱ {f.priority}: {(PRIORITY_SLA[f.priority] ? PRIORITY_SLA[f.priority].desc : ‘’)}</div>}
 <Btn style={{width:“100%”,padding:11,fontSize:13}} onClick={submit}>Log Job</Btn>
 </div>
 </Card>
@@ -1350,7 +1368,7 @@ const TABS_CFG = [
 {id:“settings”,l:“Settings”,i:“⚙”},
 ];
 
-export default function FieldOpsPro() {
+function FieldOpsPro() {
 const [tab, setTab] = useState(“jobs”);
 const [jobs, setJobs] = useState(INITIAL_JOBS);
 const [subs, setSubs] = useState(INIT_SUBCONTRACTORS);
@@ -1438,3 +1456,12 @@ return (
 
 );
 }
+
+```
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(FieldOpsPro));
+```
+
+  </script>
+</body>
+</html>
