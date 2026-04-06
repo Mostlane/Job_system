@@ -10,7 +10,6 @@
     body { font-family: 'DM Sans', system-ui, sans-serif; }
     .syne { font-family: 'Syne', sans-serif; }
     .card { background: #080f20; border: 1px solid #1e293b; border-radius: 12px; }
-    .status-badge { padding: 4px 12px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
     .modal { animation: modalPop 0.2s ease-out forwards; }
     @keyframes modalPop { from { opacity: 0; transform: scale(0.95) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
     .tab-content { display: none; }
@@ -31,9 +30,6 @@
     <div class="flex gap-8 text-sm font-medium" id="tabs">
       <a href="#" data-tab="dashboard" class="tab-link active text-blue-400">Dashboard</a>
       <a href="#" data-tab="jobs" class="tab-link">All Jobs</a>
-      <a href="#" data-tab="compliance" class="tab-link">Compliance</a>
-      <a href="#" data-tab="engineer" class="tab-link">Engineer App</a>
-      <a href="#" data-tab="invoicing" class="tab-link">Invoicing</a>
       <a href="#" data-tab="settings" class="tab-link">Settings</a>
     </div>
   </nav>
@@ -61,30 +57,25 @@
       </div>
     </div>
 
-    <!-- Other tabs (kept simple for now) -->
-    <div id="compliance" class="tab-content"><div class="max-w-7xl mx-auto py-20 text-center text-slate-400">Compliance Schedule – coming next</div></div>
-    <div id="engineer" class="tab-content"><div class="max-w-7xl mx-auto py-20 text-center text-slate-400">Engineer App View – coming next</div></div>
-    <div id="invoicing" class="tab-content"><div class="max-w-7xl mx-auto py-20 text-center text-slate-400">Invoicing – coming next</div></div>
-
-    <!-- Settings with full modals -->
+    <!-- Settings -->
     <div id="settings" class="tab-content">
       <div class="max-w-6xl mx-auto">
-        <h1 class="syne text-3xl font-black mb-8">Master Data Settings</h1>
+        <h1 class="syne text-3xl font-black mb-8">Master Data</h1>
         <div class="grid grid-cols-2 gap-8">
           <div class="card p-6">
-            <h2 class="font-semibold mb-4 flex justify-between">Clients <button onclick="addMasterItem('clients')" class="text-blue-400 text-sm font-medium">+ Add Client</button></h2>
+            <h2 class="font-semibold mb-4 flex justify-between">Clients <button onclick="addMasterItem('clients')" class="text-blue-400 text-sm">+ Add</button></h2>
             <div id="clients-list" class="space-y-3"></div>
           </div>
           <div class="card p-6">
-            <h2 class="font-semibold mb-4 flex justify-between">Subcontractors <button onclick="addMasterItem('subcontractors')" class="text-blue-400 text-sm font-medium">+ Add Sub</button></h2>
+            <h2 class="font-semibold mb-4 flex justify-between">Subcontractors <button onclick="addMasterItem('subcontractors')" class="text-blue-400 text-sm">+ Add</button></h2>
             <div id="subcontractors-list" class="space-y-3"></div>
           </div>
           <div class="card p-6">
-            <h2 class="font-semibold mb-4 flex justify-between">Engineers <button onclick="addMasterItem('engineers')" class="text-blue-400 text-sm font-medium">+ Add Engineer</button></h2>
+            <h2 class="font-semibold mb-4 flex justify-between">Engineers <button onclick="addMasterItem('engineers')" class="text-blue-400 text-sm">+ Add</button></h2>
             <div id="engineers-list" class="space-y-3"></div>
           </div>
           <div class="card p-6">
-            <h2 class="font-semibold mb-4 flex justify-between">Vehicles <button onclick="addMasterItem('vehicles')" class="text-blue-400 text-sm font-medium">+ Add Vehicle</button></h2>
+            <h2 class="font-semibold mb-4 flex justify-between">Vehicles <button onclick="addMasterItem('vehicles')" class="text-blue-400 text-sm">+ Add</button></h2>
             <div id="vehicles-list" class="space-y-3"></div>
           </div>
         </div>
@@ -92,37 +83,14 @@
     </div>
   </div>
 
-  <!-- New Job Modal -->
-  <div id="new-job-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
-    <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-lg p-8">
-      <h3 class="text-xl font-semibold mb-6">Create New Job</h3>
-      <div class="space-y-5">
-        <input id="job-title" placeholder="Job Title (e.g. HVAC Failure)" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4 text-white">
-        <select id="job-client" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4 text-white">
-          <option value="">Select Client...</option>
-        </select>
-        <select id="job-priority" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4 text-white">
-          <option value="P1">P1 - Emergency (4h response)</option>
-          <option value="P2">P2 - High Priority</option>
-          <option value="P3">P3 - Standard</option>
-        </select>
-        <textarea id="job-description" rows="4" placeholder="Full job description..." class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4 text-white"></textarea>
-      </div>
-      <div class="flex gap-3 mt-8">
-        <button onclick="closeNewJobModal()" class="flex-1 py-3 text-slate-400 hover:bg-slate-800 rounded-xl">Cancel</button>
-        <button onclick="createNewJob()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-medium">Create Job</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Master Data Edit Modal -->
+  <!-- Master Edit Modal -->
   <div id="master-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
     <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-md p-8">
       <h3 id="master-modal-title" class="text-xl font-semibold mb-6"></h3>
       <div id="master-modal-form" class="space-y-4"></div>
       <div class="flex gap-3 mt-8">
-        <button onclick="closeMasterModal()" class="flex-1 py-3 text-slate-400 hover:bg-slate-800 rounded-xl">Cancel</button>
-        <button onclick="saveMasterItem()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-medium">Save</button>
+        <button onclick="closeMasterModal()" class="flex-1 py-3 text-slate-400">Cancel</button>
+        <button onclick="saveMasterItem()" class="flex-1 py-3 bg-blue-600 rounded-xl">Save</button>
       </div>
     </div>
   </div>
@@ -137,18 +105,140 @@
 
     let currentMasterCollection = null;
     let currentMasterId = null;
-    let jobs = [];
 
     async function apiRequest(endpoint, method = "GET", body = null) {
-      const opts = { method, headers: {"Content-Type": "application/json"} };
-      if (body) opts.body = JSON.stringify(body);
-      const res = await fetch(API_BASE + endpoint, opts);
-      if (!res.ok && res.status !== 404) throw new Error("API failed");
-      return res.status === 204 ? null : res.json().catch(() => null);
+      try {
+        const opts = { method, headers: {"Content-Type": "application/json"} };
+        if (body) opts.body = JSON.stringify(body);
+
+        const res = await fetch(API_BASE + endpoint, opts);
+        
+        if (!res.ok) {
+          const errorText = await res.text().catch(() => "Unknown error");
+          console.error(`API Error ${res.status}:`, errorText);
+          showToast(`Error ${res.status}: ${errorText.substring(0, 80)}`);
+          return null;
+        }
+        return await res.json().catch(() => null);
+      } catch (err) {
+        console.error("Fetch error:", err);
+        showToast("Cannot reach Worker. Check if deployed and binding is 'fieldops_kv'");
+        return null;
+      }
     }
 
-    async function loadCollection(coll) {
-      return await apiRequest(`/api/${coll}`) || [];
+    async function renderSettings() {
+      const clients = await apiRequest("/api/clients") || [];
+      const subs = await apiRequest("/api/subcontractors") || [];
+      const engineers = await apiRequest("/api/engineers") || [];
+      const vehicles = await apiRequest("/api/vehicles") || [];
+
+      document.getElementById("clients-list").innerHTML = clients.map(c => `
+        <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
+          <div><div class="font-medium">${c.name}</div></div>
+          <div class="flex gap-3">
+            <button onclick="editMasterItem('clients', ${JSON.stringify(c)})" class="text-blue-400">Edit</button>
+            <button onclick="deleteMasterItem('clients', '${c.id}')" class="text-red-400">Delete</button>
+          </div>
+        </div>
+      `).join('') || '<p class="text-slate-400 py-8 text-center">No clients yet</p>';
+
+      document.getElementById("subcontractors-list").innerHTML = subs.map(s => `
+        <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
+          <div><div class="font-medium">${s.name}</div></div>
+          <div class="flex gap-3">
+            <button onclick="editMasterItem('subcontractors', ${JSON.stringify(s)})" class="text-blue-400">Edit</button>
+            <button onclick="deleteMasterItem('subcontractors', '${s.id}')" class="text-red-400">Delete</button>
+          </div>
+        </div>
+      `).join('') || '<p class="text-slate-400 py-8 text-center">No subcontractors yet</p>';
+
+      document.getElementById("engineers-list").innerHTML = engineers.map(e => `
+        <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
+          <div><div class="font-medium">${e.name}</div></div>
+          <div class="flex gap-3">
+            <button onclick="editMasterItem('engineers', ${JSON.stringify(e)})" class="text-blue-400">Edit</button>
+            <button onclick="deleteMasterItem('engineers', '${e.id}')" class="text-red-400">Delete</button>
+          </div>
+        </div>
+      `).join('') || '<p class="text-slate-400 py-8 text-center">No engineers yet</p>';
+
+      document.getElementById("vehicles-list").innerHTML = vehicles.map(v => `
+        <div class="flex justify-between bg-[#0a1628] p-4 rounded-xl">
+          <div><div class="font-medium">${v.name || v.registration || 'Vehicle'}</div></div>
+          <div class="flex gap-3">
+            <button onclick="editMasterItem('vehicles', ${JSON.stringify(v)})" class="text-blue-400">Edit</button>
+            <button onclick="deleteMasterItem('vehicles', '${v.id}')" class="text-red-400">Delete</button>
+          </div>
+        </div>
+      `).join('') || '<p class="text-slate-400 py-8 text-center">No vehicles yet</p>';
+    }
+
+    function addMasterItem(coll) {
+      currentMasterCollection = coll;
+      currentMasterId = null;
+      showMasterModal(coll, {});
+    }
+
+    function editMasterItem(coll, item) {
+      currentMasterCollection = coll;
+      currentMasterId = item.id;
+      showMasterModal(coll, item);
+    }
+
+    function showMasterModal(coll, item) {
+      let title = `Add ${coll.charAt(0).toUpperCase() + coll.slice(1)}`;
+      if (item.id) title = `Edit ${coll.charAt(0).toUpperCase() + coll.slice(1)}`;
+
+      document.getElementById("master-modal-title").textContent = title;
+
+      let formHTML = '';
+      if (coll === 'clients') {
+        formHTML = `
+          <input id="m-name" value="${item.name||''}" placeholder="Client Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-contact" value="${item.contact||''}" placeholder="Contact" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-email" value="${item.email||''}" placeholder="Email" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        `;
+      } else if (coll === 'subcontractors') {
+        formHTML = `
+          <input id="m-name" value="${item.name||''}" placeholder="Company Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input id="m-category" value="${item.category||''}" placeholder="Category" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        `;
+      } else if (coll === 'engineers') {
+        formHTML = `
+          <input id="m-name" value="${item.name||''}" placeholder="Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        `;
+      } else if (coll === 'vehicles') {
+        formHTML = `
+          <input id="m-name" value="${item.name||''}" placeholder="Vehicle Name/Reg" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        `;
+      }
+
+      document.getElementById("master-modal-form").innerHTML = formHTML;
+      document.getElementById("master-modal").classList.remove("hidden");
+    }
+
+    function closeMasterModal() {
+      document.getElementById("master-modal").classList.add("hidden");
+    }
+
+    async function saveMasterItem() {
+      const coll = currentMasterCollection;
+      const data = { id: currentMasterId };
+
+      document.querySelectorAll("#master-modal-form input").forEach(input => {
+        data[input.id.replace('m-', '')] = input.value.trim();
+      });
+
+      try {
+        await saveItem(coll, data);
+        showToast("Saved successfully");
+        closeMasterModal();
+        renderSettings();
+      } catch (e) {
+        showToast("Save failed - check Worker code and binding");
+        console.error(e);
+      }
     }
 
     async function saveItem(coll, item) {
@@ -163,121 +253,8 @@
       await apiRequest(`/api/${coll}/${id}`, "DELETE");
     }
 
-    // ==================== NEW JOB MODAL ====================
-    async function openNewJobModal() {
-      document.getElementById("new-job-modal").classList.remove("hidden");
-      const clients = await loadCollection("clients");
-      const select = document.getElementById("job-client");
-      select.innerHTML = '<option value="">Select Client...</option>' +
-        clients.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-    }
-
-    function closeNewJobModal() {
-      document.getElementById("new-job-modal").classList.add("hidden");
-    }
-
-    async function createNewJob() {
-      const title = document.getElementById("job-title").value.trim();
-      const clientId = document.getElementById("job-client").value;
-      const priority = document.getElementById("job-priority").value;
-      const description = document.getElementById("job-description").value.trim();
-
-      if (!title || !clientId) {
-        showToast("Job title and client are required");
-        return;
-      }
-
-      const newJob = {
-        id: "JOB-" + Date.now().toString().slice(-6),
-        title,
-        clientId,
-        priority,
-        status: "pending",
-        category: "General",
-        description: description || "No description",
-        createdAt: new Date().toISOString(),
-        completionDeadline: new Date(Date.now() + 7*24*60*60*1000).toISOString(),
-        location: "To be assigned"
-      };
-
-      jobs.unshift(newJob);
-      showToast("Job created successfully");
-      closeNewJobModal();
-      renderAllJobs();
-      renderDashboard();
-    }
-
-    // ==================== MASTER DATA MODALS ====================
-    function addMasterItem(collection) {
-      currentMasterCollection = collection;
-      currentMasterId = null;
-      showMasterModal(collection, {});
-    }
-
-    function showMasterModal(collection, item) {
-      currentMasterCollection = collection;
-      currentMasterId = item.id || null;
-
-      let title = `Add ${collection.charAt(0).toUpperCase() + collection.slice(1)}`;
-      if (item.id) title = `Edit ${collection.charAt(0).toUpperCase() + collection.slice(1)}`;
-
-      document.getElementById("master-modal-title").textContent = title;
-
-      let form = '';
-      if (collection === 'clients') {
-        form = `
-          <input id="m-name" value="${item.name||''}" placeholder="Client Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-          <input id="m-contact" value="${item.contact||''}" placeholder="Contact Person" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-          <input id="m-email" value="${item.email||''}" placeholder="Email" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-        `;
-      } else if (collection === 'subcontractors') {
-        form = `
-          <input id="m-name" value="${item.name||''}" placeholder="Company Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-          <input id="m-category" value="${item.category||''}" placeholder="Category (e.g. Drainage)" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-        `;
-      } else if (collection === 'engineers') {
-        form = `
-          <input id="m-name" value="${item.name||''}" placeholder="Engineer Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-          <input id="m-specialisms" value="${item.specialisms ? item.specialisms.join(', ') : ''}" placeholder="Specialisms (comma separated)" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-        `;
-      } else if (collection === 'vehicles') {
-        form = `
-          <input id="m-name" value="${item.name||''}" placeholder="Vehicle Name / Registration" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
-        `;
-      }
-
-      document.getElementById("master-modal-form").innerHTML = form;
-      document.getElementById("master-modal").classList.remove("hidden");
-    }
-
-    function closeMasterModal() {
-      document.getElementById("master-modal").classList.add("hidden");
-    }
-
-    async function saveMasterItem() {
-      const coll = currentMasterCollection;
-      const formData = { id: currentMasterId };
-
-      document.querySelectorAll("#master-modal-form input").forEach(inp => {
-        if (inp.id === "m-specialisms") {
-          formData.specialisms = inp.value.split(',').map(s => s.trim()).filter(Boolean);
-        } else {
-          formData[inp.id.replace('m-', '')] = inp.value.trim();
-        }
-      });
-
-      try {
-        await saveItem(coll, formData);
-        showToast("Saved successfully");
-        closeMasterModal();
-        renderSettings();
-      } catch (e) {
-        showToast("Save failed");
-      }
-    }
-
-    function deleteItemConfirm(coll, id) {
-      if (confirm("Delete this item permanently?")) {
+    function deleteMasterItem(coll, id) {
+      if (confirm("Delete this item?")) {
         deleteItem(coll, id).then(() => {
           showToast("Deleted");
           renderSettings();
@@ -285,112 +262,27 @@
       }
     }
 
-    // Render Settings
-    async function renderSettings() {
-      const clients = await loadCollection("clients");
-      const subs = await loadCollection("subcontractors");
-      const engineers = await loadCollection("engineers");
-      const vehicles = await loadCollection("vehicles");
-
-      document.getElementById("clients-list").innerHTML = clients.map(c => `
-        <div class="flex justify-between items-center bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${c.name}</div><div class="text-xs text-slate-400">${c.contact||''}</div></div>
-          <div class="flex gap-3">
-            <button onclick="showMasterModal('clients', ${JSON.stringify(c)})" class="text-blue-400 text-sm">Edit</button>
-            <button onclick="deleteItemConfirm('clients', '${c.id}')" class="text-red-400 text-sm">Delete</button>
-          </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 text-center py-8">No clients yet</p>';
-
-      document.getElementById("subcontractors-list").innerHTML = subs.map(s => `
-        <div class="flex justify-between items-center bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${s.name}</div><div class="text-xs text-slate-400">${s.category||''}</div></div>
-          <div class="flex gap-3">
-            <button onclick="showMasterModal('subcontractors', ${JSON.stringify(s)})" class="text-blue-400 text-sm">Edit</button>
-            <button onclick="deleteItemConfirm('subcontractors', '${s.id}')" class="text-red-400 text-sm">Delete</button>
-          </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 text-center py-8">No subcontractors yet</p>';
-
-      document.getElementById("engineers-list").innerHTML = engineers.map(e => `
-        <div class="flex justify-between items-center bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${e.name}</div></div>
-          <div class="flex gap-3">
-            <button onclick="showMasterModal('engineers', ${JSON.stringify(e)})" class="text-blue-400 text-sm">Edit</button>
-            <button onclick="deleteItemConfirm('engineers', '${e.id}')" class="text-red-400 text-sm">Delete</button>
-          </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 text-center py-8">No engineers yet</p>';
-
-      document.getElementById("vehicles-list").innerHTML = vehicles.map(v => `
-        <div class="flex justify-between items-center bg-[#0a1628] p-4 rounded-xl">
-          <div><div class="font-medium">${v.name || v.registration || 'Vehicle'}</div></div>
-          <div class="flex gap-3">
-            <button onclick="showMasterModal('vehicles', ${JSON.stringify(v)})" class="text-blue-400 text-sm">Edit</button>
-            <button onclick="deleteItemConfirm('vehicles', '${v.id}')" class="text-red-400 text-sm">Delete</button>
-          </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 text-center py-8">No vehicles yet</p>';
-    }
-
     function showToast(msg) {
       const t = document.getElementById('toast');
       document.getElementById('toast-text').textContent = msg;
       t.classList.remove('hidden');
-      setTimeout(() => t.classList.add('hidden'), 2800);
+      setTimeout(() => t.classList.add('hidden'), 3000);
     }
 
     function switchTab(tab) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
       document.getElementById(tab).classList.add('active');
       document.querySelectorAll('.tab-link').forEach(l => l.classList.toggle('text-blue-400', l.getAttribute('data-tab') === tab));
-
-      if (tab === 'dashboard') renderDashboard();
-      if (tab === 'jobs') renderAllJobs();
       if (tab === 'settings') renderSettings();
     }
 
-    function renderDashboard() {
-      document.getElementById("stats").innerHTML = `
-        <div class="card p-6"><div class="text-5xl font-bold text-blue-400">${jobs.length}</div><div class="text-slate-400">Active Jobs</div></div>
-        <div class="card p-6"><div class="text-5xl font-bold text-red-400">2</div><div class="text-slate-400">P1 Critical</div></div>
-      `;
-      document.getElementById("recent-jobs").innerHTML = jobs.slice(0,3).map(j => `
-        <div class="card p-6 hover:border-blue-500 cursor-pointer" onclick="alert('Job detail for ${j.id}')">
-          <div class="font-medium">${j.title}</div>
-          <div class="text-xs text-slate-400">${j.description.substring(0,60)}...</div>
-        </div>
-      `).join('');
-    }
-
-    function renderAllJobs() {
-      document.getElementById("all-jobs-list").innerHTML = jobs.map(j => `
-        <div class="card p-6 hover:border-blue-500 cursor-pointer" onclick="alert('Open detail for ${j.id}')">
-          <div class="flex justify-between">
-            <div>
-              <span class="status-badge bg-amber-900 text-amber-400">${j.priority}</span>
-              <div class="font-semibold mt-2">${j.title}</div>
-            </div>
-            <div class="text-right text-slate-400 text-sm">${j.clientId}</div>
-          </div>
-        </div>
-      `).join('') || '<p class="text-slate-400 p-12 text-center">No jobs yet. Create one above.</p>';
-    }
-
-    // Init
     window.onload = () => {
-      jobs = [
-        {id:"JOB-0891", title:"HVAC Unit Failure", clientId:"C001", priority:"P1", description:"Rooftop failure"},
-        {id:"JOB-0890", title:"Boiler Fault", clientId:"C002", priority:"P1", description:"No heating reported"}
-      ];
-
       document.querySelectorAll('.tab-link').forEach(link => {
         link.addEventListener('click', e => {
           e.preventDefault();
           switchTab(link.getAttribute('data-tab'));
         });
       });
-
       switchTab('dashboard');
     };
   </script>
