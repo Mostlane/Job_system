@@ -34,6 +34,7 @@
     <div class="flex gap-8 text-sm font-medium" id="tabs">
       <a href="#" data-tab="dashboard" class="tab-link text-blue-400">Dashboard</a>
       <a href="#" data-tab="jobs" class="tab-link">All Jobs</a>
+      <a href="#" data-tab="sites" class="tab-link">Sites</a>
       <a href="#" data-tab="settings" class="tab-link">Settings</a>
     </div>
   </nav>
@@ -58,6 +59,39 @@
           <button onclick="openNewJobModal()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-2xl text-sm font-medium">+ New Job</button>
         </div>
         <div class="grid gap-4" id="all-jobs-list"></div>
+      </div>
+    </div>
+
+    <!-- Sites -->
+    <div id="sites" class="tab-content">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+          <h1 class="syne text-3xl font-black">Sites</h1>
+          <button onclick="openSiteModal()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-2xl text-sm font-medium">+ New Site</button>
+        </div>
+
+        <div class="card p-4 mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <input id="site-search" placeholder="Search name / postcode / number" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+            <select id="site-type-filter" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+              <option value="">All types</option>
+              <option value="retail">Retail</option>
+              <option value="els">ELS</option>
+              <option value="els_private">ELS Private</option>
+              <option value="cobra">Cobra</option>
+              <option value="wenzels">Wenzel's</option>
+              <option value="projects">Projects</option>
+            </select>
+            <select id="site-active-filter" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+              <option value="">All statuses</option>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+            <button onclick="applySiteFilters()" class="bg-slate-700 hover:bg-slate-600 rounded-xl px-4 py-3">Apply Filters</button>
+          </div>
+        </div>
+
+        <div class="grid gap-4" id="sites-list"></div>
       </div>
     </div>
 
@@ -144,6 +178,51 @@
     </div>
   </div>
 
+  <!-- Site Modal -->
+  <div id="site-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
+    <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-3xl p-8 max-h-[92vh] overflow-auto">
+      <h3 id="site-modal-title" class="text-xl font-semibold mb-6">New Site</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <input id="site-name" placeholder="Site Name" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        <input id="site-number" placeholder="Site Number / Branch Code" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+
+        <select id="site-type" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <option value="retail">Retail</option>
+          <option value="els">ELS</option>
+          <option value="els_private">ELS Private</option>
+          <option value="cobra">Cobra</option>
+          <option value="wenzels">Wenzel's</option>
+          <option value="projects">Projects</option>
+        </select>
+
+        <input id="site-client" placeholder="Client" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+
+        <input id="site-postcode" placeholder="Postcode" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        <input id="site-telephone" placeholder="Telephone" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+
+        <input id="site-address" placeholder="Address" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4 md:col-span-2">
+        <input id="site-sharepoint" placeholder="SharePoint URL" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4 md:col-span-2">
+
+        <input id="site-lat" placeholder="Latitude" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        <input id="site-lng" placeholder="Longitude" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+
+        <input id="site-mileage" placeholder="Mileage from HQ" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+        <input id="site-travel-time" placeholder="Travel time from HQ (minutes)" class="w-full bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+
+        <label class="flex items-center gap-3 bg-[#0a1628] border border-slate-700 rounded-xl p-4">
+          <input type="checkbox" id="site-active" checked class="w-4 h-4">
+          <span>Active</span>
+        </label>
+      </div>
+
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeSiteModal()" class="flex-1 py-3 text-slate-400">Cancel</button>
+        <button onclick="saveSite()" class="flex-1 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl">Save Site</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Master Data Modal -->
   <div id="master-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
     <div class="modal bg-[#080f20] border border-slate-700 rounded-2xl w-full max-w-md p-8">
@@ -167,7 +246,9 @@
     let currentMasterCollection = null;
     let currentMasterId = null;
     let currentJob = null;
+    let currentSiteId = null;
     let jobs = [];
+    let sites = [];
     let clientsCache = [];
 
     async function apiRequest(endpoint, method = "GET", body = null) {
@@ -222,6 +303,61 @@
       }
     }
 
+    function normaliseSite(raw) {
+      const clientRaw = (raw.client || raw.type || "").toString().toLowerCase();
+
+      let type = clientRaw;
+      if (!type) {
+        if (raw["Branch Code"]) type = "els";
+        else if ((raw.siteName || "").toLowerCase().includes("wenzel")) type = "wenzels";
+        else type = "retail";
+      }
+
+      if (type === "els_private" || type === "els private" || type === "elsprivate") type = "els_private";
+
+      const lat = raw.lat ?? raw.latitude ?? raw.Latitude ?? null;
+      const lng = raw.lng ?? raw.lon ?? raw.longitude ?? raw.Longitude ?? null;
+
+      return {
+        id: raw.id || `SITE-${raw.siteNumber || raw["Branch Code"] || raw.siteName || Date.now()}`,
+        client: raw.client || type,
+        type,
+        active: raw.active !== false,
+        siteNumber: raw.siteNumber || raw["Branch Code"] || "",
+        siteName: raw.siteName || raw["Store Name"] || "",
+        postcode: raw.postcode || raw.Postcode || "",
+        telephone: raw.telephone || raw.Telephone || "",
+        address: raw.address || raw.address1 || raw.Address || raw["Address 1"] || raw.street || raw.Street || "",
+        town: raw.town || raw.Town || "",
+        county: raw.county || raw.County || "",
+        sharepointURL: raw.sharepointURL || raw.sharePointURL || raw.SharePoint || "",
+        lat: lat !== null && lat !== "" ? Number(lat) : null,
+        lng: lng !== null && lng !== "" ? Number(lng) : null,
+        mileageFromHQ: raw.mileageFromHQ !== undefined && raw.mileageFromHQ !== null && raw.mileageFromHQ !== "" ? Number(raw.mileageFromHQ) : null,
+        travelTimeFromHQMinutes: raw.travelTimeFromHQMinutes !== undefined && raw.travelTimeFromHQMinutes !== null && raw.travelTimeFromHQMinutes !== "" ? Number(raw.travelTimeFromHQMinutes) : null,
+        lastUpdated: raw.lastUpdated || raw.updatedAt || raw.createdAt || ""
+      };
+    }
+
+    function denormaliseSite(site) {
+      return {
+        id: site.id,
+        client: site.client || site.type,
+        active: site.active,
+        siteNumber: site.siteNumber,
+        siteName: site.siteName,
+        postcode: site.postcode,
+        telephone: site.telephone,
+        address1: site.address,
+        lat: site.lat,
+        lon: site.lng,
+        mileageFromHQ: site.mileageFromHQ,
+        sharepointURL: site.sharepointURL,
+        travelTimeFromHQMinutes: site.travelTimeFromHQMinutes,
+        lastUpdated: new Date().toISOString()
+      };
+    }
+
     async function loadJobs() {
       try {
         const data = await apiRequest("/api/jobs");
@@ -244,6 +380,21 @@
         clientsCache = Array.isArray(data) ? data : [];
       } catch (e) {
         clientsCache = [];
+      }
+    }
+
+    async function loadSites() {
+      try {
+        const data = await apiRequest("/api/sites");
+        const arr = Array.isArray(data) ? data : [];
+        sites = arr.map(normaliseSite);
+        sites.sort((a, b) => String(a.siteName || "").localeCompare(String(b.siteName || "")));
+        renderSites();
+      } catch (e) {
+        console.error("Failed to load sites:", e);
+        sites = [];
+        renderSites();
+        showToast("Failed to load sites");
       }
     }
 
@@ -497,8 +648,8 @@
       const title = document.getElementById("job-title").value.trim();
       const clientId = document.getElementById("job-client").value;
       const priority = document.getElementById("job-priority").value;
-      const location = document.getElementById("job-location").value.trim();
       const description = document.getElementById("job-description").value.trim();
+      const location = document.getElementById("job-location").value.trim();
 
       if (!title || !clientId) {
         showToast("Title and client required");
@@ -531,6 +682,174 @@
       }
     }
 
+    function renderSites(filtered = null) {
+      const source = filtered || sites;
+
+      document.getElementById("sites-list").innerHTML = source.length
+        ? source.map(site => `
+          <div class="card p-6">
+            <div class="flex justify-between gap-4">
+              <div>
+                <div class="flex items-center gap-3 flex-wrap">
+                  <div class="font-semibold text-lg">${escapeHtml(site.siteName || "")}</div>
+                  <span class="status-badge bg-blue-900 text-blue-300">${escapeHtml(site.type || "unknown")}</span>
+                  <span class="status-badge ${site.active ? 'bg-emerald-900 text-emerald-300' : 'bg-slate-700 text-slate-300'}">${site.active ? 'Active' : 'Inactive'}</span>
+                </div>
+
+                <div class="text-sm text-slate-400 mt-2">
+                  ${escapeHtml(site.siteNumber || "")}${site.siteNumber ? ' · ' : ''}${escapeHtml(site.postcode || "")}
+                </div>
+
+                <div class="text-sm text-slate-400 mt-1">${escapeHtml(site.address || "")}</div>
+
+                <div class="text-xs text-slate-500 mt-2">
+                  GPS: ${site.lat ?? "—"}, ${site.lng ?? "—"}
+                </div>
+
+                <div class="text-xs text-slate-500">
+                  Mileage from HQ: ${site.mileageFromHQ ?? "—"}
+                </div>
+
+                <div class="text-xs text-slate-500">
+                  Travel time from HQ: ${site.travelTimeFromHQMinutes ?? "—"} mins
+                </div>
+              </div>
+
+              <div class="flex gap-3 shrink-0 items-start">
+                <button onclick="editSite('${site.id}')" class="text-blue-400">Edit</button>
+                <button onclick="deleteSite('${site.id}')" class="text-red-400">Delete</button>
+              </div>
+            </div>
+          </div>
+        `).join("")
+        : '<div class="card p-6 text-slate-400">No sites found</div>';
+    }
+
+    function applySiteFilters() {
+      const q = document.getElementById("site-search").value.trim().toLowerCase();
+      const type = document.getElementById("site-type-filter").value.trim().toLowerCase();
+      const activeValue = document.getElementById("site-active-filter").value;
+
+      let filtered = [...sites];
+
+      if (type) {
+        filtered = filtered.filter(s => (s.type || "").toLowerCase() === type);
+      }
+
+      if (activeValue !== "") {
+        const isActive = activeValue === "true";
+        filtered = filtered.filter(s => !!s.active === isActive);
+      }
+
+      if (q) {
+        filtered = filtered.filter(s =>
+          String(s.siteName || "").toLowerCase().includes(q) ||
+          String(s.siteNumber || "").toLowerCase().includes(q) ||
+          String(s.postcode || "").toLowerCase().includes(q) ||
+          String(s.address || "").toLowerCase().includes(q)
+        );
+      }
+
+      renderSites(filtered);
+    }
+
+    function openSiteModal(site = null) {
+      currentSiteId = site ? site.id : null;
+
+      document.getElementById("site-modal-title").textContent = site ? "Edit Site" : "New Site";
+      document.getElementById("site-name").value = site?.siteName || "";
+      document.getElementById("site-number").value = site?.siteNumber || "";
+      document.getElementById("site-type").value = site?.type || "retail";
+      document.getElementById("site-client").value = site?.client || site?.type || "";
+      document.getElementById("site-postcode").value = site?.postcode || "";
+      document.getElementById("site-telephone").value = site?.telephone || "";
+      document.getElementById("site-address").value = site?.address || "";
+      document.getElementById("site-sharepoint").value = site?.sharepointURL || "";
+      document.getElementById("site-lat").value = site?.lat ?? "";
+      document.getElementById("site-lng").value = site?.lng ?? "";
+      document.getElementById("site-mileage").value = site?.mileageFromHQ ?? "";
+      document.getElementById("site-travel-time").value = site?.travelTimeFromHQMinutes ?? "";
+      document.getElementById("site-active").checked = site ? !!site.active : true;
+
+      document.getElementById("site-modal").classList.remove("hidden");
+    }
+
+    function closeSiteModal() {
+      document.getElementById("site-modal").classList.add("hidden");
+    }
+
+    async function editSite(id) {
+      try {
+        const raw = await apiRequest(`/api/sites/${id}`);
+        const site = normaliseSite(raw);
+        openSiteModal(site);
+      } catch (e) {
+        console.error(e);
+        const fallback = sites.find(s => s.id === id);
+        if (fallback) openSiteModal(fallback);
+        else showToast("Failed to load site");
+      }
+    }
+
+    async function saveSite() {
+      const site = {
+        id: currentSiteId || undefined,
+        client: document.getElementById("site-client").value.trim() || document.getElementById("site-type").value,
+        type: document.getElementById("site-type").value,
+        active: document.getElementById("site-active").checked,
+        siteNumber: document.getElementById("site-number").value.trim(),
+        siteName: document.getElementById("site-name").value.trim(),
+        postcode: document.getElementById("site-postcode").value.trim(),
+        telephone: document.getElementById("site-telephone").value.trim(),
+        address: document.getElementById("site-address").value.trim(),
+        sharepointURL: document.getElementById("site-sharepoint").value.trim(),
+        lat: document.getElementById("site-lat").value.trim(),
+        lng: document.getElementById("site-lng").value.trim(),
+        mileageFromHQ: document.getElementById("site-mileage").value.trim(),
+        travelTimeFromHQMinutes: document.getElementById("site-travel-time").value.trim()
+      };
+
+      if (!site.siteName) {
+        showToast("Site name required");
+        return;
+      }
+
+      site.lat = site.lat === "" ? null : Number(site.lat);
+      site.lng = site.lng === "" ? null : Number(site.lng);
+      site.mileageFromHQ = site.mileageFromHQ === "" ? null : Number(site.mileageFromHQ);
+      site.travelTimeFromHQMinutes = site.travelTimeFromHQMinutes === "" ? null : Number(site.travelTimeFromHQMinutes);
+
+      const payload = denormaliseSite(site);
+
+      try {
+        if (currentSiteId) {
+          await apiRequest(`/api/sites/${currentSiteId}`, "PUT", payload);
+        } else {
+          await apiRequest("/api/sites", "POST", payload);
+        }
+
+        closeSiteModal();
+        await loadSites();
+        showToast("Site saved");
+      } catch (e) {
+        console.error(e);
+        showToast("Failed to save site");
+      }
+    }
+
+    async function deleteSite(id) {
+      if (!confirm("Delete this site?")) return;
+
+      try {
+        await apiRequest(`/api/sites/${id}`, "DELETE");
+        await loadSites();
+        showToast("Site deleted");
+      } catch (e) {
+        console.error(e);
+        showToast("Failed to delete site");
+      }
+    }
+
     function dispatchToSub() {
       if (!currentJob) {
         showToast("No job selected");
@@ -550,6 +869,7 @@
       });
 
       if (tab === "settings") renderSettings();
+      if (tab === "sites") loadSites();
     }
 
     function renderDashboard() {
